@@ -1,5 +1,5 @@
 from markupsafe import escape
-from flask import Flask
+from flask import Flask, render_template
 from configparser import ConfigParser
 
 app = Flask(__name__)
@@ -8,14 +8,24 @@ config = ConfigParser()
 config.read("config.ini")
 
 testName = config.get("DEFAULT", "testName")
+secretKey = config.get("DEFAULT", "secretKey")
+app.config["SECRET_KEY"] = secretKey
+
+
+
+
 
 @app.route("/")
 def index():
-    return "<h1>Hello!</h1>"
+    return render_template("index.html")
 
 @app.route("/test")
 def test():
-    return '<h1>{}</h1>'.format(escape(testName.capitalize()))
+    return render_template("test.html", testName = testName)
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
 
 
 #Run with
