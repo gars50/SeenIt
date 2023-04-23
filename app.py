@@ -19,13 +19,21 @@ app.config["SECRET_KEY"] = secretKey
 def index():
     return render_template("index.html")
 
-@app.route("/test")
-def test():
-    return render_template("test.html", testName = testName)
+@app.route("/mymovies")
+def mymovies():
+    return render_template("mymovies.html")
 
-@app.route("/about")
-def about():
-    return render_template("about.html")
+@app.route("/myshows")
+def myshows():
+    return render_template("myshows.html")
+
+@app.route("/abandonnedmovies")
+def abandonnedmovies():
+    return render_template("abandonnedmovies.html")
+
+@app.route("/abandonnedshows")
+def abandonnedshows():
+    return render_template("abandonnedshows.html")
 
 
 #Run with
