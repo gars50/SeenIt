@@ -1,15 +1,8 @@
-from markupsafe import escape
 from flask import Flask, render_template
-from configparser import ConfigParser
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-
-config = ConfigParser()
-config.read("config.ini")
-
-testName = config.get("DEFAULT", "testName")
-secretKey = config.get("DEFAULT", "secretKey")
-app.config["SECRET_KEY"] = secretKey
+app.config.from_pyfile('config.py')
 
 
 
@@ -37,6 +30,9 @@ def abandonnedshows():
 
 
 #Run with
-#.\env\Scripts\activate
+#.\venv\Scripts\activate
 #SET FLASK_APP=app.py
 #flask --debug run
+
+#Save pip requirements 
+#pip freeze > requirements.txt
