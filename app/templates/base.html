@@ -14,23 +14,31 @@
         {% set active_page = active_page -%}
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{{ url_for('index') }}">SeenIt</a>
+                <a class="navbar-brand" href="{{ url_for('main.index') }}">SeenIt</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item" >
-                            <a {% if active_page == "abandonnedmovies" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('abandonnedmovies') }}">Abandonned Movies</a>
+                            <a {% if active_page == "abandonnedmovies" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('main.abandonnedmovies') }}">Abandonned Movies</a>
                         </li>
                         <li class="nav-item">
-                            <a {% if active_page == "abandonnedshows" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('abandonnedshows') }}">Abandonned Shows</a>
+                            <a {% if active_page == "abandonnedshows" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('main.abandonnedshows') }}">Abandonned Shows</a>
                         </li>
                         <li class="nav-item">
-                            <a {% if active_page == "mymovies" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('mymovies') }}">My Movies</a>
+                            <a {% if active_page == "mymovies" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('main.mymovies') }}">My Movies</a>
                         </li>
                         <li class="nav-item">
-                            <a {% if active_page == "myshows" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('myshows') }}">My Shows</a>
+                            <a {% if active_page == "myshows" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('main.myshows') }}">My Shows</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a {% if active_page == "settings" %} class="nav-link active dropdown-toggle" {% else %} class="nav-link dropdown-toggle" {% endif %} data-bs-toggle="dropdown" href="#">Settings</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="{{ url_for('settings.index') }}">Index</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('settings.users') }}">Users</a></li>
+                                <li><a class="dropdown-item" href="{{ url_for('settings.connections') }}">Connections</a></li>
+                            </ul>
                         </li>
                     </ul>
                 </div>

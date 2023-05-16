@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% set active_page = "settings" %}
+{% block content %}
+    <span class="title"><h1>{% block title %} Users {% endblock %}</h1></span>
+    <div class="content">
+        <h2>This is the Users Settings page within the Settings blueprint</h2>
+        {% for user in users %}
+            <div class="user">
+                <p><b>#{{ user.id }}</b></p>
+                <p class="user">
+                    <b>
+                        <a href="#">
+                            {{ user.alias }}
+                        </a>
+                    </b>
+                </p>
+                <div class="email">
+                    <p>{{ user.email }}</p>
+                </div>
+                <hr>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
