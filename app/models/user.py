@@ -11,7 +11,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     plexid = db.Column(db.Integer, unique=True)
     alias = db.Column(db.String(100))
-    admin = db.Column(db.Boolean)
+    admin = db.Column(db.Boolean, default=False)
     lastlogin = db.Column(db.DateTime)
 
     #Relations
@@ -26,6 +26,9 @@ class User(UserMixin, db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+    
+    def set_admin(self, admin):
+        self.admin = bool(admin)
     
 @login.user_loader
 def load_user(id):

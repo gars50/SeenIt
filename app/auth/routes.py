@@ -32,6 +32,9 @@ def register():
     if form.validate_on_submit():
         user = User(email=form.email.data)
         user.set_password(form.password.data)
+        #If there are no users, we create an admin
+        if not User.query.first():
+            user.set_admin('true')
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')

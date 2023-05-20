@@ -38,14 +38,16 @@
                         </li>
                     </ul>
                     <ul class="navbar-nav mr-auto">
-                        <li class="nav-item dropdown">
-                            <a {% if active_page == "settings" %} class="nav-link active dropdown-toggle" {% else %} class="nav-link dropdown-toggle" {% endif %} data-bs-toggle="dropdown" href="#">Settings</a>
-                            <div class="dropdown-menu" style="right: 0; left: auto;">
-                                <a class="dropdown-item" href="{{ url_for('settings.index') }}">Index</a>
-                                <a class="dropdown-item" href="{{ url_for('settings.users') }}">Users</a>
-                                <a class="dropdown-item" href="{{ url_for('settings.connections') }}">Connections</a>
-                            </div>
-                        </li>
+                        {% if current_user.admin %}
+                            <li class="nav-item dropdown">
+                                <a {% if active_page == "settings" %} class="nav-link active dropdown-toggle" {% else %} class="nav-link dropdown-toggle" {% endif %} data-bs-toggle="dropdown" href="#">Settings</a>
+                                <div class="dropdown-menu" style="right: 0; left: auto;">
+                                    <a class="dropdown-item" href="{{ url_for('settings.index') }}">Index</a>
+                                    <a class="dropdown-item" href="{{ url_for('settings.users') }}">Users</a>
+                                    <a class="dropdown-item" href="{{ url_for('settings.connections') }}">Connections</a>
+                                </div>
+                            </li>
+                        {% endif %}
                         <li class="nav-item">
                             {% if current_user.is_anonymous %}
                             <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
