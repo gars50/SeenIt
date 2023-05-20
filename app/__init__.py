@@ -1,7 +1,8 @@
 from flask import Flask
 
 from config import Config
-from app.extensions import db
+from app.extensions import db, login, migrate
+
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -9,6 +10,8 @@ def create_app(config_class=Config):
 
     # Initialize Flask extensions here
     db.init_app(app)
+    login.init_app(app)
+    migrate.init_app(app,db)
 
     # Register blueprints here
     from app.main import bp as main_bp
@@ -17,8 +20,7 @@ def create_app(config_class=Config):
     from app.settings import bp as settings_bp
     app.register_blueprint(settings_bp, url_prefix="/settings")
 
-    @app.route('/test/')
-    def test_page():
-        return '<h1>Testing the Flask Application Factory Pattern</h1>'
+    from app.auth import bp as auth_bp
+    app.register_blueprint(auth_bp, url_prefix='/auth')
 
     return app

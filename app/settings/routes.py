@@ -1,6 +1,5 @@
 from flask import render_template
 from app.settings import bp
-from app.extensions import db
 from app.models.user import User
 
 @bp.route('/')

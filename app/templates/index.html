@@ -4,5 +4,7 @@
     <h1>{% block title %} Index Page {% endblock %}</h1>
     <div class="test">
         Hello World!
+        Please login to do anything.
+        Hello {{ current_user.alias }}
     </div>
 {% endblock %}
