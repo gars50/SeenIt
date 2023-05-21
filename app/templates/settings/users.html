@@ -1,25 +1,26 @@
 {% extends 'base.html' %}
 {% set active_page = "settings" %}
+
 {% block content %}
     <span class="title"><h1>{% block title %} Users {% endblock %}</h1></span>
     <table class="table">
         <thead>
             <tr>
-                <th scope="col">#</th>
-                <th scope="col">Alias</th>
                 <th scope="col">Email</th>
+                <th scope="col">Alias</th>
                 <th scope="col">Admin</th>
                 <th scope="col">Edit</th>
+                <th scope="col">Delete</th>
             </tr>
         </thead>
         {% for user in users %}
             <tbody>
                 <tr>
-                    <th scope="row">{{user.id}}</th>
+                    <th scope="row">{{user.email}}</th>
                     <td>{{user.alias}}</td>
-                    <td>{{user.email}}</td>
                     <td>{{user.admin}}</td>
                     <td><a class="btn btn-outline-light" type="button" href="{{ url_for('settings.user', user_id=user.id) }}">Edit</a></td>
+                    <td><a class="btn btn-outline-light btn-danger" type="button" href="{{ url_for('settings.delete_user', user_id=user.id) }}">Delete</a></td>
                 </tr>
             </tbody>
         {% endfor %}
