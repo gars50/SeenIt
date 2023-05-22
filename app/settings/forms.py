@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
-from app.models.user import User
+from wtforms import StringField, IntegerField, BooleanField, SubmitField, validators
+
 
 class EditUserForm(FlaskForm):
     email = StringField('Email Address')
@@ -9,8 +8,14 @@ class EditUserForm(FlaskForm):
     admin = BooleanField('Admin')
     submit = SubmitField('Save')
 
-class ConnectionForm(FlaskForm):
-    host = StringField('Hostname', validators=[DataRequired()])
-    port = StringField('Port', validators=[DataRequired()])
-    apiKey = StringField('API Key', validators=[DataRequired()])
-    save = SubmitField('Save')
+class EditConnectionsForm(FlaskForm):
+    hostRadarr = StringField()
+    portRadarr = IntegerField(validators=[validators.Optional()])
+    apiKeyRadarr = StringField()
+    hostSonarr = StringField()
+    portSonarr = IntegerField(validators=[validators.Optional()])
+    apiKeySonarr = StringField()
+    hostOmbi = StringField()
+    portOmbi = IntegerField(validators=[validators.Optional()])
+    apiKeyOmbi = StringField()
+    submit = SubmitField('Save')

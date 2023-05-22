@@ -3,7 +3,47 @@
 
 {% block content %}
     <span class="title"><h1>{% block title %} Connections {% endblock %}</h1></span>
-    <div class="content">
-        <h2>This is the Connections Settings page within the Settings blueprint</h2>
-    </div>
+    <form action="" method="post">
+    {{ form.hidden_tag() }}
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Service</th>
+                <th scope="col">Hostname</th>
+                <th scope="col">Port</th>
+                <th scope="col">API Key</th>
+                <th scope="col">Test</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">Radarr</th>
+                <td> {{ form.hostRadarr }} </td>
+                <td> {{ form.portRadarr }} </td>
+                <td> {{ form.apiKeyRadarr(size=35) }} </td>
+                <td><a class="btn btn-outline-light btn-info" type="button" href="">Test</a></td>
+            </tr>
+        </tbody>
+        <tbody>
+            <tr>
+                <th scope="row">Sonarr</th>
+                <td> {{ form.hostSonarr }} </td>
+                <td> {{ form.portSonarr }} </td>
+                <td> {{ form.apiKeySonarr(size=35) }} </td>
+                <td><a class="btn btn-outline-light btn-info" type="button" href="">Test</a></td>
+            </tr>
+        </tbody>
+        <tbody>
+            <tr>
+                <th scope="row">Ombi</th>
+                <td> {{ form.hostOmbi }} </td>
+                <td> {{ form.portOmbi }} </td>
+                <td> {{ form.apiKeyOmbi(size=35) }} </td>
+                <td><a class="btn btn-outline-light btn-info" type="button" href="">Test</a></td>
+            </tr>
+        </tbody>
+    </table>
+    <p>{{ form.submit() }}</p>
+    </p>
+    </form>
 {% endblock %}

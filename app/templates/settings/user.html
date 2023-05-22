@@ -2,7 +2,7 @@
 {% set active_page = "settings" %}
 
 {% block content %}
-    <h1>Edit User</h1>
+    <span class="title"><h1>{% block title %} Edit User {% endblock %}</h1></span>
     <form action="" method="post">
         {{ form.hidden_tag() }}
         <p>
