@@ -4,46 +4,106 @@
 {% block content %}
     <span class="title"><h1>{% block title %} Connections {% endblock %}</h1></span>
     <form action="" method="post">
-    {{ form.hidden_tag() }}
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Service</th>
-                <th scope="col">Hostname</th>
-                <th scope="col">Port</th>
-                <th scope="col">API Key</th>
-                <th scope="col">Test</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <th scope="row">Radarr</th>
-                <td> {{ form.hostRadarr }} </td>
-                <td> {{ form.portRadarr }} </td>
-                <td> {{ form.apiKeyRadarr(size=35) }} </td>
-                <td><a class="btn btn-outline-light btn-info" type="button" href="">Test</a></td>
-            </tr>
-        </tbody>
-        <tbody>
-            <tr>
-                <th scope="row">Sonarr</th>
-                <td> {{ form.hostSonarr }} </td>
-                <td> {{ form.portSonarr }} </td>
-                <td> {{ form.apiKeySonarr(size=35) }} </td>
-                <td><a class="btn btn-outline-light btn-info" type="button" href="">Test</a></td>
-            </tr>
-        </tbody>
-        <tbody>
-            <tr>
-                <th scope="row">Ombi</th>
-                <td> {{ form.hostOmbi }} </td>
-                <td> {{ form.portOmbi }} </td>
-                <td> {{ form.apiKeyOmbi(size=35) }} </td>
-                <td><a class="btn btn-outline-light btn-info" type="button" href="">Test</a></td>
-            </tr>
-        </tbody>
-    </table>
-    <p>{{ form.submit() }}</p>
-    </p>
+        {{ form.hidden_tag() }}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Service</th>
+                    <th scope="col">Hostname</th>
+                    <th scope="col">Port</th>
+                    <th scope="col">API Key</th>
+                    <th scope="col"> </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Radarr</th>
+                    <td> {{ form.hostRadarr }} </td>
+                    <td> {{ form.portRadarr }} </td>
+                    <td> {{ form.apiKeyRadarr(size=35) }} </td>
+                    <td><a onclick="testRadarr()" class="btn btn-info">Test</button></td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <th scope="row">Sonarr</th>
+                    <td> {{ form.hostSonarr }} </td>
+                    <td> {{ form.portSonarr }} </td>
+                    <td> {{ form.apiKeySonarr(size=35) }} </td>
+                    <td><a onclick="testSonarr()" class="btn btn-info">Test</button></td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <th scope="row">Ombi</th>
+                    <td> {{ form.hostOmbi }} </td>
+                    <td> {{ form.portOmbi }} </td>
+                    <td> {{ form.apiKeyOmbi(size=35) }} </td>
+                    <td><a onclick="testOmbi()" class="btn btn-info">Test</button></td>
+                </tr>
+            </tbody>
+        </table>
+        <p>{{ form.submit() }}</p>
+        </p>
     </form>
+
+    <script>
+        async function testRadarr() {
+            response = null
+            ombiURL = "http://"+document.getElementById('hostRadarr').value+":"+document.getElementById('portRadarr').value+"/api/v3/system/status"
+            try{
+                response = await fetch(ombiURL, {
+                    headers: {
+                        "X-Api-Key": document.getElementById('apiKeyRadarr').value
+                    },
+                    signal: AbortSignal.timeout(5_000)
+                })
+                if (response.ok) {
+                    toastr.success("Test to Sonarr successful")
+                } else {
+                    throw "Nope"
+                }
+            } catch (error) {
+                toastr.error("Could not connect to Radarr")
+            }
+        }
+        async function testSonarr() {
+            response = null
+            ombiURL = "http://"+document.getElementById('hostSonarr').value+":"+document.getElementById('portSonarr').value+"/api/v3/system/status"
+            try{
+                response = await fetch(ombiURL, {
+                    headers: {
+                        "X-Api-Key": document.getElementById('apiKeySonarr').value
+                    },
+                    signal: AbortSignal.timeout(5_000)
+                })
+                if (response.ok) {
+                    toastr.success("Test to Sonarr successful")
+                } else {
+                    throw "Nope"
+                }
+            } catch (error) {
+                toastr.error("Could not connect to Sonarr")
+            }
+        }
+        async function testOmbi() {
+            response = null
+            ombiURL = "http://"+document.getElementById('hostOmbi').value+":"+document.getElementById('portOmbi').value+"/api/v1/Status"
+            try{
+                response = await fetch(ombiURL, {
+                    headers: {
+                        ApiKey: document.getElementById('apiKeyOmbi').value
+                    },
+                    signal: AbortSignal.timeout(5_000)
+                })
+                if (response.ok) {
+                    toastr.success("Test to Ombi successful")
+                } else {
+                    throw "Nope"
+                }
+            } catch (error) {
+                toastr.error("Could not connect to Ombi")
+            }
+        }
+    </script>
 {% endblock %}
