@@ -2,9 +2,16 @@
 {% set active_page = "settings" %}
 
 {% block content %}
-    <span class="title"><h1>{% block title %} Connections {% endblock %}</h1></span>
+    <span class="title"><h1>{% block title %} Application Settings {% endblock %}</h1></span>
     <form action="" method="post">
         {{ form.hidden_tag() }}
+        <p>
+            Time before deleting an abandonned media<br>
+            {{ form.delayNumber }} {{ form.delayUnit }}<br>
+            {% for error in form.delayNumber.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
         <table class="table">
             <thead>
                 <tr>
@@ -18,48 +25,47 @@
             <tbody>
                 <tr>
                     <th scope="row">Radarr</th>
-                    <td> {{ form.hostRadarr }} </td>
-                    <td> {{ form.portRadarr }} </td>
-                    <td> {{ form.apiKeyRadarr(size=35) }} </td>
+                    <td> {{ form.radarrHost }} </td>
+                    <td> {{ form.radarrPort }} </td>
+                    <td> {{ form.radarrApiKey(size=35) }} </td>
                     <td><a onclick="testRadarr()" class="btn btn-info">Test</a></td>
                 </tr>
             </tbody>
             <tbody>
                 <tr>
                     <th scope="row">Sonarr</th>
-                    <td> {{ form.hostSonarr }} </td>
-                    <td> {{ form.portSonarr }} </td>
-                    <td> {{ form.apiKeySonarr(size=35) }} </td>
+                    <td> {{ form.sonarrHost }} </td>
+                    <td> {{ form.sonarrPort }} </td>
+                    <td> {{ form.sonarrApiKey(size=35) }} </td>
                     <td><a onclick="testSonarr()" class="btn btn-info">Test</a></td>
                 </tr>
             </tbody>
             <tbody>
                 <tr>
                     <th scope="row">Ombi</th>
-                    <td> {{ form.hostOmbi }} </td>
-                    <td> {{ form.portOmbi }} </td>
-                    <td> {{ form.apiKeyOmbi(size=35) }} </td>
+                    <td> {{ form.ombiHost }} </td>
+                    <td> {{ form.ombiPort }} </td>
+                    <td> {{ form.ombiApiKey(size=35) }} </td>
                     <td><a onclick="testOmbi()" class="btn btn-info">Test</a></td>
                 </tr>
             </tbody>
         </table>
         <p>{{ form.submit() }}</p>
-        </p>
     </form>
 
     <script>
         async function testRadarr() {
             response = null
-            ombiURL = "http://"+document.getElementById('hostRadarr').value+":"+document.getElementById('portRadarr').value+"/api/v3/system/status"
+            ombiURL = "http://"+document.getElementById('radarrHost').value+":"+document.getElementById('radarrPort').value+"/api/v3/system/status"
             try{
                 response = await fetch(ombiURL, {
                     headers: {
-                        "X-Api-Key": document.getElementById('apiKeyRadarr').value
+                        "X-Api-Key": document.getElementById('radarrApiKey').value
                     },
                     signal: AbortSignal.timeout(5_000)
                 })
                 if (response.ok) {
-                    toastr.success("Test to Sonarr successful")
+                    toastr.success("Test to Radarr successful")
                 } else {
                     throw "Nope"
                 }
@@ -69,11 +75,11 @@
         }
         async function testSonarr() {
             response = null
-            ombiURL = "http://"+document.getElementById('hostSonarr').value+":"+document.getElementById('portSonarr').value+"/api/v3/system/status"
+            ombiURL = "http://"+document.getElementById('sonarrHost').value+":"+document.getElementById('sonarrPort').value+"/api/v3/system/status"
             try{
                 response = await fetch(ombiURL, {
                     headers: {
-                        "X-Api-Key": document.getElementById('apiKeySonarr').value
+                        "X-Api-Key": document.getElementById('sonarrApiKey').value
                     },
                     signal: AbortSignal.timeout(5_000)
                 })
@@ -88,11 +94,11 @@
         }
         async function testOmbi() {
             response = null
-            ombiURL = "http://"+document.getElementById('hostOmbi').value+":"+document.getElementById('portOmbi').value+"/api/v1/Status"
+            ombiURL = "http://"+document.getElementById('ombiHost').value+":"+document.getElementById('ombiPort').value+"/api/v1/Status"
             try{
                 response = await fetch(ombiURL, {
                     headers: {
-                        ApiKey: document.getElementById('apiKeyOmbi').value
+                        ApiKey: document.getElementById('ombiApiKey').value
                     },
                     signal: AbortSignal.timeout(5_000)
                 })

@@ -1,15 +1,47 @@
 from flask import render_template, flash, redirect, request, url_for
 from app.settings import bp
-from app.models import User
-from app.models.connections import RadarrConnection, SonarrConnection, OmbiConnection
-from app.settings.forms import EditUserForm, EditConnectionsForm, AddUserForm
+from app.models import User, AppSettings
+from app.settings.forms import EditUserForm, EditConnectionsForm, AddUserForm, EditAppSettings
 from flask_login import login_required
 from app import db
 
-@bp.route('/')
+@bp.route('/application', methods=['GET', 'POST'])
 @login_required
-def index():
-    return render_template('settings/index.html')
+def application():
+    app_settings = AppSettings.query.first()
+    form = EditAppSettings()
+    if not app_settings:
+        app_settings = AppSettings()
+        db.session.add(app_settings)
+        db.session.commit()
+    if form.validate_on_submit():
+        app_settings.delayNumber = form.delayNumber.data
+        app_settings.delayUnit = form.delayUnit.data
+        app_settings.radarrHost = form.radarrHost.data
+        app_settings.radarrPort = form.radarrPort.data
+        app_settings.radarrApiKey = form.radarrApiKey.data
+        app_settings.sonarrHost = form.sonarrHost.data
+        app_settings.sonarrPort = form.sonarrPort.data
+        app_settings.sonarrApiKey = form.sonarrApiKey.data
+        app_settings.ombiHost = form.ombiHost.data
+        app_settings.ombiPort = form.ombiPort.data
+        app_settings.ombiApiKey = form.ombiApiKey.data
+        db.session.commit()
+        flash('Your changes have been saved.')
+        return redirect(url_for('settings.application'))
+    elif request.method == 'GET':
+        form.delayNumber.data = app_settings.delayNumber
+        form.delayUnit.data = app_settings.delayUnit
+        form.radarrHost.data = app_settings.radarrHost
+        form.radarrPort.data = app_settings.radarrPort
+        form.radarrApiKey.data = app_settings.radarrApiKey
+        form.sonarrHost.data = app_settings.sonarrHost
+        form.sonarrPort.data = app_settings.sonarrPort
+        form.sonarrApiKey.data = app_settings.sonarrApiKey
+        form.ombiHost.data = app_settings.ombiHost
+        form.ombiPort.data = app_settings.ombiPort
+        form.ombiApiKey.data = app_settings.ombiApiKey
+    return render_template('settings/application.html', form=form)
 
 @bp.route('/users')
 @login_required
@@ -45,38 +77,6 @@ def delete_user(user_id):
     db.session.delete(user)
     db.session.commit()
     return redirect(url_for('settings.users'))
-
-@bp.route('/connections', methods=['GET', 'POST'])
-@login_required
-def connections():
-    connectionRadarr = RadarrConnection.query.first()
-    connectionSonarr = SonarrConnection.query.first()
-    connectionOmbi = OmbiConnection.query.first()
-    form = EditConnectionsForm()
-    if form.validate_on_submit():
-        connectionRadarr.host = form.hostRadarr.data
-        connectionRadarr.port = form.portRadarr.data
-        connectionRadarr.apiKey = form.apiKeyRadarr.data
-        connectionSonarr.host = form.hostSonarr.data
-        connectionSonarr.port = form.portSonarr.data
-        connectionSonarr.apiKey = form.apiKeySonarr.data
-        connectionOmbi.host = form.hostOmbi.data
-        connectionOmbi.port = form.portOmbi.data
-        connectionOmbi.apiKey = form.apiKeyOmbi.data
-        db.session.commit()
-        flash('Your changes have been saved.')
-        return redirect(url_for('settings.connections'))
-    elif request.method == 'GET':
-        form.hostRadarr.data = connectionRadarr.host
-        form.portRadarr.data = connectionRadarr.port
-        form.apiKeyRadarr.data = connectionRadarr.apiKey
-        form.hostSonarr.data = connectionSonarr.host
-        form.portSonarr.data = connectionSonarr.port
-        form.apiKeySonarr.data = connectionSonarr.apiKey
-        form.hostOmbi.data = connectionOmbi.host
-        form.portOmbi.data = connectionOmbi.port
-        form.apiKeyOmbi.data = connectionOmbi.apiKey
-    return render_template('settings/connections.html', form=form)
 
 @bp.route('/add_user', methods=['GET', 'POST'])
 @login_required
