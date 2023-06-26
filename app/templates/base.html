@@ -60,7 +60,13 @@
                             {% if current_user.is_anonymous %}
                             <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
                             {% else %}
-                            <a class="nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
+                            <li class="nav-item dropdown">
+                                <a {% if active_page == "profile" %} class="nav-link active dropdown-toggle" {% else %} class="nav-link dropdown-toggle" {% endif %} data-bs-toggle="dropdown" href="#">{{ current_user.email }}</a>
+                                <div class="dropdown-menu" style="right: 0; left: auto;">
+                                    <a class="dropdown-item" href="{{ url_for('settings.users') }}">Profile</a>
+                                    <a class="dropdown-item" href="{{ url_for('auth.logout') }}">Logout</a>
+                                </div>
+                            </li>
                             {% endif %}
                         </li>
                     </ul>
