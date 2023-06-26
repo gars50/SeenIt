@@ -71,3 +71,15 @@ def reset_password(token):
         flash('Your password has been reset.')
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password.html', form=form)
+
+@bp.route('/update_profile', methods=['GET', 'POST'])
+@login_required
+def update_profile():
+    user = current_user
+    form = ResetPasswordForm()
+    if form.validate_on_submit():
+        user.set_password(form.password.data)
+        db.session.commit()
+        flash('Your password has been changed.')
+        return redirect(url_for('auth.login'))
+    return render_template('auth/update_profile.html', form=form)
