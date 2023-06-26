@@ -33,12 +33,23 @@ def register():
         return redirect(url_for('main.index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(email=form.email.data)
-        user.set_password(form.password.data)
         #If there are no users, we create an admin
         if not User.query.first():
+            user = User(email=form.email.data)
+            user.set_password(form.password.data)    
             user.set_admin('true')
-        db.session.add(user)
+            db.session.add(user)
+        else:
+            #We verify the user is allowed to register
+            user = User.query.filter_by(email=form.email.data).first()
+            if not user:
+                flash("You are not allowed to register.")
+                return redirect(url_for('auth.login'))
+            elif user.password_hash:
+                flash("Account is already registered. Reset your password if it was forgotten.")
+                return redirect(url_for('auth.login'))
+            else:
+                user.set_password(form.password.data)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('auth.login'))

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% set active_page = "settings" %}
+
+{% block content %}
+    <span class="title"><h1>{% block title %} Add User {% endblock %}</h1></span>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.email.label }}<br>
+            {{ form.email(size=32) }}<br>
+            {% for error in form.email.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.alias.label }}<br>
+            {{ form.alias(size=32)  }}<br>
+            {% for error in form.alias.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+        <p>
+            {{ form.admin.label }}<br>
+            {{ form.admin }}<br>
+        </p>
+        <p>
+        <p>{{ form.submit() }}</p>
+        </p>
+    </form>
+{% endblock %}

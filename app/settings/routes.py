@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, request, url_for
 from app.settings import bp
 from app.models import User
 from app.models.connections import RadarrConnection, SonarrConnection, OmbiConnection
-from app.settings.forms import EditUserForm, EditConnectionsForm
+from app.settings.forms import EditUserForm, EditConnectionsForm, AddUserForm
 from flask_login import login_required
 from app import db
 
@@ -77,3 +77,15 @@ def connections():
         form.portOmbi.data = connectionOmbi.port
         form.apiKeyOmbi.data = connectionOmbi.apiKey
     return render_template('settings/connections.html', form=form)
+
+@bp.route('/add_user', methods=['GET', 'POST'])
+@login_required
+def add_user():
+    form = AddUserForm()
+    if form.validate_on_submit():
+        user = User(email=form.email.data, alias=form.alias.data, admin=form.admin.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('User has been added.')
+        return redirect(url_for('settings.users'))
+    return render_template('settings/add_user.html', form=form)
