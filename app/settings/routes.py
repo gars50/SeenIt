@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, request, url_for
 from app.settings import bp
 from app.models import User, AppSettings
-from app.settings.forms import EditUserForm, EditConnectionsForm, AddUserForm, EditAppSettings
+from app.settings.forms import EditUserForm, AddUserForm, EditAppSettings
 from flask_login import login_required
 from app import db
 
