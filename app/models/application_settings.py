@@ -13,6 +13,7 @@ class AppSettings(db.Model):
     ombiHost = db.Column(db.String(100))
     ombiPort = db.Column(db.Integer)
     ombiApiKey = db.Column(db.String(100))
+    lastMediaImport = db.Column(db.DateTime)
 
     def __repr__(self) -> str:
         return f'''

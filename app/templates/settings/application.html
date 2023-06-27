@@ -58,7 +58,9 @@
     </form>
     <br><hr>
     <h2>Jobs</h2>
-    <a onclick="importData()" class="btn btn-success">Import Data</a>
+    <a onclick="importData()" class="btn btn-success">Import Data from Ombi</a>
+    <a onclick="deleteRequests()" class="btn btn-danger">Delete all requests</a>
+    <a onclick="deleteUsers()" class="btn btn-danger">Delete users</a>
     <script>
         async function testRadarr() {
             ombiURL = "http://"+document.getElementById('radarrHost').value+":"+document.getElementById('radarrPort').value+"/api/v3/system/status"
@@ -129,7 +131,49 @@
                 if (response.ok) {
                     response.json()
                     .then(function(response) {
-                        toastr.success(response.response)
+                        toastr.success(response.message)
+                    })
+                }
+            })
+            .catch(function(error) {
+                console.log(error)
+            })
+        }
+
+        function deleteRequests() {
+            fetch("/settings/delete_requests", {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                method : 'POST',
+                signal: AbortSignal.timeout(5_000)
+            })
+            .then(function (response){
+                if (response.ok) {
+                    response.json()
+                    .then(function(response) {
+                        toastr.success(response.message)
+                    })
+                }
+            })
+            .catch(function(error) {
+                console.log(error)
+            })
+        }
+
+        function deleteUsers() {
+            fetch("/settings/delete_users", {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                method : 'POST',
+                signal: AbortSignal.timeout(5_000)
+            })
+            .then(function (response){
+                if (response.ok) {
+                    response.json()
+                    .then(function(response) {
+                        toastr.success(response.message)
                     })
                 }
             })

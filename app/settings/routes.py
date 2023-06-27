@@ -1,9 +1,10 @@
 from flask import render_template, flash, redirect, request, url_for, jsonify
+from datetime import datetime
 from app.settings import bp
-from app.models import User, AppSettings
+from app.models import User, AppSettings, Movie, TVShow
 from app.settings.forms import EditUserForm, AddUserForm, EditAppSettings
 from flask_login import login_required
-from app.scripts.media import import_data
+from app.scripts.media import import_all_requests
 from app import db
 
 @bp.route('/application', methods=['GET', 'POST'])
@@ -12,7 +13,7 @@ def application():
     app_settings = AppSettings.query.first()
     form = EditAppSettings()
     if not app_settings:
-        app_settings = AppSettings()
+        app_settings = AppSettings(lastMediaImport = datetime.min)
         db.session.add(app_settings)
         db.session.commit()
     if form.validate_on_submit():
@@ -94,7 +95,34 @@ def add_user():
 @bp.route('/import_requests', methods=['POST'])
 @login_required
 def import_requests():
-    scriptdata = import_data()
+    scriptdata = import_all_requests()
+    app_settings = AppSettings.query.first()
+    app_settings.lastMediaImport = datetime.utcnow()
+    db.session.commit()
     return {
-        'response' : scriptdata
+        'message' : scriptdata
+    }
+
+@bp.route('/delete_requests', methods=['POST'])
+@login_required
+def delete_requests():
+    Movie.query.delete()
+    TVShow.query.delete()
+    db.session.commit()
+    app_settings = AppSettings.query.first()
+    app_settings.lastMediaImport = datetime.min
+    db.session.commit()
+    return {
+        'message' : "All requests deleted"
+    }
+
+@bp.route('/delete_users', methods=['POST'])
+@login_required
+def delete_users():
+    usersToDelete = User.query.filter_by(admin=False).all()
+    for userToDelete in usersToDelete:
+        db.session.delete(userToDelete)
+    db.session.commit()
+    return {
+        'message' : "All non-admins deleted"
     }
