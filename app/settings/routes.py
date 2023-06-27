@@ -1,8 +1,9 @@
-from flask import render_template, flash, redirect, request, url_for
+from flask import render_template, flash, redirect, request, url_for, jsonify
 from app.settings import bp
 from app.models import User, AppSettings
 from app.settings.forms import EditUserForm, AddUserForm, EditAppSettings
 from flask_login import login_required
+from app.scripts.media import import_data
 from app import db
 
 @bp.route('/application', methods=['GET', 'POST'])
@@ -89,3 +90,11 @@ def add_user():
         flash('User has been added.')
         return redirect(url_for('settings.users'))
     return render_template('settings/add_user.html', form=form)
+
+@bp.route('/import_requests', methods=['POST'])
+@login_required
+def import_requests():
+    scriptdata = import_data()
+    return {
+        'response' : scriptdata
+    }

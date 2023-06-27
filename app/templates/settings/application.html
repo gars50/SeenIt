@@ -5,6 +5,8 @@
     <span class="title"><h1>{% block title %} Application Settings {% endblock %}</h1></span>
     <form action="" method="post">
         {{ form.hidden_tag() }}
+        <hr>
+        <h2>Miscellaneous</h2>
         <p>
             Time before deleting an abandonned media<br>
             {{ form.delayNumber }} {{ form.delayUnit }}<br>
@@ -12,6 +14,8 @@
                 <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
+        <br>
+        <h2>Connections</h2>
         <table class="table">
             <thead>
                 <tr>
@@ -52,10 +56,11 @@
         </table>
         <p>{{ form.submit() }}</p>
     </form>
-
+    <br><hr>
+    <h2>Jobs</h2>
+    <a onclick="importData()" class="btn btn-success">Import Data</a>
     <script>
         async function testRadarr() {
-            response = null
             ombiURL = "http://"+document.getElementById('radarrHost').value+":"+document.getElementById('radarrPort').value+"/api/v3/system/status"
             try{
                 response = await fetch(ombiURL, {
@@ -67,14 +72,14 @@
                 if (response.ok) {
                     toastr.success("Test to Radarr successful")
                 } else {
-                    throw "Nope"
+                    throw "Something went wrong"
                 }
             } catch (error) {
                 toastr.error("Could not connect to Radarr")
             }
         }
+
         async function testSonarr() {
-            response = null
             ombiURL = "http://"+document.getElementById('sonarrHost').value+":"+document.getElementById('sonarrPort').value+"/api/v3/system/status"
             try{
                 response = await fetch(ombiURL, {
@@ -86,14 +91,14 @@
                 if (response.ok) {
                     toastr.success("Test to Sonarr successful")
                 } else {
-                    throw "Nope"
+                    throw "Something went wrong"
                 }
             } catch (error) {
                 toastr.error("Could not connect to Sonarr")
             }
         }
+
         async function testOmbi() {
-            response = null
             ombiURL = "http://"+document.getElementById('ombiHost').value+":"+document.getElementById('ombiPort').value+"/api/v1/Status"
             try{
                 response = await fetch(ombiURL, {
@@ -105,11 +110,32 @@
                 if (response.ok) {
                     toastr.success("Test to Ombi successful")
                 } else {
-                    throw "Nope"
+                    throw "Something went wrong"
                 }
             } catch (error) {
                 toastr.error("Could not connect to Ombi")
             }
+        }
+
+        function importData() {
+            fetch("/settings/import_requests", {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                method : 'POST',
+                signal: AbortSignal.timeout(5_000)
+            })
+            .then(function (response){
+                if (response.ok) {
+                    response.json()
+                    .then(function(response) {
+                        toastr.success(response.response)
+                    })
+                }
+            })
+            .catch(function(error) {
+                console.log(error)
+            })
         }
     </script>
 {% endblock %}

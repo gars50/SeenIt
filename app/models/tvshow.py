@@ -6,6 +6,7 @@ class TVShow(db.Model):
 
     tvdbid = db.Column(db.Integer)
     totalSize = db.Column(db.Integer)
+    expiryDate = db.Column(db.DateTime)
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self) -> str:
@@ -13,3 +14,6 @@ class TVShow(db.Model):
 
     def changeOwner(self, newOwner):
         self.owner_id = newOwner.id
+
+    def setExpiryDate(self, date):
+        self.expiryDate = date
