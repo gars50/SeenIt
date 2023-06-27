@@ -10,6 +10,6 @@ class Movie(db.Model):
 
     def __repr__(self) -> str:
         return f'Movie: {self.title} ({self.year})'
-    
+
     def changeOwner(self, newOwner):
         self.owner_id = newOwner.id

@@ -22,19 +22,19 @@ class User(UserMixin, db.Model):
 
     def __repr__(self) -> str:
         return f'User: {self.email}'
-    
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-    
+
     def set_admin(self, admin):
         self.admin = bool(admin)
 
     def get_reset_password_token(self, expires_in=600):
         return jwt.encode({'reset_password': self.id, 'exp': time() + expires_in}, current_app.config["SECRET_KEY"], algorithm='HS256')
-    
+
     @staticmethod
     def verify_reset_password_token(token):
         try:
