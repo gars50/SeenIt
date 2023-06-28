@@ -8,14 +8,13 @@
                 <th scope="col">Title</th>
                 <th scope="col">Release Date</th>
                 <th scope="col">Owner</th>
-                <th scope="col">Delete</th>
+                <th scope="col"></th>
             </tr>
         </thead>
         {% for movie in movies %}
             <tbody>
                 <tr>
-                    <th scope="row">{{movie.title}}</th>
-                    <td>{{movie.releaseDate}}</td>
+                    <th scope="row"><a href="{{ movie.theMovieDbURL }}">{{movie.title}} ({{movie.releaseDate.strftime('%Y')}})</a></th>
                     <td>{{movie.owner.alias}}</td>
                     <td><a onclick="deleteMovie()" class="btn btn-danger">Delete</a></td>
                 </tr>

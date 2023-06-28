@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% set active_page = "abandonnedmovies" %}
+{% block content %}
+    <h1>{% block title %} Abandonned Movies {% endblock %}</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col">Release Date</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        {% for movie in movies %}
+            <tbody>
+                <tr>
+                    <th scope="row"><a href="{{ movie.theMovieDbURL }}">{{movie.title}} ({{movie.releaseDate.strftime('%Y')}})</a></th>
+                    <td><a onclick="changeOwnerMovie()" class="btn btn-success">Adopt</a></td>
+                </tr>
+            </tbody>
+        {% endfor %}
+    </table>
+{% endblock %}

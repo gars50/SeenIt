@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% set active_page = "abandonnedshows" %}
+{% block content %}
+    <h1>{% block title %} Abandonned Shows {% endblock %}</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        {% for tvShow in tvShows %}
+            <tbody>
+                <tr>
+                    <th scope="row"><a href="{{ tvShow.tvDbURL }}">{{tvShow.title}}</a></th>
+                    <td><a onclick="changeOwnerShow()" class="btn btn-success">Adopt</a></td>
+                </tr>
+            </tbody>
+        {% endfor %}
+    </table>
+{% endblock %}

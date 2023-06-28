@@ -1,8 +1,8 @@
-"""Initial setup
+"""Initial commit
 
-Revision ID: 388d315eb4e3
+Revision ID: eb2772ed22e8
 Revises: 
-Create Date: 2023-06-27 15:39:08.299547
+Create Date: 2023-06-28 09:52:17.076691
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '388d315eb4e3'
+revision = 'eb2772ed22e8'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -48,9 +48,11 @@ def upgrade():
     op.create_table('movie',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(length=100), nullable=True),
-    sa.Column('releaseDate', sa.Integer(), nullable=True),
-    sa.Column('theMovieDbId', sa.Integer(), nullable=True),
+    sa.Column('releaseDate', sa.DateTime(), nullable=True),
+    sa.Column('theMovieDbID', sa.Integer(), nullable=True),
+    sa.Column('theMovieDbURL', sa.String(length=100), nullable=True),
     sa.Column('ombiID', sa.Integer(), nullable=True),
+    sa.Column('radarrID', sa.Integer(), nullable=True),
     sa.Column('totalSize', sa.Integer(), nullable=True),
     sa.Column('abandonnedDate', sa.DateTime(), nullable=True),
     sa.Column('deleteDate', sa.DateTime(), nullable=True),
@@ -61,8 +63,10 @@ def upgrade():
     op.create_table('tv_show',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(length=100), nullable=True),
-    sa.Column('tvDbId', sa.Integer(), nullable=True),
+    sa.Column('tvDbID', sa.Integer(), nullable=True),
+    sa.Column('tvDbURL', sa.String(length=100), nullable=True),
     sa.Column('ombiID', sa.Integer(), nullable=True),
+    sa.Column('sonarrID', sa.Integer(), nullable=True),
     sa.Column('totalSize', sa.Integer(), nullable=True),
     sa.Column('abandonnedDate', sa.DateTime(), nullable=True),
     sa.Column('deleteDate', sa.DateTime(), nullable=True),

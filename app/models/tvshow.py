@@ -4,8 +4,10 @@ class TVShow(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100))
 
-    tvDbId = db.Column(db.Integer)
+    tvDbID = db.Column(db.Integer)
+    tvDbURL = db.Column(db.String(100))
     ombiID = db.Column(db.Integer)
+    sonarrID = db.Column(db.Integer)
     totalSize = db.Column(db.Integer)
     abandonnedDate = db.Column(db.DateTime)
     deleteDate = db.Column(db.DateTime)

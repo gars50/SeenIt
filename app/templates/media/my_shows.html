@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% set active_page = "myshows" %}
+{% block content %}
+    <h1>{% block title %} My Shows {% endblock %}</h1>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        {% for tvShow in tvShows %}
+            <tbody>
+                <tr>
+                    <th scope="row"><a href="{{ tvShow.tvDbURL }}">{{tvShow.title}}</a></th>
+                    <td><a onclick="changeOwnerShow()" class="btn btn-danger">Abandon</a></td>
+                </tr>
+            </tbody>
+        {% endfor %}
+    </table>
+{% endblock %}

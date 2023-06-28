@@ -7,15 +7,15 @@
             <tr>
                 <th scope="col">Title</th>
                 <th scope="col">Owner</th>
-                <th scope="col">Delete</th>
+                <th scope="col"></th>
             </tr>
         </thead>
-        {% for tvshow in tvshows %}
+        {% for tvShow in tvShows %}
             <tbody>
                 <tr>
-                    <th scope="row">{{tvshow.title}}</th>
-                    <td>{{tvshow.owner.alias}}</td>
-                    <td><a onclick="deleteMovie()" class="btn btn-danger">Delete</a></td>
+                    <th scope="row"><a href="{{ tvShow.tvDbURL }}">{{tvShow.title}}</a></th>
+                    <td>{{tvShow.owner.alias}}</td>
+                    <td><a onclick="deleteShow()" class="btn btn-danger">Delete</a></td>
                 </tr>
             </tbody>
         {% endfor %}

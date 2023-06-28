@@ -21,8 +21,9 @@ def import_all_requests():
     movieRequests = movieRequestsResponse.json()
 
     for movieRequest in movieRequests:
-        theMovieDbId = movieRequest["theMovieDbId"]
         title = movieRequest["title"]
+        theMovieDbID = movieRequest["theMovieDbId"]
+        theMovieDbURL = "https://www.themoviedb.org/movie/"+str(theMovieDbID)
         releaseDate = movieRequest["releaseDate"]
         requesterEmail = movieRequest["requestedUser"]["email"]
         requesterAlias = movieRequest["requestedUser"]["userAlias"]
@@ -30,7 +31,7 @@ def import_all_requests():
 
         releaseDateMod = datetime.datetime.strptime(releaseDate.replace("T", " "), "%Y-%m-%d %H:%M:%S")
         requester = check_user_creation(requesterEmail, requesterAlias)
-        newMovieRequest = Movie(theMovieDbId=theMovieDbId, title=title, releaseDate=releaseDateMod, ombiID=ombiID, owner_id=requester.id)
+        newMovieRequest = Movie(title=title, theMovieDbID=theMovieDbID, theMovieDbURL=theMovieDbURL, releaseDate=releaseDateMod, ombiID=ombiID, owner_id=requester.id)
         db.session.add(newMovieRequest)
         db.session.commit()
 
@@ -39,18 +40,18 @@ def import_all_requests():
     TVRequests = TVRequestsResponse.json()
 
     for TVRequest in TVRequests:
-        tvDbId = TVRequest["tvDbId"]
         title = TVRequest["title"]
+        tvDbID = TVRequest["tvDbId"]
+        tvDbURL = "https://www.thetvdb.com/?id="+str(tvDbID)+"&tab=series"
 
         requesterEmail = TVRequest["childRequests"][0]["requestedUser"]["email"]
         requesterAlias = TVRequest["childRequests"][0]["requestedUser"]["userAlias"]
         ombiID = TVRequest["id"]
 
         requester = check_user_creation(requesterEmail, requesterAlias)
-        newTVRequest = TVShow(tvDbId=tvDbId, title=title, ombiID=ombiID, owner_id=requester.id)
+        newTVRequest = TVShow(title=title, tvDbID=tvDbID, tvDbURL=tvDbURL, ombiID=ombiID, owner_id=requester.id)
         db.session.add(newTVRequest)
         db.session.commit()
-
 
     response = "Data OK"
     return response
