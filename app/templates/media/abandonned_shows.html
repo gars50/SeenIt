@@ -2,20 +2,20 @@
 {% set active_page = "abandonnedshows" %}
 {% block content %}
     <h1>{% block title %} Abandonned Shows {% endblock %}</h1>
-    <table class="table">
+    <table class="table table-striped table-dark">
         <thead>
             <tr>
                 <th scope="col">Title</th>
                 <th scope="col"></th>
             </tr>
         </thead>
-        {% for tvShow in tvShows %}
-            <tbody>
+        <tbody>
+            {% for tvShow in tvShows %}
                 <tr>
-                    <th scope="row"><a href="{{ tvShow.tvDbURL }}">{{tvShow.title}}</a></th>
+                    <th scope="row"><a href="{{ tvShow.tvDbURL }}" target="_blank">{{tvShow.title}}</a></th>
                     <td><a onclick="changeOwnerShow()" class="btn btn-success">Adopt</a></td>
                 </tr>
-            </tbody>
-        {% endfor %}
+            {% endfor %}
+        </tbody>
     </table>
 {% endblock %}

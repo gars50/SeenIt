@@ -2,23 +2,22 @@
 {% set active_page = "allmovies" %}
 {% block content %}
     <h1>{% block title %} All Movies {% endblock %}</h1>
-    <table class="table">
+    <table class="table table-striped table-dark">
         <thead>
             <tr>
                 <th scope="col">Title</th>
-                <th scope="col">Release Date</th>
                 <th scope="col">Owner</th>
                 <th scope="col"></th>
             </tr>
         </thead>
-        {% for movie in movies %}
-            <tbody>
+        <tbody>
+            {% for movie in movies %}
                 <tr>
-                    <th scope="row"><a href="{{ movie.theMovieDbURL }}">{{movie.title}} ({{movie.releaseDate.strftime('%Y')}})</a></th>
+                    <th scope="row"><a href="{{ movie.theMovieDbURL }}" target="_blank">{{movie.title}} ({{movie.releaseDate.strftime('%Y')}})</a></th>
                     <td>{{movie.owner.alias}}</td>
                     <td><a onclick="deleteMovie()" class="btn btn-danger">Delete</a></td>
                 </tr>
-            </tbody>
-        {% endfor %}
+            {% endfor %}
+        </tbody>
     </table>
 {% endblock %}

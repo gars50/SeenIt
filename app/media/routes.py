@@ -37,7 +37,7 @@ def all_shows():
     tvShows = TVShow.query.all()
     return render_template("media/all_shows.html", tvShows=tvShows)
 
-@bp.route("/movies/<int:movie_id>/change_owner/", methods=['POST'])
+@bp.route("/movies/<int:movie_id>/change_owner", methods=['POST'])
 @login_required
 def change_movie_owner(movie_id):
     movie = Movie.query.get_or_404(movie_id)
@@ -46,7 +46,7 @@ def change_movie_owner(movie_id):
     else:
         movie.owner_id = current_user.id
 
-@bp.route("/tv_show/<int:show_id>/change_owner/", methods=['POST'])
+@bp.route("/tv_show/<int:show_id>/change_owner", methods=['POST'])
 @login_required
 def change_tvshow_owner(show_id):
     tvShow = TVShow.query.get_or_404(show_id)

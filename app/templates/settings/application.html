@@ -120,14 +120,15 @@
         }
 
         function importData() {
+            spinner.removeAttribute('hidden');
             fetch("/settings/import_requests", {
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 method : 'POST',
-                signal: AbortSignal.timeout(5_000)
             })
             .then(function (response){
+                spinner.setAttribute('hidden', '');
                 if (response.ok) {
                     response.json()
                     .then(function(response) {
