@@ -4,8 +4,6 @@ from app.extensions import db, login
 from time import time
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from app.models.tvshow import TVShow
-from app.models.movie import Movie
 
 
 class User(UserMixin, db.Model):

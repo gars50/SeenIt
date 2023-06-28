@@ -14,10 +14,7 @@ class Movie(db.Model):
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self) -> str:
-        return f'Movie: {self.title} ({self.releaseDate})'
-
-    def changeOwner(self, newOwner):
-        self.owner_id = newOwner.id
+        return f'Movie: {self.title} ({self.releaseDate.strftime("%Y")})'
     
     def setExpiryDate(self, date):
         self.expiryDate = date

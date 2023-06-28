@@ -1,7 +1,7 @@
 from app.media import bp
 from flask_login import login_required, current_user
 from flask import render_template
-from app.models import Movie, TVShow, User
+from app.models import Movie, TVShow
 
 @bp.route("/abandonned_movies")
 def abandonned_movies():
@@ -45,7 +45,6 @@ def change_movie_owner(movie_id):
         movie.owner_id = ""
     else:
         movie.owner_id = current_user.id
-
 
 @bp.route("/tv_show/<int:show_id>/change_owner/", methods=['POST'])
 @login_required
