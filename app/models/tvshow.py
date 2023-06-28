@@ -16,8 +16,5 @@ class TVShow(db.Model):
     def __repr__(self) -> str:
         return f'TV Show: {self.title}'
 
-    def changeOwner(self, newOwner):
-        self.owner_id = newOwner.id
-
     def setExpiryDate(self, date):
         self.expiryDate = date
