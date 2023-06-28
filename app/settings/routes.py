@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, request, url_for, jsonify
+from flask import render_template, flash, redirect, request, url_for
 from datetime import datetime
 from app.settings import bp
 from app.models import User, AppSettings, Movie, TVShow
@@ -106,14 +106,13 @@ def import_requests():
 @bp.route('/delete_requests', methods=['POST'])
 @login_required
 def delete_requests():
-    Movie.query.delete()
-    TVShow.query.delete()
-    db.session.commit()
+    numMovie = Movie.query.delete()
+    numTVShow = TVShow.query.delete()
     app_settings = AppSettings.query.first()
     app_settings.lastMediaImport = datetime.min
     db.session.commit()
     return {
-        'message' : "All requests deleted"
+        'message' : "Deleted "+str(numMovie)+" movies and "+str(numTVShow)+" TV Shows"
     }
 
 @bp.route('/delete_users', methods=['POST'])

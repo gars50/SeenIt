@@ -1,4 +1,4 @@
-import requests, json, datetime
+import requests, datetime
 from app.models import User, Movie, TVShow, AppSettings
 from app import db
 
@@ -35,18 +35,19 @@ def import_all_requests():
         db.session.commit()
 
 
-    TVRequestsResponse = requests.get(ombiBaseURL+"/api/v1/Request/movie", headers=headers)
+    TVRequestsResponse = requests.get(ombiBaseURL+"/api/v1/Request/tv", headers=headers)
     TVRequests = TVRequestsResponse.json()
 
     for TVRequest in TVRequests:
-        theMovieDbId = TVRequest["theMovieDbId"]
+        tvDbId = TVRequest["tvDbId"]
         title = TVRequest["title"]
 
-        requester = TVRequest["requestedUser"]["email"]
+        requesterEmail = TVRequest["childRequests"][0]["requestedUser"]["email"]
+        requesterAlias = TVRequest["childRequests"][0]["requestedUser"]["userAlias"]
         ombiID = TVRequest["id"]
 
-        requester = check_user_creation(requesterEmail)
-        newTVRequest = TVShow(theMovieDbId=theMovieDbId, title=title, releaseDate=releaseDate, ombiID=ombiID, ownerid=requester.id)
+        requester = check_user_creation(requesterEmail, requesterAlias)
+        newTVRequest = TVShow(tvDbId=tvDbId, title=title, ombiID=ombiID, owner_id=requester.id)
         db.session.add(newTVRequest)
         db.session.commit()
 

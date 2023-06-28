@@ -30,19 +30,28 @@
                 <div class="collapse navbar-collapse" id="main_nav">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a {% if active_page == "abandonnedmovies" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('main.abandonnedmovies') }}">Abandonned Movies</a>
+                            <a {% if active_page == "abandonnedmovies" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.abandonnedmovies') }}">Abandonned Movies</a>
                         </li>
                         <li class="nav-item">
-                            <a {% if active_page == "abandonnedshows" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('main.abandonnedshows') }}">Abandonned Shows</a>
+                            <a {% if active_page == "abandonnedshows" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.abandonnedshows') }}">Abandonned Shows</a>
                         </li>
                         <li class="nav-link">
-                            <a>|</a>
+                        <a>|</a>
                         </li>
                         <li class="nav-item">
-                            <a {% if active_page == "mymovies" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('main.mymovies') }}">My Movies</a>
+                            <a {% if active_page == "mymovies" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.mymovies') }}">My Movies</a>
                         </li>
                         <li class="nav-item">
-                            <a {% if active_page == "myshows" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('main.myshows') }}">My Shows</a>
+                            <a {% if active_page == "myshows" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.myshows') }}">My Shows</a>
+                        </li>
+                        <li class="nav-link">
+                        <a>|</a>
+                        </li>
+                        <li class="nav-item">
+                            <a {% if active_page == "allmovies" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.allmovies') }}">All Movies</a>
+                        </li>
+                        <li class="nav-item">
+                            <a {% if active_page == "allshows" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.allshows') }}">All Shows</a>
                         </li>
                     </ul>
                     <ul class="navbar-nav mr-auto">

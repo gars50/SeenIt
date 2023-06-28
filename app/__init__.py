@@ -20,6 +20,9 @@ def create_app(config_class=Config):
     from app.settings import bp as settings_bp
     app.register_blueprint(settings_bp, url_prefix="/settings")
 
+    from app.media import bp as media_bp
+    app.register_blueprint(media_bp, url_prefix='/media')
+
     from app.auth import bp as auth_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
 
