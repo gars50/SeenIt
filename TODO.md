@@ -5,6 +5,7 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex
 - Monitor if someone is watching before deleting
 - Add adoption/requested date
 - Configure deletions in Ombi, Sonarr and Radarr
+- Add Plex login
 
 ### In Progress
 - Add an option to "order by" fields in media
