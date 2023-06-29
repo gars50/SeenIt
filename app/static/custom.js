@@ -1,6 +1,7 @@
-function changeOwnerShow(show_id) {
+function changeOwnerMovie(movie_id, object) {
     spinner.removeAttribute('hidden');
-    fetch("/tv_show/"+show_id+"/change_owner", {
+    var row = object.parentNode.parentNode
+    fetch("/media/movie/"+movie_id+"/change_owner", {
         headers: {
             'Content-Type': 'application/json'
         },
@@ -14,6 +15,7 @@ function changeOwnerShow(show_id) {
             .then(function(response) {
                 toastr.success(response.message)
             })
+            row.parentNode.removeChild(row)
         }
     })
     .catch(function(error) {
@@ -21,9 +23,10 @@ function changeOwnerShow(show_id) {
     })
 }
 
-function changeOwnerMovie(movie_id) {
+function changeOwnerShow(show_id, object) {
     spinner.removeAttribute('hidden');
-    fetch("/movies/"+movie_id+"/change_owner", {
+    var row = object.parentNode.parentNode
+    fetch("/media/tv_show/"+show_id+"/change_owner", {
         headers: {
             'Content-Type': 'application/json'
         },
@@ -37,6 +40,57 @@ function changeOwnerMovie(movie_id) {
             .then(function(response) {
                 toastr.success(response.message)
             })
+            row.parentNode.removeChild(row)
+        }
+    })
+    .catch(function(error) {
+        console.log(error)
+    })
+}
+
+function deleteMovie(movie_id, object) {
+    spinner.removeAttribute('hidden')
+    var row = object.parentNode.parentNode
+    fetch("/media/movie/"+movie_id+"/delete", {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method : 'DELETE',
+        signal: AbortSignal.timeout(5_000)
+    })
+    .then(function (response){
+        spinner.setAttribute('hidden', '');
+        if (response.ok) {
+            response.json()
+            .then(function(response) {
+                toastr.success(response.message)
+            })
+            row.parentNode.removeChild(row)
+        }
+    })
+    .catch(function(error) {
+        console.log(error)
+    })
+}
+
+function deleteShow(show_id, object) {
+    spinner.removeAttribute('hidden')
+    var row = object.parentNode.parentNode
+    fetch("/media/tv_show/"+show_id+"/delete", {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method : 'DELETE',
+        signal: AbortSignal.timeout(5_000)
+    })
+    .then(function (response){
+        spinner.setAttribute('hidden', '');
+        if (response.ok) {
+            response.json()
+            .then(function(response) {
+                toastr.success(response.message)
+            })
+            row.parentNode.removeChild(row)
         }
     })
     .catch(function(error) {
