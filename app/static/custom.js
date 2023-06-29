@@ -97,3 +97,12 @@ function deleteShow(show_id, object) {
         console.log(error)
     })
 }
+
+$(document).ready(function(){
+    $("#myInput").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+        $("#myTable tr").filter(function() {
+            $(this).toggle($(this).find('th').text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+});

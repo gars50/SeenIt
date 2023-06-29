@@ -12,7 +12,6 @@ def check_user_creation(email, alias):
     return User.query.filter_by(email=email).first()
 
 def import_all_requests():
-    print("Running import_data")
     appSettings = AppSettings.query.first()
     ombiBaseURL = "http://"+appSettings.ombiHost+":"+f'{appSettings.ombiPort}'
     headers = {'ApiKey' : appSettings.ombiApiKey}
@@ -20,6 +19,7 @@ def import_all_requests():
     movieRequestsResponse = requests.get(ombiBaseURL+"/api/v1/Request/movie", headers=headers)
     movieRequests = movieRequestsResponse.json()
 
+    totalMovies = 0
     for movieRequest in movieRequests:
         title = movieRequest["title"]
         theMovieDbID = movieRequest["theMovieDbId"]
@@ -28,17 +28,21 @@ def import_all_requests():
         requesterEmail = movieRequest["requestedUser"]["email"]
         requesterAlias = movieRequest["requestedUser"]["userAlias"]
         ombiID = movieRequest["id"]
-
         releaseDateMod = datetime.datetime.strptime(releaseDate.replace("T", " "), "%Y-%m-%d %H:%M:%S")
         requester = check_user_creation(requesterEmail, requesterAlias)
-        newMovieRequest = Movie(title=title, theMovieDbID=theMovieDbID, theMovieDbURL=theMovieDbURL, releaseDate=releaseDateMod, ombiID=ombiID, owner_id=requester.id)
-        db.session.add(newMovieRequest)
-        db.session.commit()
+
+        movie = Movie.query.filter_by(ombiID=ombiID).first()
+        if not movie:
+            totalMovies+=1
+            newMovieRequest = Movie(title=title, theMovieDbID=theMovieDbID, theMovieDbURL=theMovieDbURL, releaseDate=releaseDateMod, ombiID=ombiID, owner_id=requester.id)
+            db.session.add(newMovieRequest)
+            db.session.commit()
 
 
     TVRequestsResponse = requests.get(ombiBaseURL+"/api/v1/Request/tv", headers=headers)
     TVRequests = TVRequestsResponse.json()
 
+    totalShows = 0
     for TVRequest in TVRequests:
         title = TVRequest["title"]
         tvDbID = TVRequest["tvDbId"]
@@ -47,14 +51,14 @@ def import_all_requests():
         requesterEmail = TVRequest["childRequests"][0]["requestedUser"]["email"]
         requesterAlias = TVRequest["childRequests"][0]["requestedUser"]["userAlias"]
         ombiID = TVRequest["id"]
-
         requester = check_user_creation(requesterEmail, requesterAlias)
-        newTVRequest = TVShow(title=title, tvDbID=tvDbID, tvDbURL=tvDbURL, ombiID=ombiID, owner_id=requester.id)
-        db.session.add(newTVRequest)
-        db.session.commit()
+        
+        show = TVShow.query.filter_by(ombiID=ombiID).first()
+        if not show:
+            totalShows =+ 1
+            newTVRequest = TVShow(title=title, tvDbID=tvDbID, tvDbURL=tvDbURL, ombiID=ombiID, owner_id=requester.id)
+            db.session.add(newTVRequest)
+            db.session.commit()
 
-    response = "Data OK"
+    response = "Imported "+str(totalMovies)+" movies and "+str(totalShows)+" TV Shows"
     return response
-
-#Get all requests from Ombi
-#For each request, check if the request already exists. If not, create a request, associate the user with the email address. If user does not exist, create it.

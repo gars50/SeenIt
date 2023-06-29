@@ -2,6 +2,7 @@
 {% set active_page = "allshows" %}
 {% block content %}
     <h1>{% block title %} All Shows {% endblock %}</h1>
+    <input class="form-control" id="myInput" type="text" placeholder="Search..">
     <table class="table table-hover table-dark">
         <thead>
             <tr>
@@ -10,11 +11,11 @@
                 <th scope="col"></th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="myTable">
             {% for tvShow in tvShows %}
                 <tr>
                     <th scope="row"><a href="{{ tvShow.tvDbURL }}" target="_blank">{{tvShow.title}}</a></th>
-                    <td>{{tvShow.owner.alias}}</td>
+                    <th>{{tvShow.owner.alias}}</td>
                     <td><a onclick="deleteShow({{tvShow.id}}, this)" class="btn btn-danger">Delete</a></td>
                 </tr>
             {% endfor %}

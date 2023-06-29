@@ -2,6 +2,7 @@
 {% set active_page = "abandonnedshows" %}
 {% block content %}
     <h1>{% block title %} Abandonned Shows {% endblock %}</h1>
+    <input class="form-control" id="myInput" type="text" placeholder="Search..">
     <table class="table table-hover table-dark">
         <thead>
             <tr>
@@ -9,7 +10,7 @@
                 <th scope="col"></th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="myTable">
             {% for tvShow in tvShows %}
                 <tr>
                     <th scope="row"><a href="{{ tvShow.tvDbURL }}" target="_blank">{{tvShow.title}}</a></th>
