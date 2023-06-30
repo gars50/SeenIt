@@ -14,7 +14,11 @@
             {% for movie in movies %}
                 <tr>
                     <td scope="row"><a href="{{ movie.theMovieDbURL }}" target="_blank">{{movie.title}} ({{movie.releaseDate.strftime('%Y')}})</a></td>
-                    <td>{{movie.owner.alias}}</td>
+                    {% if movie.owner.alias %}
+                        <td>{{ movie.owner.alias}}</td>
+                    {% else %}
+                        <td>{{ movie.owner.email}}</td>
+                    {% endif %}
                     <td><a onclick="deleteMovie({{movie.id}}, this)" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
                 </tr>
             {% endfor %}
