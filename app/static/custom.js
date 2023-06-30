@@ -1,5 +1,6 @@
 function fetchToastRemoveRow(url, obj, type) {
     var row = obj.parentNode.parentNode
+    var table = $('#mediaTable').DataTable();
     spinner.removeAttribute('hidden');
     fetch(url, {
         headers: {
@@ -15,7 +16,7 @@ function fetchToastRemoveRow(url, obj, type) {
             .then(function(response) {
                 toastr.success(response.message)
             })
-            row.parentNode.removeChild(row)
+            table.row(row).remove().draw()
         } else {
             response.json()
             .then(function(response) {
