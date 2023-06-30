@@ -51,9 +51,11 @@ function deleteShow(show_id, obj) {
 
 $(document).ready(function () {
     $('#mediaTable').DataTable({
+        "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
         "columnDefs": [{
             "targets": 'nosort',
-            "orderable": false
+            "orderable": false,
+            "width": "5%"
         }]
     });
   });
