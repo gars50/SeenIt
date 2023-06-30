@@ -14,7 +14,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user is None or not user.check_password(form.password.data):
+        if user is None or not user.password_hash or not user.check_password(form.password.data):
             flash('Invalid username or password', 'warning')
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
@@ -94,3 +94,11 @@ def update_profile():
         flash('Your password has been changed.', "success")
         return redirect(url_for('auth.login'))
     return render_template('auth/update_profile.html', form=form)
+
+@bp.route('/login_choice', methods=['GET'])
+def login_choice():
+    return render_template('auth/login_choice.html')
+
+@bp.route('/get_plex_auth', methods=['GET'])
+def get_plex_auth():
+    return True

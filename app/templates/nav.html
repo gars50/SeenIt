@@ -45,7 +45,7 @@
                 {% endif %}
                 <li class="nav-item">
                     {% if current_user.is_anonymous %}
-                    <a class="nav-link" href="{{ url_for('auth.login') }}">Login</a>
+                    <a class="nav-link" href="{{ url_for('auth.login_choice') }}">Login</a>
                     {% else %}
                     <li class="nav-item dropdown">
                         <a {% if active_page == "profile" %} class="nav-link active dropdown-toggle" {% else %} class="nav-link dropdown-toggle" {% endif %} data-bs-toggle="dropdown" href="#">{{ current_user.email }}</a>

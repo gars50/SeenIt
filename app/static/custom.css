@@ -18,6 +18,18 @@
 	vertical-align: middle;
 }
 
+.btn-plex{
+	background-color: #282a2d;
+	color: #e5a00d;
+	border-color: #e5a00d;
+}
+
+.btn-plex:hover{
+	background-color: #e5a00d;
+	color: #282a2d;
+	border-color: #282a2d;
+}
+
 #spinner:not([hidden]) {
 	position: fixed;
 	top: 0;

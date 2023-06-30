@@ -14,6 +14,8 @@ class AppSettings(db.Model):
     ombiPort = db.Column(db.Integer)
     ombiApiKey = db.Column(db.String(100))
     lastMediaImport = db.Column(db.DateTime)
+    plexClientID = db.Column(db.String(100))
+    appName = db.Column(db.String(100))
 
     def __repr__(self) -> str:
         return f'''
