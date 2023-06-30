@@ -50,7 +50,12 @@ function deleteShow(show_id, obj) {
 }
 
 $(document).ready(function () {
-    $('#mediaTable').DataTable();
+    $('#mediaTable').DataTable({
+        "columnDefs": [{
+            "targets": 'nosort',
+            "orderable": false
+        }]
+    });
   });
 
   toastr.options = {
