@@ -13,7 +13,11 @@
             {% for tvShow in tvShows %}
                 <tr>
                     <td scope="row"><a href="{{ tvShow.tvDbURL }}" target="_blank">{{tvShow.title}}</a></td>
+                    {% if current_user.is_anonymous %}
+                    <td></td>
+                    {% else %}
                     <td><a onclick="changeOwnerShow({{tvShow.id}}, this)" class="btn btn-success"><i class="bi bi-plus-circle"></i></a></td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         </tbody>

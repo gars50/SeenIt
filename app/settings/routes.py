@@ -29,7 +29,7 @@ def application():
         app_settings.ombiPort = form.ombiPort.data
         app_settings.ombiApiKey = form.ombiApiKey.data
         db.session.commit()
-        flash('Your changes have been saved.')
+        flash('Your changes have been saved.', "success")
         return redirect(url_for('settings.application'))
     elif request.method == 'GET':
         form.delayNumber.data = app_settings.delayNumber
@@ -60,12 +60,12 @@ def user(user_id):
         #If this user is the last admin and the user unchecks admin, we deny it.
         lastAdmin = db.one_or_404(db.select(User).filter_by(admin=True))
         if ((user == lastAdmin) and (not form.admin.data)):
-            flash('Cannot disable the last administrator')
+            flash('Cannot disable the last administrator', "error")
         else:
             user.alias = form.alias.data
             user.admin = form.admin.data
             db.session.commit()
-            flash('Your changes have been saved.')
+            flash('Your changes have been saved.', "success")
         return redirect(url_for('settings.users'))
     elif request.method == 'GET':
         form.email.data = user.email
@@ -95,7 +95,7 @@ def add_user():
         user = User(email=form.email.data, alias=form.alias.data, admin=form.admin.data)
         db.session.add(user)
         db.session.commit()
-        flash('User has been added.')
+        flash('User has been added.', "success")
         return redirect(url_for('settings.users'))
     return render_template('settings/add_user.html', form=form)
 

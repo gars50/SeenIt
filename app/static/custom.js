@@ -53,5 +53,6 @@ $(document).ready(function () {
   });
 
   toastr.options = {
-    closeButton: true
+    closeButton: true,
+    progressBar: true
   }
