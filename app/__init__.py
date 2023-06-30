@@ -1,6 +1,7 @@
 from flask import Flask
 from config import Config
 from app.extensions import db, login, migrate, mail
+from app.setup import setup_app
 
 
 def create_app(config_class=Config):
@@ -28,5 +29,9 @@ def create_app(config_class=Config):
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp, url_prefix='/errors')
+
+    @app.before_first_request
+    def before_first_request():
+        setup_app()
 
     return app

@@ -23,6 +23,7 @@ class AddUserForm(FlaskForm):
 class EditAppSettings(FlaskForm):
     delayNumber = IntegerField(validators=[validators.NumberRange(min=0)])
     delayUnit = SelectField(u'Unit', choices=[("minutes","minutes"), ("hours","hours"), ("days","days"), ("weeks","weeks")])
+    appName = StringField('Application Name')
     radarrHost = StringField()
     radarrPort = IntegerField(validators=[validators.Optional()])
     radarrApiKey = StringField()

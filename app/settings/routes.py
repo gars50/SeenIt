@@ -12,13 +12,10 @@ from app import db
 def application():
     app_settings = AppSettings.query.first()
     form = EditAppSettings()
-    if not app_settings:
-        app_settings = AppSettings(lastMediaImport = datetime.min)
-        db.session.add(app_settings)
-        db.session.commit()
     if form.validate_on_submit():
         app_settings.delayNumber = form.delayNumber.data
         app_settings.delayUnit = form.delayUnit.data
+        app_settings.appName = form.appName.data
         app_settings.radarrHost = form.radarrHost.data
         app_settings.radarrPort = form.radarrPort.data
         app_settings.radarrApiKey = form.radarrApiKey.data
@@ -34,6 +31,7 @@ def application():
     elif request.method == 'GET':
         form.delayNumber.data = app_settings.delayNumber
         form.delayUnit.data = app_settings.delayUnit
+        form.appName.data = app_settings.appName
         form.radarrHost.data = app_settings.radarrHost
         form.radarrPort.data = app_settings.radarrPort
         form.radarrApiKey.data = app_settings.radarrApiKey

@@ -1,8 +1,8 @@
-"""Initial commit
+"""First commit
 
-Revision ID: eb2772ed22e8
+Revision ID: 07601611e932
 Revises: 
-Create Date: 2023-06-28 09:52:17.076691
+Create Date: 2023-06-30 14:41:29.998413
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'eb2772ed22e8'
+revision = '07601611e932'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -32,6 +32,8 @@ def upgrade():
     sa.Column('ombiPort', sa.Integer(), nullable=True),
     sa.Column('ombiApiKey', sa.String(length=100), nullable=True),
     sa.Column('lastMediaImport', sa.DateTime(), nullable=True),
+    sa.Column('plexClientID', sa.String(length=100), nullable=True),
+    sa.Column('appName', sa.String(length=100), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('user',
