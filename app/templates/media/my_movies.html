@@ -2,20 +2,20 @@
 {% set active_page = "mymovies" %}
 {% block content %}
     <h1>{% block title %} My Movies {% endblock %}</h1>
-    <input class="form-control" id="myInput" type="text" placeholder="Search..">
-    <table class="table table-hover table-dark">
+    <table id="mediaTable" class="table table-hover table-dark">
         <thead>
             <tr>
                 <th scope="col">Title</th>
-                <th scope="col"></th>
+                <th scope="col">Abandon</th>
+                <th scope="col">Delete</th>
             </tr>
         </thead>
-        <tbody id="myTable">
+        <tbody>
             {% for movie in movies %}
                 <tr>
-                    <th scope="row"><a href="{{ movie.theMovieDbURL }}" target="_blank">{{movie.title}} ({{movie.releaseDate.strftime('%Y')}})</a></th>
-                    <td><a onclick="changeOwnerMovie({{movie.id}}, this)" class="btn btn-warning">Abandon</a></td>
-                    <td><a onclick="deleteMovie({{movie.id}}, this)" class="btn btn-danger"">Delete</a></td>
+                    <td scope="row"><a href="{{ movie.theMovieDbURL }}" target="_blank">{{movie.title}} ({{movie.releaseDate.strftime('%Y')}})</a></td>
+                    <td><a onclick="changeOwnerMovie({{movie.id}}, this)" class="btn btn-warning"><i class="bi bi-dash-circle"></i></a></td>
+                    <td><a onclick="deleteMovie({{movie.id}}, this)" class="btn btn-danger""><i class="bi bi-trash"></i></a></td>
                 </tr>
             {% endfor %}
         </tbody>

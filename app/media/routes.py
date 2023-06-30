@@ -75,7 +75,6 @@ def change_tvshow_owner(show_id):
 @bp.route("/movie/<int:movie_id>/delete", methods=['DELETE'])
 @login_required
 def delete_movie(movie_id):
-
     movie = Movie.query.get_or_404(movie_id)
     db.session.delete(movie)
     db.session.commit()

@@ -2,19 +2,18 @@
 {% set active_page = "abandonnedshows" %}
 {% block content %}
     <h1>{% block title %} Abandonned Shows {% endblock %}</h1>
-    <input class="form-control" id="myInput" type="text" placeholder="Search..">
-    <table class="table table-hover table-dark">
+    <table id="mediaTable" class="table table-hover table-dark">
         <thead>
             <tr>
                 <th scope="col">Title</th>
-                <th scope="col"></th>
+                <th scope="col">Adopt</th>
             </tr>
         </thead>
-        <tbody id="myTable">
+        <tbody>
             {% for tvShow in tvShows %}
                 <tr>
-                    <th scope="row"><a href="{{ tvShow.tvDbURL }}" target="_blank">{{tvShow.title}}</a></th>
-                    <td><a onclick="changeOwnerShow({{tvShow.id}}, this)" class="btn btn-success">Adopt</a></td>
+                    <td scope="row"><a href="{{ tvShow.tvDbURL }}" target="_blank">{{tvShow.title}}</a></td>
+                    <td><a onclick="changeOwnerShow({{tvShow.id}}, this)" class="btn btn-success"><i class="bi bi-plus-circle"></i></a></td>
                 </tr>
             {% endfor %}
         </tbody>

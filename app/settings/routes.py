@@ -57,10 +57,15 @@ def user(user_id):
     user = User.query.get_or_404(user_id)
     form = EditUserForm()
     if form.validate_on_submit():
-        user.alias = form.alias.data
-        user.admin = form.admin.data
-        db.session.commit()
-        flash('Your changes have been saved.')
+        #If this user is the last admin and the user unchecks admin, we deny it.
+        lastAdmin = db.one_or_404(db.select(User).filter_by(admin=True))
+        if ((user == lastAdmin) and (not form.admin.data)):
+            flash('Cannot disable the last administrator')
+        else:
+            user.alias = form.alias.data
+            user.admin = form.admin.data
+            db.session.commit()
+            flash('Your changes have been saved.')
         return redirect(url_for('settings.users'))
     elif request.method == 'GET':
         form.email.data = user.email
@@ -68,17 +73,19 @@ def user(user_id):
         form.admin.data = user.admin
     return render_template('settings/user.html', form=form)
 
-@bp.route('/user/<int:user_id>/delete/')
+@bp.route('/user/<int:user_id>/delete', methods=['DELETE'])
 @login_required
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
     if user.admin:
-        flash('Cannot delete an admin.')
-        return redirect(url_for('settings.users'))
-    #Need to reassign TVShows and Movies
+        return {
+            "message" : user.email+" is an admin and cannot be deleted"
+        }, 400
     db.session.delete(user)
     db.session.commit()
-    return redirect(url_for('settings.users'))
+    return {
+        "message" : user.email+" has been deleted"
+    }
 
 @bp.route('/add_user', methods=['GET', 'POST'])
 @login_required
@@ -95,12 +102,12 @@ def add_user():
 @bp.route('/import_requests', methods=['POST'])
 @login_required
 def import_requests():
-    scriptdata = import_all_requests()
+    scriptmessage = import_all_requests()
     app_settings = AppSettings.query.first()
     app_settings.lastMediaImport = datetime.utcnow()
     db.session.commit()
     return {
-        'message' : scriptdata
+        'message' : scriptmessage
     }
 
 @bp.route('/delete_requests', methods=['POST'])

@@ -20,10 +20,17 @@
                     <td>{{user.alias}}</td>
                     <td>{{user.admin}}</td>
                     <td><a class="btn btn-outline-light" type="button" href="{{ url_for('settings.user', user_id=user.id) }}">Edit</a></td>
-                    <td><a class="btn btn-outline-light btn-danger" type="button" href="{{ url_for('settings.delete_user', user_id=user.id) }}">Delete</a></td>
+                    <td><a onclick="deleteUser({{user.id}}, this)" class="btn btn-danger">Delete</a></td>
                 </tr>
             </tbody>
         {% endfor %}
     </table>
     <a class="btn btn-outline-light" type="button" href="{{ url_for('settings.add_user') }}">Add a user</a>
+
+    <script>
+        function deleteUser(user_id, obj) {
+            var fetchURL = "/settings/user/"+user_id+"/delete"
+            fetchToastRemoveRow(fetchURL, obj, 'DELETE')
+        }
+    </script>
 {% endblock %}
