@@ -1,11 +1,16 @@
-from flask import render_template, redirect, url_for, flash
+from flask import render_template, redirect, url_for, flash, session
 from app.auth import bp
 from app.extensions import db
 from flask_login import current_user, login_user, logout_user, login_required
 from app.auth.forms import LoginForm, RegistrationForm, ResetPasswordRequestForm, ResetPasswordForm
 from app.scripts.email import send_password_reset_email
-from app.models.user import User
+from app.models import User, AppSettings
+import requests
+import urllib.parse
 
+@bp.route('/login_choice', methods=['GET'])
+def login_choice():
+    return render_template('auth/login_choice.html')
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -95,10 +100,83 @@ def update_profile():
         return redirect(url_for('auth.login'))
     return render_template('auth/update_profile.html', form=form)
 
-@bp.route('/login_choice', methods=['GET'])
-def login_choice():
-    return render_template('auth/login_choice.html')
+@bp.route('/plex_login')
+def plex_login():
+    app_settings = AppSettings.query.first()
+    
+    #We ask Plex for an id and code to create the URL for authentication
+    url = "https://plex.tv/api/v2/pins"
+    headers = {
+        "accept": "application/json"
+    }
+    data = {
+        "X-Plex-Product": app_settings.appName,
+        "X-Plex-Client-Identifier": app_settings.plexClientID,
+        "strong": "true"
+    }
+    response = requests.post(url, headers=headers, data=data)
 
-@bp.route('/get_plex_auth', methods=['GET'])
-def get_plex_auth():
-    return True
+    #Parse the response and ready the url to give to the user to authenticate
+    id = response.json().get('id')
+    code = response.json().get('code')
+    call_back_url = url_for('auth.plex_callback', _external=True)
+    session['plex_oauth_id'] = id
+    session['plex_oauth_code'] = code
+    params = {
+        "clientID": app_settings.plexClientID,
+        "code": code,
+        "forwardUrl": call_back_url,
+        "context%5Bdevice%5D%5Bproduct%5D": app_settings.appName
+    }
+    paramsUrl = urllib.parse.urlencode(params, quote_via=urllib.parse.quote)
+    fullPlexUrl = "https://app.plex.tv/auth/#?"+paramsUrl
+    print(fullPlexUrl)
+    return redirect(fullPlexUrl)
+
+@bp.route('/plex_callback')
+def plex_callback():
+    app_settings = AppSettings.query.first()
+
+    if not session['plex_oauth_code'] or not session['plex_oauth_id']:
+        flash('Error while logging in Plex', "error")
+        return redirect(url_for('auth.login_choice'))
+    
+    #Verify if the PIN has been claimed
+    verifyPinUrl = "https://plex.tv/api/v2/pins/"+str(session['plex_oauth_id'])
+    headers = {
+        "accept": "application/json"
+    }
+    data = {
+        "X-Plex-Client-Identifier": app_settings.plexClientID,
+        "X-Plex-Token": session['plex_oauth_code']
+    }
+    response = requests.get(verifyPinUrl, headers=headers, data=data)
+    plex_auth_token = response.json().get('authToken')
+    if not plex_auth_token:
+        flash('Login to Plex failed', "error")
+        return redirect(url_for('auth.login_choice'))
+    
+    #If it was successfully claimed, we verify the user's email
+    verifyUserUrl = "https://plex.tv/api/v2/user"
+    headers = {
+        "accept": "application/json"
+    }
+    data = {
+        "X-Plex-Product": app_settings.appName,
+        "X-Plex-Client-Identifier": app_settings.plexClientID,
+        "X-Plex-Token": plex_auth_token
+    }
+    response = requests.get(verifyUserUrl, headers=headers, data=data)
+    user_email = response.json().get('email')
+
+    user = User.query.filter_by(email=user_email).first()
+    #If there are no users, we create an admin
+    if not User.query.first():
+            user = User(email=user_email)
+            user.set_admin('true')
+            db.session.add(user)
+    if user is None:
+            flash("You are not allowed to login.", "error")
+            return redirect(url_for('auth.login'))
+    login_user(user)
+    return redirect(url_for('main.index'))
