@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<p><a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary">Sign in with SeenIt</a> <a onclick="plexAuth" class="btn btn-plex">Sign in with Plex</a></p>
+    <p><a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary">Sign in with SeenIt</a> <a href="{{ url_for('auth.plex_login') }}" class="btn btn-plex">Sign in with Plex</a></p>
 {% endblock %}
