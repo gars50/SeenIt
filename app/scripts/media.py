@@ -55,7 +55,7 @@ def import_all_requests():
         
         show = TVShow.query.filter_by(ombiID=ombiID).first()
         if not show:
-            totalShows =+ 1
+            totalShows+=1
             newTVRequest = TVShow(title=title, tvDbID=tvDbID, tvDbURL=tvDbURL, ombiID=ombiID, owner_id=requester.id)
             db.session.add(newTVRequest)
             db.session.commit()

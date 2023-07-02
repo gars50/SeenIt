@@ -9,12 +9,9 @@ class Movie(db.Model):
     ombiID = db.Column(db.Integer)
     radarrID = db.Column(db.Integer)
     totalSize = db.Column(db.Integer)
-    abandonnedDate = db.Column(db.DateTime)
+    expiryDate = db.Column(db.DateTime)
     deleteDate = db.Column(db.DateTime)
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self) -> str:
         return f'Movie: {self.title} ({self.releaseDate.strftime("%Y")})'
-    
-    def setExpiryDate(self, date):
-        self.expiryDate = date

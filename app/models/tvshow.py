@@ -9,12 +9,9 @@ class TVShow(db.Model):
     ombiID = db.Column(db.Integer)
     sonarrID = db.Column(db.Integer)
     totalSize = db.Column(db.Integer)
-    abandonnedDate = db.Column(db.DateTime)
+    expiryDate = db.Column(db.DateTime)
     deleteDate = db.Column(db.DateTime)
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self) -> str:
         return f'TV Show: {self.title}'
-
-    def setExpiryDate(self, date):
-        self.expiryDate = date

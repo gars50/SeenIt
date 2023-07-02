@@ -14,10 +14,12 @@
             {% for tvShow in tvShows %}
                 <tr>
                     <td scope="row"><a href="{{ tvShow.tvDbURL }}" target="_blank">{{tvShow.title}}</a></td>
-                    {% if tvShow.owner.alias %}
-                        <td>{{ tvShow.owner.alias}}</td>
+                    {% if not tvShow.owner %}
+                        <td>Abandonned</td>
+                    {% elif tvShow.owner.alias %}
+                        <td>{{ tvShow.owner.alias }}</td>
                     {% else %}
-                        <td>{{ tvShow.owner.email}}</td>
+                        <td>{{ tvShow.owner.email }}</td>
                     {% endif %}
                     <td><a onclick="deleteShow({{tvShow.id}}, this)" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
                 </tr>
