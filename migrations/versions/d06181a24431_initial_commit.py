@@ -1,8 +1,8 @@
-"""First commit
+"""Initial Commit
 
-Revision ID: 07601611e932
+Revision ID: d06181a24431
 Revises: 
-Create Date: 2023-06-30 14:41:29.998413
+Create Date: 2023-07-02 18:27:19.986707
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '07601611e932'
+revision = 'd06181a24431'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -56,7 +56,7 @@ def upgrade():
     sa.Column('ombiID', sa.Integer(), nullable=True),
     sa.Column('radarrID', sa.Integer(), nullable=True),
     sa.Column('totalSize', sa.Integer(), nullable=True),
-    sa.Column('abandonnedDate', sa.DateTime(), nullable=True),
+    sa.Column('expiryDate', sa.DateTime(), nullable=True),
     sa.Column('deleteDate', sa.DateTime(), nullable=True),
     sa.Column('owner_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['owner_id'], ['user.id'], ),
@@ -70,7 +70,7 @@ def upgrade():
     sa.Column('ombiID', sa.Integer(), nullable=True),
     sa.Column('sonarrID', sa.Integer(), nullable=True),
     sa.Column('totalSize', sa.Integer(), nullable=True),
-    sa.Column('abandonnedDate', sa.DateTime(), nullable=True),
+    sa.Column('expiryDate', sa.DateTime(), nullable=True),
     sa.Column('deleteDate', sa.DateTime(), nullable=True),
     sa.Column('owner_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['owner_id'], ['user.id'], ),

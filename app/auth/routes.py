@@ -175,6 +175,7 @@ def plex_callback():
             user = User(email=user_email)
             user.set_admin('true')
             db.session.add(user)
+            db.session.commit()
     if user is None:
             flash("You are not allowed to login.", "error")
             return redirect(url_for('auth.login'))

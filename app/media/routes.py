@@ -17,26 +17,24 @@ def abandonned_shows():
 @bp.route("/my_movies")
 @login_required
 def my_movies():
-    movies = Movie.query.filter_by(owner_id=current_user.id)
-    return render_template("media/my_movies.html", movies=movies)
+    return render_template("media/my_movies.html", movies=current_user.movies)
 
 @bp.route("/my_shows")
 @login_required
 def my_shows():
-    tvShows = TVShow.query.filter_by(owner_id=current_user.id)
-    return render_template("media/my_shows.html", tvShows=tvShows)
+    return render_template("media/my_shows.html", tvShows=current_user.tvshows)
 
 @bp.route("/all_movies")
 @login_required
 def all_movies():
-    movies = Movie.query.all()
-    return render_template("media/all_movies.html", movies=movies)
+    all_movies = Movie.query.all()
+    return render_template("media/all_movies.html", movies=all_movies)
 
 @bp.route("/all_shows")
 @login_required
 def all_shows():
-    tvShows = TVShow.query.all()
-    return render_template("media/all_shows.html", tvShows=tvShows)
+    all_tvShows = TVShow.query.all()
+    return render_template("media/all_shows.html", tvShows=all_tvShows)
 
 @bp.route("/movie/<int:movie_id>/change_owner", methods=['POST'])
 @login_required

@@ -20,7 +20,7 @@ function fetchToastRemoveRow(url, obj, type) {
         } else {
             response.json()
             .then(function(response) {
-                toastr.error(response.message)
+                toastr.error(response.error)
             })
         }
     })

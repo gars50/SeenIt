@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, request, url_for
+from flask import render_template, flash, redirect, request, url_for, Response, jsonify
 from datetime import datetime
 from app.settings import bp
 from app.models import User, AppSettings, Movie, TVShow
@@ -98,14 +98,18 @@ def add_user():
     return render_template('settings/add_user.html', form=form)
 
 @bp.route('/import_requests', methods=['POST'])
-@login_required
+#@login_required
 def import_requests():
-    scriptmessage = import_all_requests()
+    try:
+        scriptResult = import_all_requests()
+    except Exception as err:
+        return jsonify(error=str(err)), 500
+
     app_settings = AppSettings.query.first()
     app_settings.lastMediaImport = datetime.utcnow()
     db.session.commit()
     return {
-        'message' : scriptmessage
+        'message' : scriptResult
     }
 
 @bp.route('/delete_requests', methods=['POST'])

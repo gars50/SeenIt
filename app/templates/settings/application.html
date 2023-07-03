@@ -67,9 +67,9 @@
     <a onclick="deleteUsers()" class="btn btn-danger">Delete users</a>
     <script>
         async function testRadarr() {
-            ombiURL = "http://"+document.getElementById('radarrHost').value+":"+document.getElementById('radarrPort').value+"/api/v3/system/status"
+            radarrURL = "http://"+document.getElementById('radarrHost').value+":"+document.getElementById('radarrPort').value+"/api/v3/system/status"
             try{
-                response = await fetch(ombiURL, {
+                response = await fetch(radarrURL, {
                     headers: {
                         "X-Api-Key": document.getElementById('radarrApiKey').value
                     },
@@ -78,7 +78,7 @@
                 if (response.ok) {
                     toastr.success("Test to Radarr successful")
                 } else {
-                    throw "Something went wrong"
+                    throw "Error"
                 }
             } catch (error) {
                 toastr.error("Could not connect to Radarr")
@@ -86,9 +86,9 @@
         }
 
         async function testSonarr() {
-            ombiURL = "http://"+document.getElementById('sonarrHost').value+":"+document.getElementById('sonarrPort').value+"/api/v3/system/status"
+            sonarrURL = "http://"+document.getElementById('sonarrHost').value+":"+document.getElementById('sonarrPort').value+"/api/v3/system/status"
             try{
-                response = await fetch(ombiURL, {
+                response = await fetch(sonarrURL, {
                     headers: {
                         "X-Api-Key": document.getElementById('sonarrApiKey').value
                     },
@@ -97,7 +97,7 @@
                 if (response.ok) {
                     toastr.success("Test to Sonarr successful")
                 } else {
-                    throw "Something went wrong"
+                    throw "Error"
                 }
             } catch (error) {
                 toastr.error("Could not connect to Sonarr")
@@ -116,7 +116,7 @@
                 if (response.ok) {
                     toastr.success("Test to Ombi successful")
                 } else {
-                    throw "Something went wrong"
+                    throw response
                 }
             } catch (error) {
                 toastr.error("Could not connect to Ombi")
@@ -138,6 +138,11 @@
                     .then(function(response) {
                         toastr.success(response.message)
                     })
+                } else {
+                    response.json()
+                    .then(function(response) {
+                        toastr.error(response.error)
+                    })
                 }
             })
             .catch(function(error) {
@@ -158,6 +163,11 @@
                     response.json()
                     .then(function(response) {
                         toastr.success(response.message)
+                    })
+                } else {
+                    response.json()
+                    .then(function(response) {
+                        toastr.error(response.error)
                     })
                 }
             })
