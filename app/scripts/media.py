@@ -24,13 +24,13 @@ def check_movie_creation(title, theMovieDbID, theMovieDbURL, releaseDateMod, omb
 
 def check_moviePick_creation(movie, requester, pickDate, pickMethod):
     addedToDB= False
-    moviePick = MoviePick.query.filter_by(movie=movie, picker=requester)
+    moviePick = MoviePick.query.filter_by(movie=movie, picker=requester).first()
     if not moviePick:
         newMoviePick = MoviePick(movie=movie, picker=requester, pick_date=pickDate, pick_method=pickMethod)
         db.session.add(newMoviePick)
         db.session.commit()
         addedToDB= True
-    return MoviePick.query.filter_by(movie=movie, picker=requester), addedToDB
+    return MoviePick.query.filter_by(movie=movie, picker=requester).first(), addedToDB
 
 def check_tvShow_creation(title, tvDbID, tvDbURL, ombiID):
     addedToDB= False
@@ -44,13 +44,13 @@ def check_tvShow_creation(title, tvDbID, tvDbURL, ombiID):
 
 def check_tvShowPick_creation(tvShow, requester, pickDate, pickMethod):
     addedToDB = False
-    tvShowPick = TVShowPick.query.filter_by(tvShow=tvShow, picker=requester)
+    tvShowPick = TVShowPick.query.filter_by(tvShow=tvShow, picker=requester).first()
     if not tvShowPick:
         newTvShowPick = TVShowPick(tvShow=tvShow, picker=requester, pick_date=pickDate, pick_method=pickMethod)
         db.session.add(newTvShowPick)
         db.session.commit()
         addedToDB = True
-    return TVShowPick.query.filter_by(tvShow=tvShow, picker=requester), addedToDB
+    return TVShowPick.query.filter_by(tvShow=tvShow, picker=requester).first(), addedToDB
 
 def test_services():
     appSettings = AppSettings.query.first()
@@ -131,13 +131,11 @@ def import_all_requests():
 
         requester, addedUser = check_user_creation(requesterEmail, requesterAlias)
         tvShow, addedTVShow = check_tvShow_creation(title, tvDbID, tvDbURL, ombiID)
-        #tvShowPick, addedTVShowPick = check_tvShowPick_creation(tvShow, requester, pickDateMod, "Ombi Request")
+        tvShowPick, addedTVShowPick = check_tvShowPick_creation(tvShow, requester, pickDateMod, "Ombi Request")
 
         if addedUser:addedUsers+=1
         if addedTVShow:addedTVShows+=1
-        #if addedTVShowPick:addedTVShowPicks+=1
-
-
+        if addedTVShowPick:addedTVShowPicks+=1
 
     response = "Imported \n"+str(addedUsers)+" Users.\n"+str(addedTVShows)+" TV Shows.\n"+str(addedMovies)+" Movies.\n"+str(addedMoviePicks)+" Movie Picks.\n"+str(addedTVShowPicks)+" TV Show Picks"
     return response
