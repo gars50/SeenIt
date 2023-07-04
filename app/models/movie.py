@@ -10,8 +10,10 @@ class Movie(db.Model):
     radarrID = db.Column(db.Integer)
     totalSize = db.Column(db.Integer)
     expiryDate = db.Column(db.DateTime)
-    deleteDate = db.Column(db.DateTime)
-    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    deletionDate = db.Column(db.DateTime)
+
+    #Relations
+    picks = db.relationship('MoviePick', backref='movie', lazy='dynamic')
 
     def __repr__(self) -> str:
         return f'Movie: {self.title} ({self.releaseDate.strftime("%Y")})'
