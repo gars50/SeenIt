@@ -5,9 +5,8 @@ class AppSettings(db.Model):
     expiryTimeNumber = db.Column(db.Integer)
     expiryTimeUnit = db.Column(db.String(50))
     
-    deletionStartDate = db.Column(db.DateTime)
-    deletionInterval = db.Column(db.DateTime)
     nextDelete = db.Column(db.DateTime)
+    deletionInterval = db.Column(db.DateTime)
 
     lastMediaImport = db.Column(db.DateTime)
     importInterval = db.Column(db.DateTime)
@@ -30,7 +29,7 @@ class AppSettings(db.Model):
 
     def __repr__(self) -> str:
         return f'''
-        Expire timer: {self.expireTimeNumber} {self.expireTimeUnit}
+        Expire timer: {self.expiryTimeNumber} {self.expiryTimeUnit}
         Radarr Connection: {self.radarrHost}:{self.radarrPort}
         Sonarr Connection: {self.sonarrHost}:{self.sonarrPort}
         Ombi Connection: {self.ombiHost}:{self.ombiPort}'''

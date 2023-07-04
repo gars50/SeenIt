@@ -9,8 +9,8 @@
         <h2>Miscellaneous</h2>
         <p>
             Time before deleting an abandonned media<br>
-            {{ form.delayNumber }} {{ form.delayUnit }}<br>
-            {% for error in form.delayNumber.errors %}
+            {{ form.expiryTimeNumber }} {{ form.expiryTimeUnit }}<br>
+            {% for error in form.expiryTimeNumber.errors %}
                 <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
@@ -63,7 +63,8 @@
     <br><hr>
     <h2>Jobs</h2>
     <a onclick="importData()" class="btn btn-success">Import Data from Ombi</a>
-    <a onclick="deleteRequests()" class="btn btn-danger">Delete all requests</a>
+    <a onclick="deletePicks()" class="btn btn-danger">Delete all picks</a>
+    <a onclick="deleteMedias()" class="btn btn-danger">Delete all medias</a>
     <a onclick="deleteUsers()" class="btn btn-danger">Delete users</a>
     <script>
         async function testRadarr() {
@@ -150,12 +151,38 @@
             })
         }
 
-        function deleteRequests() {
-            fetch("/settings/delete_requests", {
+        function deletePicks() {
+            fetch("/settings/delete_picks", {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                method : 'POST',
+                method : 'DELETE',
+                signal: AbortSignal.timeout(5_000)
+            })
+            .then(function (response){
+                if (response.ok) {
+                    response.json()
+                    .then(function(response) {
+                        toastr.success(response.message)
+                    })
+                } else {
+                    response.json()
+                    .then(function(response) {
+                        toastr.error(response.error)
+                    })
+                }
+            })
+            .catch(function(error) {
+                console.log(error)
+            })
+        }
+
+        function deleteMedias() {
+            fetch("/settings/delete_medias", {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                method : 'DELETE',
                 signal: AbortSignal.timeout(5_000)
             })
             .then(function (response){

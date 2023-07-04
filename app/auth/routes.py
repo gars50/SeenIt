@@ -130,7 +130,6 @@ def plex_login():
     }
     paramsUrl = urllib.parse.urlencode(params, quote_via=urllib.parse.quote)
     fullPlexUrl = "https://app.plex.tv/auth/#?"+paramsUrl
-    print(fullPlexUrl)
     return redirect(fullPlexUrl)
 
 @bp.route('/plex_callback')

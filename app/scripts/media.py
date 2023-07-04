@@ -1,5 +1,5 @@
 import requests, datetime
-from app.models import User, Movie, TVShow, TVShowSeason, AppSettings, MoviePick, TVShowSeasonPick
+from app.models import User, Movie, TVShow, AppSettings, MoviePick, TVShowPick
 from app import db
 
 def check_user_creation(email, alias):
@@ -22,45 +22,35 @@ def check_movie_creation(title, theMovieDbID, theMovieDbURL, releaseDateMod, omb
         addedToDB= True
     return Movie.query.filter_by(theMovieDbID=theMovieDbID).first(), addedToDB
 
-def check_moviePick_creation(movie, requester, pickDate):
+def check_moviePick_creation(movie, requester, pickDate, pickMethod):
     addedToDB= False
-    moviePick = MoviePick.query.filter_by(movie=movie, owner=requester)
+    moviePick = MoviePick.query.filter_by(movie=movie, picker=requester)
     if not moviePick:
-        newMoviePick = MoviePick(movie=movie, owner=requester, pick_date=pickDate)
+        newMoviePick = MoviePick(movie=movie, picker=requester, pick_date=pickDate, pick_method=pickMethod)
         db.session.add(newMoviePick)
         db.session.commit()
         addedToDB= True
-    return MoviePick.query.filter_by(movie_id=movie.id, owner_id=requester.id), addedToDB
+    return MoviePick.query.filter_by(movie=movie, picker=requester), addedToDB
 
 def check_tvShow_creation(title, tvDbID, tvDbURL, ombiID):
     addedToDB= False
     show = TVShow.query.filter_by(tvDbID=tvDbID).first()
     if not show:
-        newTVRequest = TVShow(title=title, tvDbID=tvDbID, tvDbURL=tvDbURL, ombiID=ombiID)
-        db.session.add(newTVRequest)
+        newShow = TVShow(title=title, tvDbID=tvDbID, tvDbURL=tvDbURL, ombiID=ombiID)
+        db.session.add(newShow)
         db.session.commit()
         addedToDB= True
     return TVShow.query.filter_by(tvDbID=tvDbID).first(), addedToDB
 
-def check_tvShowSeason_creation(tvShow, seasonNumber, ombiID):
+def check_tvShowPick_creation(tvShow, requester, pickDate, pickMethod):
     addedToDB = False
-    season = TVShowSeason.query.filter_by(tvShow=tvShow, seasonNumber=seasonNumber, ombiID=ombiID)
-    if not season:
-        newSeason = TVShowSeason(tvShow=tvShow, seasonNumber=seasonNumber, ombiID=ombiID)
-        db.session.add(newSeason)
+    tvShowPick = TVShowPick.query.filter_by(tvShow=tvShow, picker=requester)
+    if not tvShowPick:
+        newTvShowPick = TVShowPick(tvShow=tvShow, picker=requester, pick_date=pickDate, pick_method=pickMethod)
+        db.session.add(newTvShowPick)
         db.session.commit()
         addedToDB = True
-    return TVShowSeason.query.filter_by(tvShow=tvShow), addedToDB
-
-def check_tvShowSeasonPick_creation(tvShow, seasonNumber, requester, pickDate):
-    addedToDB= False
-    seasonPick = TVShowSeasonPick.query.filter_by(tvShow=tvShow, seasonNumber=seasonNumber, owner=requester).first()
-    if not seasonPick:
-        newSeasonPick = TVShowSeasonPick(tvShow=tvShow, seasonNumber=seasonNumber, owner=requester, pick_date=pickDate)
-        db.session.add(newSeasonPick)
-        db.session.commit()
-        addedToDB= True
-    return TVShowSeasonPick.query.filter_by(tvShow=tvShow, seasonNumber=seasonNumber, owner=requester).first(), addedToDB
+    return TVShowPick.query.filter_by(tvShow=tvShow, picker=requester), addedToDB
 
 def test_services():
     appSettings = AppSettings.query.first()
@@ -74,21 +64,22 @@ def test_services():
     ombiBaseUrl = "http://"+appSettings.ombiHost+":"+f'{appSettings.ombiPort}'
     ombiHeaders = {'ApiKey' : appSettings.ombiApiKey}
     try:
-        radarrResult = requests.get(radarrBaseURL+"/api/v3/system/status", headers=radarrHeaders)
-        sonarrResult = requests.get(sonarrBaseURL+"/api/v3/system/status", headers=sonarrHeaders)
-        ombiResult = requests.get(ombiBaseUrl+"/api/v1/Status", headers=ombiHeaders)
+        requests.get(radarrBaseURL+"/api/v3/system/status", headers=radarrHeaders)
+        requests.get(sonarrBaseURL+"/api/v3/system/status", headers=sonarrHeaders)
+        requests.get(ombiBaseUrl+"/api/v1/Status", headers=ombiHeaders)
     except Exception as err:
         raise Exception(str(err))
 
 
 def import_all_requests():
     test_services()
+
     addedUsers = 0
     addedMovies = 0
     addedMoviePicks = 0
     addedTVShows = 0
-    addedTVShowSeasons = 0
     addedTVShowPicks = 0
+
     appSettings = AppSettings.query.first()
     ombiBaseURL = "http://"+appSettings.ombiHost+":"+f'{appSettings.ombiPort}'
     headers = {'ApiKey' : appSettings.ombiApiKey}
@@ -108,11 +99,15 @@ def import_all_requests():
         pickDate = movieRequest["requestedDate"]
 
         releaseDateMod = datetime.datetime.strptime(releaseDate.replace("T", " "), "%Y-%m-%d %H:%M:%S")
-        pickDateMod = datetime.datetime.strptime(pickDate.replace("T", " "), "%Y-%m-%d %H:%M:%S")
+        #Weird bug with Ombi where sometimes the date is wrong?
+        if (pickDate == "0001-01-01T00:00:00"):
+            pickDateMod = datetime.datetime.min
+        else:
+            pickDateMod = datetime.datetime.strptime(pickDate.replace("T", " "), "%Y-%m-%d %H:%M:%S.%f")
 
         requester, addedUser = check_user_creation(requesterEmail, requesterAlias)
         movie, addedMovie = check_movie_creation(title, theMovieDbID, theMovieDbURL, releaseDateMod, ombiID)
-        moviePick, addedMoviePick = check_moviePick_creation(movie, requester, pickDateMod)
+        moviePick, addedMoviePick = check_moviePick_creation(movie, requester, pickDateMod, "Ombi Request")
 
         if addedUser:addedUsers+=1
         if addedMovie:addedMovies+=1
@@ -130,19 +125,19 @@ def import_all_requests():
         requesterEmail = TVRequest["childRequests"][0]["requestedUser"]["email"]
         requesterAlias = TVRequest["childRequests"][0]["requestedUser"]["userAlias"]
         ombiID = TVRequest["id"]
-        pick_date = None
+        pickDate = TVRequest["childRequests"][0]["requestedDate"]
+
+        pickDateMod = datetime.datetime.strptime(pickDate.replace("T", " "), "%Y-%m-%d %H:%M:%S.%f")
 
         requester, addedUser = check_user_creation(requesterEmail, requesterAlias)
         tvShow, addedTVShow = check_tvShow_creation(title, tvDbID, tvDbURL, ombiID)
-        tvShowSeason, addedTVShowSeason = check_tvShowSeason_creation(tvShow)
-        tvShowSeasonPick, addedTVShowPick = check_tvShowSeasonPick_creation(tvShowSeason, requester, pick_date)
+        #tvShowPick, addedTVShowPick = check_tvShowPick_creation(tvShow, requester, pickDateMod, "Ombi Request")
 
         if addedUser:addedUsers+=1
         if addedTVShow:addedTVShows+=1
-        if addedTVShowSeason:addedTVShowSeasons+=1
-        if addedTVShowPick:addedTVShowPicks+=1
-        
+        #if addedTVShowPick:addedTVShowPicks+=1
 
 
-    response = "Imported all picks"
+
+    response = "Imported \n"+str(addedUsers)+" Users.\n"+str(addedTVShows)+" TV Shows.\n"+str(addedMovies)+" Movies.\n"+str(addedMoviePicks)+" Movie Picks.\n"+str(addedTVShowPicks)+" TV Show Picks"
     return response

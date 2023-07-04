@@ -7,15 +7,13 @@
             <tr>
                 <th scope="col">Title</th>
                 <th class="nosort" scope="col">Abandon</th>
-                <th class="nosort" scope="col">Delete</th>
             </tr>
         </thead>
         <tbody>
-            {% for movie in movies %}
+            {% for moviePick in moviePicks %}
                 <tr>
-                    <td scope="row"><a href="{{ movie.theMovieDbURL }}" target="_blank">{{movie.title}} ({{movie.releaseDate.strftime('%Y')}})</a></td>
-                    <td><a onclick="changeOwnerMovie({{movie.id}}, this)" class="btn btn-warning"><i class="bi bi-dash-circle"></i></a></td>
-                    <td><a onclick="deleteMovie({{movie.id}}, this)" class="btn btn-danger""><i class="bi bi-trash"></i></a></td>
+                    <td scope="row"><a href="{{ moviePick.movie.theMovieDbURL }}" target="_blank">{{moviePick.movie.title}} ({{moviePick.movie.releaseDate.strftime('%Y')}})</a></td>
+                    <td><a onclick="deletePick({{moviePick.id}}, this)" class="btn btn-warning"><i class="bi bi-dash-circle"></i></a></td>
                 </tr>
             {% endfor %}
         </tbody>

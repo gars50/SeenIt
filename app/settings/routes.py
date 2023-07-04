@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, request, url_for, Response, jsonify
 from datetime import datetime
 from app.settings import bp
-from app.models import User, AppSettings, Movie, TVShow
+from app.models import User, AppSettings, Movie, TVShow, MoviePick, TVShowPick
 from app.settings.forms import EditUserForm, AddUserForm, EditAppSettings
 from flask_login import login_required
 from app.scripts.media import import_all_requests
@@ -13,8 +13,8 @@ def application():
     app_settings = AppSettings.query.first()
     form = EditAppSettings()
     if form.validate_on_submit():
-        app_settings.delayNumber = form.delayNumber.data
-        app_settings.delayUnit = form.delayUnit.data
+        app_settings.expiryTimeNumber = form.expiryTimeNumber.data
+        app_settings.expiryTimeUnit = form.expiryTimeUnit.data
         app_settings.appName = form.appName.data
         app_settings.radarrHost = form.radarrHost.data
         app_settings.radarrPort = form.radarrPort.data
@@ -29,8 +29,8 @@ def application():
         flash('Your changes have been saved.', "success")
         return redirect(url_for('settings.application'))
     elif request.method == 'GET':
-        form.delayNumber.data = app_settings.delayNumber
-        form.delayUnit.data = app_settings.delayUnit
+        form.expiryTimeNumber.data = app_settings.expiryTimeNumber
+        form.expiryTimeUnit.data = app_settings.expiryTimeUnit
         form.appName.data = app_settings.appName
         form.radarrHost.data = app_settings.radarrHost
         form.radarrPort.data = app_settings.radarrPort
@@ -77,7 +77,7 @@ def delete_user(user_id):
     user = User.query.get_or_404(user_id)
     if user.admin:
         return {
-            "message" : user.email+" is an admin and cannot be deleted"
+            "error" : user.email+" is an admin and cannot be deleted"
         }, 400
     db.session.delete(user)
     db.session.commit()
@@ -98,7 +98,7 @@ def add_user():
     return render_template('settings/add_user.html', form=form)
 
 @bp.route('/import_requests', methods=['POST'])
-#@login_required
+@login_required
 def import_requests():
     try:
         scriptResult = import_all_requests()
@@ -112,25 +112,31 @@ def import_requests():
         'message' : scriptResult
     }
 
-@bp.route('/delete_requests', methods=['POST'])
+@bp.route('/delete_medias', methods=['DELETE'])
 @login_required
-def delete_requests():
-    numMovie = Movie.query.delete()
-    numTVShow = TVShow.query.delete()
-    app_settings = AppSettings.query.first()
-    app_settings.lastMediaImport = datetime.min
+def delete_medias():
+    numMovies = Movie.query.delete()
+    numTVShows = TVShow.query.delete()
     db.session.commit()
     return {
-        'message' : "Deleted "+str(numMovie)+" movies and "+str(numTVShow)+" TV Shows"
+        'message' : "Deleted "+str(numMovies)+" movies and "+str(numTVShows)+" TV shows"
+    }
+
+@bp.route('/delete_picks', methods=['DELETE'])
+@login_required
+def delete_picks():
+    numMoviePicks = MoviePick.query.delete()
+    numTVShowPicks = TVShowPick.query.delete()
+    db.session.commit()
+    return {
+        'message' : "Deleted "+str(numMoviePicks)+" movie picks and "+str(numTVShowPicks)+" TV show picks"
     }
 
 @bp.route('/delete_users', methods=['POST'])
 @login_required
 def delete_users():
-    usersToDelete = User.query.filter_by(admin=False).all()
-    for userToDelete in usersToDelete:
-        db.session.delete(userToDelete)
+    numUsers = User.query.filter_by(admin=False).delete()
     db.session.commit()
     return {
-        'message' : "All non-admins deleted"
+        'message' : str(numUsers)+" non-admins deleted"
     }

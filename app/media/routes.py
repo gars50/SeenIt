@@ -2,27 +2,27 @@ from app.media import bp
 from app import db
 from flask_login import login_required, current_user
 from flask import render_template
-from app.models import Movie, TVShow
+from app.models import Movie, TVShow, Pick
 
 @bp.route("/abandonned_movies")
 def abandonned_movies():
-    movies = Movie.query.filter_by(owner_id=None)
+    movies = Movie.query.filter_by(picks=None)
     return render_template("media/abandonned_movies.html", movies=movies)
 
 @bp.route("/abandonned_shows")
 def abandonned_shows():
-    tvShows = TVShow.query.filter_by(owner_id=None)
+    tvShows = TVShow.query.filter_by(picks=None)
     return render_template("media/abandonned_shows.html", tvShows=tvShows)
 
 @bp.route("/my_movies")
 @login_required
 def my_movies():
-    return render_template("media/my_movies.html", movies=current_user.movies)
+    return render_template("media/my_movies.html", moviePicks=current_user.movie_picks)
 
 @bp.route("/my_shows")
 @login_required
 def my_shows():
-    return render_template("media/my_shows.html", tvShows=current_user.tvshows)
+    return render_template("media/my_shows.html", tvShowPicks=current_user.tvshow_picks)
 
 @bp.route("/all_movies")
 @login_required
@@ -53,27 +53,21 @@ def change_movie_owner(movie_id):
             "message" : "Adopted "+movie.title
         }
 
-@bp.route("/tv_show/<int:show_id>/change_owner", methods=['POST'])
+@bp.route("/pick/<int:pick_id>/delete", methods=['DELETE'])
 @login_required
-def change_tvshow_owner(show_id):
-    tvShow = TVShow.query.get_or_404(show_id)
-    if tvShow.owner_id:
-        tvShow.owner_id = None
-        db.session.commit()
-        return{
-            "message" : "Abandonned "+tvShow.title
-        }
-    else:
-        tvShow.owner_id = current_user.id
-        db.session.commit()
-        return{
-            "message" : "Adopted "+tvShow.title
-        }
+def delete_pick(pick_id):
+    pick = Pick.query.get_or_404(pick_id)
+    db.session.delete(pick)
+    db.session.commit()
+    return{
+        "message" : "Abandonned "+pick.media.title
+    }
 
 @bp.route("/movie/<int:movie_id>/delete", methods=['DELETE'])
 @login_required
 def delete_movie(movie_id):
     movie = Movie.query.get_or_404(movie_id)
+    db.session.delete(movie.picks)
     db.session.delete(movie)
     db.session.commit()
     return {
@@ -84,6 +78,7 @@ def delete_movie(movie_id):
 @login_required
 def delete_tv_show(show_id):
     tvShow = TVShow.query.get_or_404(show_id)
+    db.session.delete(tvShow.picks)
     db.session.delete(tvShow)
     db.session.commit()
     return {
