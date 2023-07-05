@@ -1,8 +1,8 @@
 """Initial commit
 
-Revision ID: 639a8e6922c4
+Revision ID: d2485c4df09d
 Revises: 
-Create Date: 2023-07-04 19:04:48.487906
+Create Date: 2023-07-04 20:19:05.220799
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '639a8e6922c4'
+revision = 'd2485c4df09d'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -89,14 +89,14 @@ def upgrade():
     op.create_table('movie_pick',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('movie_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['id'], ['pick.id'], ),
+    sa.ForeignKeyConstraint(['id'], ['pick.id'], ondelete='cascade'),
     sa.ForeignKeyConstraint(['movie_id'], ['movie.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('tv_show_pick',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('tvShow_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['id'], ['pick.id'], ),
+    sa.ForeignKeyConstraint(['id'], ['pick.id'], ondelete='cascade'),
     sa.ForeignKeyConstraint(['tvShow_id'], ['tv_show.id'], ),
     sa.PrimaryKeyConstraint('id')
     )

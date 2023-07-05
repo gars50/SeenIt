@@ -1,7 +1,7 @@
-from flask import render_template, flash, redirect, request, url_for, Response, jsonify
+from flask import render_template, flash, redirect, request, url_for, jsonify
 from datetime import datetime
 from app.settings import bp
-from app.models import User, AppSettings, Movie, TVShow, MoviePick, TVShowPick
+from app.models import User, AppSettings, Movie, TVShow, MoviePick, TVShowPick, Pick
 from app.settings.forms import EditUserForm, AddUserForm, EditAppSettings
 from flask_login import login_required
 from app.scripts.media import import_all_requests
@@ -127,6 +127,7 @@ def delete_medias():
 def delete_picks():
     numMoviePicks = MoviePick.query.delete()
     numTVShowPicks = TVShowPick.query.delete()
+    Pick.query.delete()
     db.session.commit()
     return {
         'message' : "Deleted "+str(numMoviePicks)+" movie picks and "+str(numTVShowPicks)+" TV show picks"
