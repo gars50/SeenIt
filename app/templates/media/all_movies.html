@@ -5,6 +5,7 @@
     <table id="mediaTable" class="table table-hover table-dark">
         <thead>
             <tr>
+                <th scope="col"></th>
                 <th scope="col">Title</th>
                 <th scope="col">Owner</th>
                 <th class="nosort" scope="col">Delete</th>
@@ -13,13 +14,12 @@
         <tbody>
             {% for movie in movies %}
                 <tr>
+                    <td scope="row"></td>
                     <td scope="row"><a href="{{ movie.theMovieDbURL }}" target="_blank">{{movie.title}} ({{movie.releaseDate.strftime('%Y')}})</a></td>
-                    {% if not movie.owner %}
+                    {% if not movie.picks %}
                         <td>Abandonned</td>
-                    {% elif movie.owner.alias %}
-                        <td>{{ movie.owner.alias }}</td>
                     {% else %}
-                        <td>{{ movie.owner.email }}</td>
+                        <td>{{ movie.picks.count() }}</td>
                     {% endif %}
                     <td><a onclick="deleteMovie({{movie.id}}, this)" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
                 </tr>

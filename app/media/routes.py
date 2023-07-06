@@ -1,7 +1,9 @@
 from app.media import bp
 from app import db
+from datetime import datetime
 from flask_login import login_required, current_user
 from flask import render_template
+from app.scripts.media import check_moviePick_creation, check_tvShow_creation
 from app.models import Movie, TVShow, Pick
 
 @bp.route("/abandonned_movies")
@@ -36,22 +38,41 @@ def all_shows():
     all_tvShows = TVShow.query.all()
     return render_template("media/all_shows.html", tvShows=all_tvShows)
 
-@bp.route("/movie/<int:movie_id>/change_owner", methods=['POST'])
+@bp.route("/movie/<int:movie_id>/add_pick", methods=['POST'])
 @login_required
-def change_movie_owner(movie_id):
+def add_movie_pick(movie_id, user=current_user):
     movie = Movie.query.get_or_404(movie_id)
-    if movie.owner_id:
-        movie.owner_id = None
-        db.session.commit()
-        return{
-            "message" : "Abandonned "+movie.title
-        }
-    else:
-        movie.owner_id = current_user.id
-        db.session.commit()
-        return{
-            "message" : "Adopted "+movie.title
-        }
+    check_moviePick_creation(movie, user, datetime.utcnow(), "Picked up")
+    return{
+        "message" : "Picked "+movie.title
+    }
+
+@bp.route("/tvshow/<int:tvShow_id>/add_pick", methods=['POST'])
+@login_required
+def add_tvShow_pick(tvShow_id, user=current_user):
+    tvShow = TVShow.query.get_or_404(tvShow_id)
+    check_tvShow_creation(tvShow, user, datetime.utcnow(), "Picked up")
+    return{
+        "message" : "Picked "+tvShow.title
+    }
+
+@bp.route("/movie/<int:movie_id>/delete_pick", methods=['DELETE'])
+@login_required
+def remove_movie_pick(movie_id, user=current_user):
+    movie = Movie.query.get_or_404(movie_id)
+    check_moviePick_creation(movie, user, datetime.utcnow(), "Picked up")
+    return{
+        "message" : "Abandonned "+movie.title
+    }
+
+@bp.route("/tvshow/<int:tvShow_id>/delete_pick", methods=['DELETE'])
+@login_required
+def remove_tvShow_pick(tvShow_id, user=current_user):
+    tvShow = TVShow.query.get_or_404(tvShow_id)
+    check_tvShow_creation(tvShow, user, datetime.utcnow(), "Picked up")
+    return{
+        "message" : "Abandonned "+tvShow.title
+    }
 
 @bp.route("/pick/<int:pick_id>/delete", methods=['DELETE'])
 @login_required

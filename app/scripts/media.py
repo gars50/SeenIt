@@ -1,4 +1,5 @@
-import requests, datetime
+import requests
+from datetime import datetime
 from app.models import User, Movie, TVShow, AppSettings, MoviePick, TVShowPick
 from app import db
 
@@ -98,12 +99,12 @@ def import_all_requests():
         ombiID = movieRequest["id"]
         pickDate = movieRequest["requestedDate"]
 
-        releaseDateMod = datetime.datetime.strptime(releaseDate.replace("T", " "), "%Y-%m-%d %H:%M:%S")
+        releaseDateMod = datetime.strptime(releaseDate.replace("T", " "), "%Y-%m-%d %H:%M:%S")
         #Weird bug with Ombi where sometimes the date is wrong?
         if (pickDate == "0001-01-01T00:00:00"):
-            pickDateMod = datetime.datetime.min
+            pickDateMod = datetime.min
         else:
-            pickDateMod = datetime.datetime.strptime(pickDate.replace("T", " "), "%Y-%m-%d %H:%M:%S.%f")
+            pickDateMod = datetime.strptime(pickDate.replace("T", " "), "%Y-%m-%d %H:%M:%S.%f")
 
         requester, addedUser = check_user_creation(requesterEmail, requesterAlias)
         movie, addedMovie = check_movie_creation(title, theMovieDbID, theMovieDbURL, releaseDateMod, ombiID)
@@ -127,7 +128,7 @@ def import_all_requests():
         ombiID = TVRequest["id"]
         pickDate = TVRequest["childRequests"][0]["requestedDate"]
 
-        pickDateMod = datetime.datetime.strptime(pickDate.replace("T", " "), "%Y-%m-%d %H:%M:%S.%f")
+        pickDateMod = datetime.strptime(pickDate.replace("T", " "), "%Y-%m-%d %H:%M:%S.%f")
 
         requester, addedUser = check_user_creation(requesterEmail, requesterAlias)
         tvShow, addedTVShow = check_tvShow_creation(title, tvDbID, tvDbURL, ombiID)

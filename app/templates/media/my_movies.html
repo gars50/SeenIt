@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% set active_page = "mymovies" %}
 {% block content %}
-    <h1>{% block title %} My Movies {% endblock %}</h1>
+    <h1>{% block title %} My Movie Picks {% endblock %}</h1>
     <table id="mediaTable" class="table table-hover table-dark">
         <thead>
             <tr>
@@ -13,7 +13,7 @@
             {% for moviePick in moviePicks %}
                 <tr>
                     <td scope="row"><a href="{{ moviePick.movie.theMovieDbURL }}" target="_blank">{{moviePick.movie.title}} ({{moviePick.movie.releaseDate.strftime('%Y')}})</a></td>
-                    <td><a onclick="deletePick({{moviePick.id}}, this)" class="btn btn-warning"><i class="bi bi-dash-circle"></i></a></td>
+                    <td><a onclick="deleteMoviePick({{moviePick.id}}, this)" class="btn btn-warning"><i class="bi bi-dash-circle"></i></a></td>
                 </tr>
             {% endfor %}
         </tbody>

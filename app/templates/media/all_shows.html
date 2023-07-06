@@ -6,7 +6,7 @@
         <thead>
             <tr>
                 <th scope="col">Title</th>
-                <th scope="col">Owner</th>
+                <th scope="col">Picks</th>
                 <th class="nosort" scope="col">Delete</th>
             </tr>
         </thead>
@@ -14,12 +14,10 @@
             {% for tvShow in tvShows %}
                 <tr>
                     <td scope="row"><a href="{{ tvShow.tvDbURL }}" target="_blank">{{tvShow.title}}</a></td>
-                    {% if not tvShow.owner %}
+                    {% if not tvShow.picks %}
                         <td>Abandonned</td>
-                    {% elif tvShow.owner.alias %}
-                        <td>{{ tvShow.owner.alias }}</td>
                     {% else %}
-                        <td>{{ tvShow.owner.email }}</td>
+                        <td>{{ tvShow.picks.count() }}</td>
                     {% endif %}
                     <td><a onclick="deleteShow({{tvShow.id}}, this)" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
                 </tr>
