@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash, session
+from flask import render_template, redirect, url_for, flash, session, abort
 from app.auth import bp
 from app.extensions import db
 from flask_login import current_user, login_user, logout_user, login_required
@@ -114,7 +114,11 @@ def plex_login():
         "X-Plex-Client-Identifier": app_settings.plexClientID,
         "strong": "true"
     }
-    response = requests.post(url, headers=headers, data=data)
+    try:
+        response = requests.post(url, headers=headers, data=data)
+    except requests.ConnectionError as err:
+        abort(500)
+
 
     #Parse the response and ready the url to give to the user to authenticate
     id = response.json().get('id')
