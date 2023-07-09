@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, request, url_for, jsonify
 from datetime import datetime
 from app.settings import bp
-from app.models import User, AppSettings, Movie, TVShow, MoviePick, TVShowPick, Pick
+from app.models import User, AppSettings, Media, Movie, TVShow, Pick
 from app.settings.forms import EditUserForm, AddUserForm, EditAppSettings
 from flask_login import login_required
 from app.scripts.media import import_all_requests
@@ -117,6 +117,7 @@ def import_requests():
 def delete_medias():
     numMovies = Movie.query.delete()
     numTVShows = TVShow.query.delete()
+    Media.query.delete()
     db.session.commit()
     return {
         'message' : "Deleted "+str(numMovies)+" movies and "+str(numTVShows)+" TV shows"
@@ -125,15 +126,13 @@ def delete_medias():
 @bp.route('/delete_picks', methods=['DELETE'])
 @login_required
 def delete_picks():
-    numMoviePicks = MoviePick.query.delete()
-    numTVShowPicks = TVShowPick.query.delete()
-    Pick.query.delete()
+    numPicks = Pick.query.delete()
     db.session.commit()
     return {
-        'message' : "Deleted "+str(numMoviePicks)+" movie picks and "+str(numTVShowPicks)+" TV show picks"
+        'message' : "Deleted "+str(numPicks)+" picks"
     }
 
-@bp.route('/delete_users', methods=['POST'])
+@bp.route('/delete_users', methods=['DELETE'])
 @login_required
 def delete_users():
     numUsers = User.query.filter_by(admin=False).delete()

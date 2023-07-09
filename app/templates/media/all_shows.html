@@ -15,11 +15,11 @@
                 <tr>
                     <td scope="row"><a href="{{ tvShow.tvDbURL }}" target="_blank">{{tvShow.title}}</a></td>
                     {% if not tvShow.picks %}
-                        <td>Abandonned</td>
+                        <td>{{ tvShow.picks }} Abandonned</td>
                     {% else %}
-                        <td>{{ tvShow.picks.count() }}</td>
+                        <td>{{ tvShow.picks }}</td>
                     {% endif %}
-                    <td><a onclick="deleteShow({{tvShow.id}}, this)" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
+                    <td><a onclick="deleteMedia({{tvShow.id}}, this)" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
                 </tr>
             {% endfor %}
         </tbody>

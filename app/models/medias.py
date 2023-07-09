@@ -1,38 +1,46 @@
 from app.extensions import db
 
-class Movie(db.Model):
+class Media(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(50))
     title = db.Column(db.String(100), nullable = False)
-    releaseDate = db.Column(db.DateTime, nullable = False)
-    theMovieDbID = db.Column(db.Integer, nullable = False, unique=True)
-    theMovieDbURL = db.Column(db.String(100))
+
     ombiID = db.Column(db.Integer, nullable = False, unique=True)
-    radarrID = db.Column(db.Integer, unique=True)
     totalSize = db.Column(db.Integer)
     expiryDate = db.Column(db.DateTime)
     deletionDate = db.Column(db.DateTime)
 
-    #Relations
-    picks = db.relationship('MoviePick', backref='movie', lazy='dynamic')
+    picks = db.relationship('Pick', back_populates='media', cascade='all, delete')
+
+    __mapper_args__ = {
+        'polymorphic_identity': 'media',
+        'polymorphic_on': type
+    }
+
+class Movie(Media):
+    id = db.Column(db.Integer, db.ForeignKey('media.id'), primary_key=True)
+    releaseDate = db.Column(db.DateTime, nullable=False)
+    theMovieDbID = db.Column(db.Integer, nullable=False, unique=True)
+    theMovieDbURL = db.Column(db.String(100))
+    radarrID = db.Column(db.Integer, unique=True)
+
+    __mapper_args__ = {
+        "polymorphic_identity": "movie",
+    }
 
     def __repr__(self) -> str:
         return f'Movie: {self.title} ({self.releaseDate.strftime("%Y")})'
 
 
-class TVShow(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(100), nullable=False)
-
-    tvDbID = db.Column(db.Integer)
+class TVShow(Media):
+    id = db.Column(db.Integer, db.ForeignKey('media.id'), primary_key=True)
+    tvDbID = db.Column(db.Integer, nullable=False, unique=True)
     tvDbURL = db.Column(db.String(100))
-    ombiID = db.Column(db.Integer)
     sonarrID = db.Column(db.Integer)
-    totalSize = db.Column(db.Integer)
-    expiryDate = db.Column(db.DateTime)
-    deletionDate = db.Column(db.DateTime)
 
-    #Relations
-    picks = db.relationship('TVShowPick', backref='tvShow', lazy='dynamic')
+    __mapper_args__ = {
+        "polymorphic_identity": "tv_show",
+    }
 
     def __repr__(self) -> str:
         return f'TV Show: {self.title}'

@@ -179,6 +179,8 @@ def plex_callback():
             user.set_admin('true')
             db.session.add(user)
             db.session.commit()
+    
+    #If the user is not in the list, we do not allow them to login
     if user is None:
             flash("You are not allowed to login.", "error")
             return redirect(url_for('auth.login'))

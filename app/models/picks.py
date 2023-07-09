@@ -1,41 +1,26 @@
 from app.extensions import db
+from sqlalchemy import event
 
 class Pick(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(50))
     pick_method = db.Column(db.String(100))
     pick_date = db.Column(db.DateTime)
+    media_type = db.Column(db.String(50))
 
     #Relations
-    picker_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    media_id = db.Column(db.Integer, db.ForeignKey('media.id'))
 
-    __mapper_args__ = {
-        "polymorphic_on": type,
-    }
+    user = db.relationship('User', back_populates='picks')
+    media = db.relationship('Media', back_populates='picks')
 
-class MoviePick(Pick):
-    id = db.Column(db.Integer, db.ForeignKey('pick.id'), primary_key=True)
-
-    #Relations
-    movie_id = db.Column(db.Integer, db.ForeignKey('movie.id'))
-
-    __mapper_args__ = {
-        "polymorphic_identity": "moviePick",
-    }
+    #Ensures that a new pick has all its information, and the correct media type is set
+    def __init__(self, user, media, pick_date, pick_method):
+        self.user = user
+        self.media = media
+        self.media_type = media.type
+        self.pick_date = pick_date
+        self.pick_method = pick_method
 
     def __repr__(self) -> str:
-        return f'{self.movie} requested by {self.picker} on {self.pick_date} through {self.pick_method}'
-
-
-class TVShowPick(Pick):
-    id = db.Column(db.Integer, db.ForeignKey('pick.id'), primary_key=True)
-
-    #Relations
-    tvShow_id = db.Column(db.Integer, db.ForeignKey('tv_show.id'))
-
-    __mapper_args__ = {
-        "polymorphic_identity": "tvShowPick",
-    }
-
-    def __repr__(self) -> str:
-        return f'{self.tvShow} requested by {self.picker} on {self.pick_date} through {self.pick_method}'
+        return f'{self.media} requested by {self.user} on {self.pick_date} through {self.pick_method}'

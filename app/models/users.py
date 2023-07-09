@@ -13,9 +13,7 @@ class User(UserMixin, db.Model):
     alias = db.Column(db.String(100))
     admin = db.Column(db.Boolean, default=False)
 
-    #Relations
-    tvshow_picks = db.relationship('TVShowPick', backref='picker', lazy='dynamic')
-    movie_picks = db.relationship('MoviePick', backref='picker', lazy='dynamic')
+    picks = db.relationship('Pick', back_populates='user', cascade='all, delete')
 
     def __repr__(self) -> str:
         return f'User: {self.email}'

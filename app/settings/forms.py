@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, BooleanField, SubmitField, validators, ValidationError, SelectField
-from app.models.user import User
+from app.models import User
 
 
 class EditUserForm(FlaskForm):

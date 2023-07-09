@@ -7,7 +7,7 @@
             <tr>
                 <th scope="col"></th>
                 <th scope="col">Title</th>
-                <th scope="col">Owner</th>
+                <th scope="col">Picks</th>
                 <th class="nosort" scope="col">Delete</th>
             </tr>
         </thead>
@@ -19,9 +19,9 @@
                     {% if not movie.picks %}
                         <td>Abandonned</td>
                     {% else %}
-                        <td>{{ movie.picks.count() }}</td>
+                        <td>{{ movie.picks }}</td>
                     {% endif %}
-                    <td><a onclick="deleteMovie({{movie.id}}, this)" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
+                    <td><a onclick="deleteMedia({{movie.id}}, this)" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
                 </tr>
             {% endfor %}
         </tbody>

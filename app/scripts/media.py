@@ -1,6 +1,6 @@
 import requests
 from datetime import datetime
-from app.models import User, Movie, TVShow, AppSettings, MoviePick, TVShowPick
+from app.models import User, Movie, TVShow, AppSettings, Pick
 from app import db
 
 def check_user_creation(email, alias):
@@ -23,16 +23,6 @@ def check_movie_creation(title, theMovieDbID, theMovieDbURL, releaseDateMod, omb
         addedToDB= True
     return Movie.query.filter_by(theMovieDbID=theMovieDbID).first(), addedToDB
 
-def check_moviePick_creation(movie, requester, pickDate, pickMethod):
-    addedToDB= False
-    moviePick = MoviePick.query.filter_by(movie=movie, picker=requester).first()
-    if not moviePick:
-        newMoviePick = MoviePick(movie=movie, picker=requester, pick_date=pickDate, pick_method=pickMethod)
-        db.session.add(newMoviePick)
-        db.session.commit()
-        addedToDB= True
-    return MoviePick.query.filter_by(movie=movie, picker=requester).first(), addedToDB
-
 def check_tvShow_creation(title, tvDbID, tvDbURL, ombiID):
     addedToDB= False
     show = TVShow.query.filter_by(tvDbID=tvDbID).first()
@@ -43,15 +33,16 @@ def check_tvShow_creation(title, tvDbID, tvDbURL, ombiID):
         addedToDB= True
     return TVShow.query.filter_by(tvDbID=tvDbID).first(), addedToDB
 
-def check_tvShowPick_creation(tvShow, requester, pickDate, pickMethod):
-    addedToDB = False
-    tvShowPick = TVShowPick.query.filter_by(tvShow=tvShow, picker=requester).first()
-    if not tvShowPick:
-        newTvShowPick = TVShowPick(tvShow=tvShow, picker=requester, pick_date=pickDate, pick_method=pickMethod)
-        db.session.add(newTvShowPick)
+
+def check_pick_creation(media, requester, pickDate, pickMethod):
+    addedToDB= False
+    pick = Pick.query.filter_by(media=media, user=requester).first()
+    if not pick:
+        new_pick = Pick(media=media, user=requester, pick_date=pickDate, pick_method=pickMethod)
+        db.session.add(new_pick)
         db.session.commit()
-        addedToDB = True
-    return TVShowPick.query.filter_by(tvShow=tvShow, picker=requester).first(), addedToDB
+        addedToDB= True
+    return Pick.query.filter_by(media=media, user=requester).first(), addedToDB
 
 def test_services():
     appSettings = AppSettings.query.first()
@@ -108,7 +99,7 @@ def import_all_requests():
 
         requester, addedUser = check_user_creation(requesterEmail, requesterAlias)
         movie, addedMovie = check_movie_creation(title, theMovieDbID, theMovieDbURL, releaseDateMod, ombiID)
-        moviePick, addedMoviePick = check_moviePick_creation(movie, requester, pickDateMod, "Ombi Request")
+        moviePick, addedMoviePick = check_pick_creation(movie, requester, pickDateMod, "Ombi Request")
 
         if addedUser:addedUsers+=1
         if addedMovie:addedMovies+=1
@@ -132,7 +123,7 @@ def import_all_requests():
 
         requester, addedUser = check_user_creation(requesterEmail, requesterAlias)
         tvShow, addedTVShow = check_tvShow_creation(title, tvDbID, tvDbURL, ombiID)
-        tvShowPick, addedTVShowPick = check_tvShowPick_creation(tvShow, requester, pickDateMod, "Ombi Request")
+        tvShowPick, addedTVShowPick = check_pick_creation(tvShow, requester, pickDateMod, "Ombi Request")
 
         if addedUser:addedUsers+=1
         if addedTVShow:addedTVShows+=1

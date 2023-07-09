@@ -29,33 +29,18 @@ function fetchToastRemoveRow(url, obj, type) {
     })
 }
 
-function addMoviePick(movie_id, obj) {
-    var fetchURL = "/media/movie/"+movie_id+"/add_pick"
+function addPick(media_id, obj) {
+    var fetchURL = "/media/"+media_id+"/add_pick"
     fetchToastRemoveRow(fetchURL, obj, 'POST')
 }
 
-function addShowPick(show_id, obj) {
-    var fetchURL = "/media/tv_show/"+show_id+"/add_pick"
-    fetchToastRemoveRow(fetchURL, obj, 'POST')
-}
-
-function deleteMoviePick(movie_id, obj) {
-    var fetchURL = "/media/movie/"+movie_id+"/delete_pick"
+function deletePick(pick_id, obj) {
+    var fetchURL = "/media/pick/"+pick_id+"/delete"
     fetchToastRemoveRow(fetchURL, obj, 'DELETE')
 }
 
-function deleteShowPick(show_id, obj) {
-    var fetchURL = "/media/tv_show/"+show_id+"/delete_pick"
-    fetchToastRemoveRow(fetchURL, obj, 'DELETE')
-}
-
-function deleteMovie(movie_id, obj) {
-    var fetchURL = "/media/movie/"+movie_id+"/delete"
-    fetchToastRemoveRow(fetchURL, obj, 'DELETE')
-}
-
-function deleteShow(show_id, obj) {
-    var fetchURL = "/media/tv_show/"+show_id+"/delete"
+function deleteMedia(media_id, obj) {
+    var fetchURL = "/media/"+media_id+"/delete"
     fetchToastRemoveRow(fetchURL, obj, 'DELETE')
 }
 

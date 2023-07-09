@@ -3,8 +3,8 @@ from app import db
 from datetime import datetime
 from flask_login import login_required, current_user
 from flask import render_template
-from app.scripts.media import check_moviePick_creation, check_tvShow_creation
-from app.models import Movie, TVShow, Pick
+from app.scripts.media import check_pick_creation
+from app.models import Media, Movie, TVShow, Pick
 
 @bp.route("/abandonned_movies")
 def abandonned_movies():
@@ -19,12 +19,14 @@ def abandonned_shows():
 @bp.route("/my_movies")
 @login_required
 def my_movies():
-    return render_template("media/my_movies.html", moviePicks=current_user.movie_picks)
+    movie_picks = Pick.query.filter_by(user=current_user, media_type="movie")
+    return render_template("media/my_movies.html", movie_picks=movie_picks)
 
 @bp.route("/my_shows")
 @login_required
 def my_shows():
-    return render_template("media/my_shows.html", tvShowPicks=current_user.tvshow_picks)
+    tv_show_picks = Pick.query.filter_by(user=current_user, media_type="tv_show")
+    return render_template("media/my_shows.html", tv_show_picks=tv_show_picks)
 
 @bp.route("/all_movies")
 @login_required
@@ -38,70 +40,33 @@ def all_shows():
     all_tvShows = TVShow.query.all()
     return render_template("media/all_shows.html", tvShows=all_tvShows)
 
-@bp.route("/movie/<int:movie_id>/add_pick", methods=['POST'])
+@bp.route("/<int:media_id>/add_pick", methods=['POST'])
 @login_required
-def add_movie_pick(movie_id, user=current_user):
-    movie = Movie.query.get_or_404(movie_id)
-    check_moviePick_creation(movie, user, datetime.utcnow(), "Picked up")
+def add_pick(media_id):
+    media = Media.query.get(media_id)
+    check_pick_creation(media, current_user, datetime.utcnow(), "Picked up")
     return{
-        "message" : "Picked "+movie.title
-    }
-
-@bp.route("/tvshow/<int:tvShow_id>/add_pick", methods=['POST'])
-@login_required
-def add_tvShow_pick(tvShow_id, user=current_user):
-    tvShow = TVShow.query.get_or_404(tvShow_id)
-    check_tvShow_creation(tvShow, user, datetime.utcnow(), "Picked up")
-    return{
-        "message" : "Picked "+tvShow.title
-    }
-
-@bp.route("/movie/<int:movie_id>/delete_pick", methods=['DELETE'])
-@login_required
-def remove_movie_pick(movie_id, user=current_user):
-    movie = Movie.query.get_or_404(movie_id)
-    check_moviePick_creation(movie, user, datetime.utcnow(), "Picked up")
-    return{
-        "message" : "Abandonned "+movie.title
-    }
-
-@bp.route("/tvshow/<int:tvShow_id>/delete_pick", methods=['DELETE'])
-@login_required
-def remove_tvShow_pick(tvShow_id, user=current_user):
-    tvShow = TVShow.query.get_or_404(tvShow_id)
-    check_tvShow_creation(tvShow, user, datetime.utcnow(), "Picked up")
-    return{
-        "message" : "Abandonned "+tvShow.title
+        "message" : "Picked up "+media.title
     }
 
 @bp.route("/pick/<int:pick_id>/delete", methods=['DELETE'])
 @login_required
 def delete_pick(pick_id):
     pick = Pick.query.get_or_404(pick_id)
+    title = pick.media.title
     db.session.delete(pick)
     db.session.commit()
     return{
-        "message" : "Abandonned "+pick.media.title
+        "message" : "Abandonned "+title
     }
 
-@bp.route("/movie/<int:movie_id>/delete", methods=['DELETE'])
+@bp.route("/<int:media_id>/delete", methods=['DELETE'])
 @login_required
-def delete_movie(movie_id):
-    movie = Movie.query.get_or_404(movie_id)
-    db.session.delete(movie.picks)
-    db.session.delete(movie)
+def delete_media(media_id):
+    media = Media.query.get_or_404(media_id)
+    title = media.title
+    db.session.delete(media)
     db.session.commit()
     return {
-        "message" : "Deleted "+movie.title
-    }
-
-@bp.route("/tv_show/<int:show_id>/delete", methods=['DELETE'])
-@login_required
-def delete_tv_show(show_id):
-    tvShow = TVShow.query.get_or_404(show_id)
-    db.session.delete(tvShow.picks)
-    db.session.delete(tvShow)
-    db.session.commit()
-    return {
-        "message" : "Deleted "+tvShow.title
+        "message" : "Deleted "+title
     }
