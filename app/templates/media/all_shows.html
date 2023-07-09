@@ -17,7 +17,13 @@
                     {% if not tvShow.picks %}
                         <td>{{ tvShow.picks }} Abandonned</td>
                     {% else %}
-                        <td>{{ tvShow.picks }}</td>
+                        <td>
+                            <span class="picks_popup">
+                                <a href="#">
+                                    {{ tvShow.picks|length }}
+                                </a>
+                            </span>
+                        </td>
                     {% endif %}
                     <td><a onclick="deleteMedia({{tvShow.id}}, this)" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
                 </tr>

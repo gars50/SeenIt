@@ -70,3 +70,10 @@ def delete_media(media_id):
     return {
         "message" : "Deleted "+title
     }
+
+@bp.route("/<int:media_id>/picks_popup", methods=['GET'])
+@login_required
+def picks_popup(media_id):
+    media = Media.query.get_or_404(media_id)
+    picks = Pick.query.filter_by(media=media)
+    return render_template("media/picks_popup.html", picks=picks)

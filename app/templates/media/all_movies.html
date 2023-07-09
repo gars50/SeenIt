@@ -19,7 +19,13 @@
                     {% if not movie.picks %}
                         <td>Abandonned</td>
                     {% else %}
-                        <td>{{ movie.picks }}</td>
+                        <td>
+                            <span class="picks_popup">
+                                <a href="{{ url_for('media.picks_popup', media_id=movie.id) }}">
+                                    {{ movie.picks|length }}
+                                </a>
+                            </span>
+                        </td>
                     {% endif %}
                     <td><a onclick="deleteMedia({{movie.id}}, this)" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
                 </tr>

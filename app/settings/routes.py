@@ -15,6 +15,9 @@ def application():
     if form.validate_on_submit():
         app_settings.expiryTimeNumber = form.expiryTimeNumber.data
         app_settings.expiryTimeUnit = form.expiryTimeUnit.data
+        app_settings.nextDelete = form.nextDelete.data
+        app_settings.deletionTimeNumber = form.deletionTimeNumber.data
+        app_settings.deletionTimeUnit = form.deletionTimeUnit.data
         app_settings.appName = form.appName.data
         app_settings.radarrHost = form.radarrHost.data
         app_settings.radarrPort = form.radarrPort.data
@@ -31,6 +34,9 @@ def application():
     elif request.method == 'GET':
         form.expiryTimeNumber.data = app_settings.expiryTimeNumber
         form.expiryTimeUnit.data = app_settings.expiryTimeUnit
+        form.nextDelete.data = app_settings.nextDelete
+        form.deletionTimeNumber.data = app_settings.deletionTimeNumber
+        form.deletionTimeUnit.data = app_settings.deletionTimeUnit
         form.appName.data = app_settings.appName
         form.radarrHost.data = app_settings.radarrHost
         form.radarrPort.data = app_settings.radarrPort

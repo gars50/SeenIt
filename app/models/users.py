@@ -5,12 +5,14 @@ from time import time
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 
+def default_alias(context):
+    return context.get_current_parameters()['email']
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), nullable=False, unique=True)
     password_hash = db.Column(db.String(128))
-    alias = db.Column(db.String(100))
+    alias = db.Column(db.String(100), default=default_alias)
     admin = db.Column(db.Boolean, default=False)
 
     picks = db.relationship('Pick', back_populates='user', cascade='all, delete')

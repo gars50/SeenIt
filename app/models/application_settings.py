@@ -7,6 +7,8 @@ class AppSettings(db.Model):
     
     nextDelete = db.Column(db.DateTime)
     deletionInterval = db.Column(db.DateTime)
+    deletionTimeNumber = db.Column(db.Integer)
+    deletionTimeUnit = db.Column(db.String(50))
 
     lastMediaImport = db.Column(db.DateTime)
     importInterval = db.Column(db.DateTime)

@@ -4,61 +4,74 @@
 {% block content %}
     <span class="title"><h1>{% block title %} Application Settings {% endblock %}</h1></span>
     <form action="" method="post">
-        {{ form.hidden_tag() }}
-        <hr>
-        <h2>Miscellaneous</h2>
-        <p>
-            Time before deleting an abandonned media<br>
-            {{ form.expiryTimeNumber }} {{ form.expiryTimeUnit }}<br>
-            {% for error in form.expiryTimeNumber.errors %}
-                <span style="color: red;">[{{ error }}]</span>
-            {% endfor %}
-        </p>
-        <p>
+        <div class="container">
+            {{ form.hidden_tag() }}
+
             {{ form.appName.label }}<br>
-            {{ form.appName(size=32) }}<br>
-        </p>
-        <br>
-        <h2>Connections</h2>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Service</th>
-                    <th scope="col">Hostname</th>
-                    <th scope="col">Port</th>
-                    <th scope="col">API Key</th>
-                    <th scope="col"> </th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Radarr</th>
-                    <td> {{ form.radarrHost }} </td>
-                    <td> {{ form.radarrPort }} </td>
-                    <td> {{ form.radarrApiKey(size=35) }} </td>
-                    <td><a onclick="testRadarr()" class="btn btn-info">Test</a></td>
-                </tr>
-            </tbody>
-            <tbody>
-                <tr>
-                    <th scope="row">Sonarr</th>
-                    <td> {{ form.sonarrHost }} </td>
-                    <td> {{ form.sonarrPort }} </td>
-                    <td> {{ form.sonarrApiKey(size=35) }} </td>
-                    <td><a onclick="testSonarr()" class="btn btn-info">Test</a></td>
-                </tr>
-            </tbody>
-            <tbody>
-                <tr>
-                    <th scope="row">Ombi</th>
-                    <td> {{ form.ombiHost }} </td>
-                    <td> {{ form.ombiPort }} </td>
-                    <td> {{ form.ombiApiKey(size=35) }} </td>
-                    <td><a onclick="testOmbi()" class="btn btn-info">Test</a></td>
-                </tr>
-            </tbody>
-        </table>
-        <p>{{ form.submit() }}</p>
+            {{ form.appName(size=32) }}
+            <hr>
+            <div class="row row-cols-auto">
+                <div class="column">
+                    <h2>Media Expiry</h2>
+                    {{ form.expiryTimeNumber.label }}<br>
+                    {{ form.expiryTimeNumber }}  {{ form.expiryTimeUnit }}<br>
+                    {% for error in form.expiryTimeNumber.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+                <div class="column">
+                    <h2>Media Deletion</h2>
+                    {{ form.nextDelete.label }}<br>
+                    {{ form.nextDelete(type='datetime-local') }}<br>
+                    {{ form.deletionTimeNumber.label }}<br>
+                    Every {{ form.deletionTimeNumber }} {{ form.deletionTimeUnit }}<br>
+                    {% for error in form.deletionTimeNumber.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                </div>
+            </div>
+            <hr>
+            <h2>Connections</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Service</th>
+                        <th scope="col">Hostname</th>
+                        <th scope="col">Port</th>
+                        <th scope="col">API Key</th>
+                        <th scope="col"> </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">Radarr</th>
+                        <td> {{ form.radarrHost }} </td>
+                        <td> {{ form.radarrPort }} </td>
+                        <td> {{ form.radarrApiKey(size=35) }} </td>
+                        <td><a onclick="testRadarr()" class="btn btn-info">Test</a></td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <th scope="row">Sonarr</th>
+                        <td> {{ form.sonarrHost }} </td>
+                        <td> {{ form.sonarrPort }} </td>
+                        <td> {{ form.sonarrApiKey(size=35) }} </td>
+                        <td><a onclick="testSonarr()" class="btn btn-info">Test</a></td>
+                    </tr>
+                </tbody>
+                <tbody>
+                    <tr>
+                        <th scope="row">Ombi</th>
+                        <td> {{ form.ombiHost }} </td>
+                        <td> {{ form.ombiPort }} </td>
+                        <td> {{ form.ombiApiKey(size=35) }} </td>
+                        <td><a onclick="testOmbi()" class="btn btn-info">Test</a></td>
+                    </tr>
+                </tbody>
+            </table>
+            <p>{{ form.submit() }}</p>
+        </div>
     </form>
     <br><hr>
     <h2>Jobs</h2>
