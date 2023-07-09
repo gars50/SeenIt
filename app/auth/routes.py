@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash, session
+from flask import render_template, redirect, url_for, flash, session, abort
 from app.auth import bp
 from app.extensions import db
 from flask_login import current_user, login_user, logout_user, login_required
@@ -114,7 +114,11 @@ def plex_login():
         "X-Plex-Client-Identifier": app_settings.plexClientID,
         "strong": "true"
     }
-    response = requests.post(url, headers=headers, data=data)
+    try:
+        response = requests.post(url, headers=headers, data=data)
+    except requests.ConnectionError as err:
+        abort(500)
+
 
     #Parse the response and ready the url to give to the user to authenticate
     id = response.json().get('id')
@@ -130,7 +134,6 @@ def plex_login():
     }
     paramsUrl = urllib.parse.urlencode(params, quote_via=urllib.parse.quote)
     fullPlexUrl = "https://app.plex.tv/auth/#?"+paramsUrl
-    print(fullPlexUrl)
     return redirect(fullPlexUrl)
 
 @bp.route('/plex_callback')
@@ -176,6 +179,8 @@ def plex_callback():
             user.set_admin('true')
             db.session.add(user)
             db.session.commit()
+    
+    #If the user is not in the list, we do not allow them to login
     if user is None:
             flash("You are not allowed to login.", "error")
             return redirect(url_for('auth.login'))

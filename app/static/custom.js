@@ -29,23 +29,18 @@ function fetchToastRemoveRow(url, obj, type) {
     })
 }
 
-function changeOwnerMovie(movie_id, obj) {
-    var fetchURL = "/media/movie/"+movie_id+"/change_owner"
+function addPick(media_id, obj) {
+    var fetchURL = "/media/"+media_id+"/add_pick"
     fetchToastRemoveRow(fetchURL, obj, 'POST')
 }
 
-function changeOwnerShow(show_id, obj) {
-    var fetchURL = "/media/tv_show/"+show_id+"/change_owner"
-    fetchToastRemoveRow(fetchURL, obj, 'POST')
-}
-
-function deleteMovie(movie_id, obj) {
-    var fetchURL = "/media/movie/"+movie_id+"/delete"
+function deletePick(pick_id, obj) {
+    var fetchURL = "/media/pick/"+pick_id+"/delete"
     fetchToastRemoveRow(fetchURL, obj, 'DELETE')
 }
 
-function deleteShow(show_id, obj) {
-    var fetchURL = "/media/tv_show/"+show_id+"/delete"
+function deleteMedia(media_id, obj) {
+    var fetchURL = "/media/"+media_id+"/delete"
     fetchToastRemoveRow(fetchURL, obj, 'DELETE')
 }
 
@@ -55,12 +50,12 @@ $(document).ready(function () {
         "columnDefs": [{
             "targets": 'nosort',
             "orderable": false,
-            "width": "5%"
+            "width": "7%"
         }]
     });
   });
 
-  toastr.options = {
+toastr.options = {
     closeButton: true,
     progressBar: true
   }

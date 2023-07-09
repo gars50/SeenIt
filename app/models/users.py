@@ -10,13 +10,10 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), nullable=False, unique=True)
     password_hash = db.Column(db.String(128))
-    plexid = db.Column(db.Integer, unique=True)
     alias = db.Column(db.String(100))
     admin = db.Column(db.Boolean, default=False)
 
-    #Relations
-    tvshows = db.relationship('TVShow', backref='owner', lazy='dynamic')
-    movies = db.relationship('Movie', backref='owner', lazy='dynamic')
+    picks = db.relationship('Pick', back_populates='user', cascade='all, delete')
 
     def __repr__(self) -> str:
         return f'User: {self.email}'

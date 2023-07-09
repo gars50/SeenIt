@@ -1,15 +1,48 @@
-import requests, datetime
-from app.models import User, Movie, TVShow, AppSettings
+import requests
+from datetime import datetime
+from app.models import User, Movie, TVShow, AppSettings, Pick
 from app import db
 
 def check_user_creation(email, alias):
+    addedToDB= False
     user = User.query.filter_by(email=email).first()
     if not user:
-        user = User(email=email)
-        user.alias = alias
-        db.session.add(user)
+        newUser = User(email=email, alias=alias)
+        db.session.add(newUser)
         db.session.commit()
-    return User.query.filter_by(email=email).first()
+        addedToDB= True
+    return User.query.filter_by(email=email).first(), addedToDB
+
+def check_movie_creation(title, theMovieDbID, theMovieDbURL, releaseDateMod, ombiID):
+    addedToDB= False
+    movie = Movie.query.filter_by(theMovieDbID=theMovieDbID).first()
+    if not movie:
+        newMovieRequest = Movie(title=title, theMovieDbID=theMovieDbID, theMovieDbURL=theMovieDbURL, releaseDate=releaseDateMod, ombiID=ombiID)
+        db.session.add(newMovieRequest)
+        db.session.commit()
+        addedToDB= True
+    return Movie.query.filter_by(theMovieDbID=theMovieDbID).first(), addedToDB
+
+def check_tvShow_creation(title, tvDbID, tvDbURL, ombiID):
+    addedToDB= False
+    show = TVShow.query.filter_by(tvDbID=tvDbID).first()
+    if not show:
+        newShow = TVShow(title=title, tvDbID=tvDbID, tvDbURL=tvDbURL, ombiID=ombiID)
+        db.session.add(newShow)
+        db.session.commit()
+        addedToDB= True
+    return TVShow.query.filter_by(tvDbID=tvDbID).first(), addedToDB
+
+
+def check_pick_creation(media, requester, pickDate, pickMethod):
+    addedToDB= False
+    pick = Pick.query.filter_by(media=media, user=requester).first()
+    if not pick:
+        new_pick = Pick(media=media, user=requester, pick_date=pickDate, pick_method=pickMethod)
+        db.session.add(new_pick)
+        db.session.commit()
+        addedToDB= True
+    return Pick.query.filter_by(media=media, user=requester).first(), addedToDB
 
 def test_services():
     appSettings = AppSettings.query.first()
@@ -23,9 +56,9 @@ def test_services():
     ombiBaseUrl = "http://"+appSettings.ombiHost+":"+f'{appSettings.ombiPort}'
     ombiHeaders = {'ApiKey' : appSettings.ombiApiKey}
     try:
-        radarrResult = requests.get(radarrBaseURL+"/api/v3/system/status", headers=radarrHeaders)
-        sonarrResult = requests.get(sonarrBaseURL+"/api/v3/system/status", headers=sonarrHeaders)
-        ombiResult = requests.get(ombiBaseUrl+"/api/v1/Status", headers=ombiHeaders)
+        requests.get(radarrBaseURL+"/api/v3/system/status", headers=radarrHeaders)
+        requests.get(sonarrBaseURL+"/api/v3/system/status", headers=sonarrHeaders)
+        requests.get(ombiBaseUrl+"/api/v1/Status", headers=ombiHeaders)
     except Exception as err:
         raise Exception(str(err))
 
@@ -33,14 +66,20 @@ def test_services():
 def import_all_requests():
     test_services()
 
+    addedUsers = 0
+    addedMovies = 0
+    addedMoviePicks = 0
+    addedTVShows = 0
+    addedTVShowPicks = 0
+
     appSettings = AppSettings.query.first()
     ombiBaseURL = "http://"+appSettings.ombiHost+":"+f'{appSettings.ombiPort}'
     headers = {'ApiKey' : appSettings.ombiApiKey}
 
+
     movieRequestsResponse = requests.get(ombiBaseURL+"/api/v1/Request/movie", headers=headers)
     movieRequests = movieRequestsResponse.json()
 
-    importedMovies = 0
     for movieRequest in movieRequests:
         title = movieRequest["title"]
         theMovieDbID = movieRequest["theMovieDbId"]
@@ -49,21 +88,27 @@ def import_all_requests():
         requesterEmail = movieRequest["requestedUser"]["email"]
         requesterAlias = movieRequest["requestedUser"]["userAlias"]
         ombiID = movieRequest["id"]
-        releaseDateMod = datetime.datetime.strptime(releaseDate.replace("T", " "), "%Y-%m-%d %H:%M:%S")
-        requester = check_user_creation(requesterEmail, requesterAlias)
+        pickDate = movieRequest["requestedDate"]
 
-        movie = Movie.query.filter_by(ombiID=ombiID).first()
-        if not movie:
-            importedMovies+=1
-            newMovieRequest = Movie(title=title, theMovieDbID=theMovieDbID, theMovieDbURL=theMovieDbURL, releaseDate=releaseDateMod, ombiID=ombiID, owner_id=requester.id)
-            db.session.add(newMovieRequest)
-            db.session.commit()
+        releaseDateMod = datetime.strptime(releaseDate.replace("T", " "), "%Y-%m-%d %H:%M:%S")
+        #Weird bug with Ombi where sometimes the date is wrong?
+        if (pickDate == "0001-01-01T00:00:00"):
+            pickDateMod = datetime.min
+        else:
+            pickDateMod = datetime.strptime(pickDate.replace("T", " "), "%Y-%m-%d %H:%M:%S.%f")
+
+        requester, addedUser = check_user_creation(requesterEmail, requesterAlias)
+        movie, addedMovie = check_movie_creation(title, theMovieDbID, theMovieDbURL, releaseDateMod, ombiID)
+        moviePick, addedMoviePick = check_pick_creation(movie, requester, pickDateMod, "Ombi Request")
+
+        if addedUser:addedUsers+=1
+        if addedMovie:addedMovies+=1
+        if addedMoviePick:addedMoviePicks+=1
 
 
     TVRequestsResponse = requests.get(ombiBaseURL+"/api/v1/Request/tv", headers=headers)
     TVRequests = TVRequestsResponse.json()
 
-    importedShows = 0
     for TVRequest in TVRequests:
         title = TVRequest["title"]
         tvDbID = TVRequest["tvDbId"]
@@ -72,14 +117,17 @@ def import_all_requests():
         requesterEmail = TVRequest["childRequests"][0]["requestedUser"]["email"]
         requesterAlias = TVRequest["childRequests"][0]["requestedUser"]["userAlias"]
         ombiID = TVRequest["id"]
-        requester = check_user_creation(requesterEmail, requesterAlias)
-        
-        show = TVShow.query.filter_by(ombiID=ombiID).first()
-        if not show:
-            importedShows+=1
-            newTVRequest = TVShow(title=title, tvDbID=tvDbID, tvDbURL=tvDbURL, ombiID=ombiID, owner_id=requester.id)
-            db.session.add(newTVRequest)
-            db.session.commit()
+        pickDate = TVRequest["childRequests"][0]["requestedDate"]
 
-    response = "Imported "+str(importedMovies)+" movies and "+str(importedShows)+" TV Shows"
+        pickDateMod = datetime.strptime(pickDate.replace("T", " "), "%Y-%m-%d %H:%M:%S.%f")
+
+        requester, addedUser = check_user_creation(requesterEmail, requesterAlias)
+        tvShow, addedTVShow = check_tvShow_creation(title, tvDbID, tvDbURL, ombiID)
+        tvShowPick, addedTVShowPick = check_pick_creation(tvShow, requester, pickDateMod, "Ombi Request")
+
+        if addedUser:addedUsers+=1
+        if addedTVShow:addedTVShows+=1
+        if addedTVShowPick:addedTVShowPicks+=1
+
+    response = "Imported \n"+str(addedUsers)+" Users.\n"+str(addedTVShows)+" TV Shows.\n"+str(addedMovies)+" Movies.\n"+str(addedMoviePicks)+" Movie Picks.\n"+str(addedTVShowPicks)+" TV Show Picks"
     return response

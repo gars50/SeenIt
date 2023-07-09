@@ -1,21 +1,19 @@
 {% extends 'base.html' %}
 {% set active_page = "mymovies" %}
 {% block content %}
-    <h1>{% block title %} My Movies {% endblock %}</h1>
+    <h1>{% block title %} My Movie Picks {% endblock %}</h1>
     <table id="mediaTable" class="table table-hover table-dark">
         <thead>
             <tr>
                 <th scope="col">Title</th>
                 <th class="nosort" scope="col">Abandon</th>
-                <th class="nosort" scope="col">Delete</th>
             </tr>
         </thead>
         <tbody>
-            {% for movie in movies %}
+            {% for movie_pick in movie_picks %}
                 <tr>
-                    <td scope="row"><a href="{{ movie.theMovieDbURL }}" target="_blank">{{movie.title}} ({{movie.releaseDate.strftime('%Y')}})</a></td>
-                    <td><a onclick="changeOwnerMovie({{movie.id}}, this)" class="btn btn-warning"><i class="bi bi-dash-circle"></i></a></td>
-                    <td><a onclick="deleteMovie({{movie.id}}, this)" class="btn btn-danger""><i class="bi bi-trash"></i></a></td>
+                    <td scope="row"><a href="{{ movie_pick.media.theMovieDbURL }}" target="_blank">{{movie_pick.media.title}} ({{movie_pick.media.releaseDate.strftime('%Y')}})</a></td>
+                    <td><a onclick="deletePick({{movie_pick.id}}, this)" class="btn btn-warning"><i class="bi bi-dash-circle"></i></a></td>
                 </tr>
             {% endfor %}
         </tbody>

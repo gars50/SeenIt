@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, BooleanField, SubmitField, validators, ValidationError, SelectField
-from app.models.user import User
+from app.models import User
 
 
 class EditUserForm(FlaskForm):
@@ -21,8 +21,8 @@ class AddUserForm(FlaskForm):
             raise ValidationError('An account with that email address is already present.')
         
 class EditAppSettings(FlaskForm):
-    delayNumber = IntegerField(validators=[validators.NumberRange(min=0)])
-    delayUnit = SelectField(u'Unit', choices=[("minutes","minutes"), ("hours","hours"), ("days","days"), ("weeks","weeks"), ("months","months")])
+    expiryTimeNumber = IntegerField(validators=[validators.NumberRange(min=0)])
+    expiryTimeUnit = SelectField(u'Unit', choices=[("minutes","minutes"), ("hours","hours"), ("days","days"), ("weeks","weeks"), ("months","months")])
     appName = StringField('Application Name')
     radarrHost = StringField()
     radarrPort = IntegerField(validators=[validators.Optional()])

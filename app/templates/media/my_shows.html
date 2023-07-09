@@ -1,21 +1,19 @@
 {% extends 'base.html' %}
 {% set active_page = "myshows" %}
 {% block content %}
-    <h1>{% block title %} My Shows {% endblock %}</h1>
+    <h1>{% block title %} My TV Show Picks {% endblock %}</h1>
     <table id="mediaTable" class="table table-hover table-dark">
         <thead>
             <tr>
                 <th scope="col">Title</th>
                 <th class="nosort" scope="col">Abandon</th>
-                <th class="nosort" scope="col">Delete</th>
             </tr>
         </thead>
         <tbody>
-            {% for tvShow in tvShows %}
+            {% for tv_show_pick in tv_show_picks %}
                 <tr>
-                    <td scope="row"><a href="{{ tvShow.tvDbURL }}" target="_blank">{{tvShow.title}}</a></td>
-                    <td><a onclick="changeOwnerShow({{tvShow.id}}, this)" class="btn btn-warning"><i class="bi bi-dash-circle"></i></a></td>
-                    <td><a onclick="deleteShow({{tvShow.id}}, this)" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
+                    <td scope="row"><a href="{{ tv_show_pick.media.tvDbURL }}" target="_blank">{{tv_show_pick.media.title}}</a></td>
+                    <td><a onclick="deletePick({{tv_show_pick.id}}, this)" class="btn btn-warning"><i class="bi bi-dash-circle"></i></a></td>
                 </tr>
             {% endfor %}
         </tbody>

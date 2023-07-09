@@ -6,7 +6,7 @@
         <thead>
             <tr>
                 <th scope="col">Title</th>
-                <th class="nosort" scope="col">Adopt</th>
+                <th class="nosort" scope="col">Pick up</th>
             </tr>
         </thead>
         <tbody>
@@ -16,7 +16,7 @@
                     {% if current_user.is_anonymous %}
                     <td></td>
                     {% else %}
-                    <td><a onclick="changeOwnerShow({{tvShow.id}}, this)" class="btn btn-success"><i class="bi bi-plus-circle"></i></a></td>
+                    <td><a onclick="addPick({{tvShow.id}}, this)" class="btn btn-success"><i class="bi bi-plus-circle"></i></a></td>
                     {% endif %}
                 </tr>
             {% endfor %}

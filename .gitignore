@@ -163,4 +163,5 @@ cython_debug/
 
 #Custom
 config.py
-init_db.py
+migrations/
+populate_db.py
