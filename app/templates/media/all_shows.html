@@ -30,4 +30,37 @@
             {% endfor %}
         </tbody>
     </table>
+
+    <!-- Modal -->
+    <div class="modal fade" id="picksModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="picksTitle">Picks</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="picksBody">
+                    Loading...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function modalPicks(media_id, obj) {
+            var fetchURL = media_id+"/picks_modal"
+            $.ajax(fetchURL, {
+                method: 'GET',
+                dataType: 'html',
+                success: function(data) {
+                    var mediaTitle = obj.parentNode.parentNode.childNodes[1].text
+                    $("#picksTitle").text("Picks for "+mediaTitle)
+                    $("#picksBody").html(data);
+                }
+            });
+        }
+    </script>
 {% endblock %}

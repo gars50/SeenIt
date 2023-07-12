@@ -39,9 +39,9 @@
 	display: flex;
 	justify-content: center;
 	align-items: center;
-  }
-  
-  #spinner::after {
+}
+
+#spinner::after {
 	content: "";
 	width: 80px;
 	height: 80px;
@@ -50,17 +50,17 @@
 	border-radius: 100%;
 	will-change: transform;
 	animation: spin 1s infinite linear
-  }
-  
-  @keyframes spin {
+}
+
+@keyframes spin {
 	from {
-	  transform: rotate(0deg);
+		transform: rotate(0deg);
 	}
 	to {
-	  transform: rotate(360deg);
+		transform: rotate(360deg);
 	}
-  }
+}
 
-  .toast {
-    opacity: 1 !important;
+.toast {
+	opacity: 1 !important;
 }

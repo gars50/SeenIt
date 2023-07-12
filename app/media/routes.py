@@ -57,7 +57,7 @@ def delete_pick(pick_id):
     db.session.delete(pick)
     db.session.commit()
     return{
-        "message" : "Abandonned "+title
+        "message" : "Pick of "+title+" deleted"
     }
 
 @bp.route("/<int:media_id>/delete", methods=['DELETE'])
@@ -71,9 +71,10 @@ def delete_media(media_id):
         "message" : "Deleted "+title
     }
 
-@bp.route("/<int:media_id>/picks_popup", methods=['GET'])
+@bp.route("/<int:media_id>/picks_modal", methods=['GET'])
 @login_required
-def picks_popup(media_id):
+def picks_modal(media_id):
     media = Media.query.get_or_404(media_id)
     picks = Pick.query.filter_by(media=media)
-    return render_template("media/picks_popup.html", picks=picks)
+    content = render_template("media/picks_modal.html", picks=picks)
+    return content
