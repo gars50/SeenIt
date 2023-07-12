@@ -48,6 +48,7 @@
     <script>
         function modalPicks(media_id, obj) {
             var fetchURL = media_id+"/picks_modal"
+            countObj = obj
             $.ajax(fetchURL, {
                 method: 'GET',
                 dataType: 'html',
@@ -59,6 +60,15 @@
             });
         }
         
+        function removeCount(){
+            var num = parseInt(countObj.text)
+            if (num === 1) {
+                countObj.parentNode.innerHTML = "Abandonned"
+            } else {
+                countObj.text = (num - 1)
+            }
+        }
+
         function deletePick1(pick_id, obj) {
             var url = "/media/pick/"+pick_id+"/delete"
             var row = obj.parentNode.parentNode
@@ -80,6 +90,7 @@
                         toastr.success(response.message)
                     })
                     table.deleteRow(rowIndex);
+                    removeCount()
                 } else {
                     response.json()
                     .then(function(response) {

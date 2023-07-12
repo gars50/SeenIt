@@ -6,8 +6,8 @@
         <thead>
             <tr>
                 <th scope="col">Title</th>
-                <th scope="col">Picks</th>
-                <th class="nosort" scope="col">Delete</th>
+                <th scope="col" class="nosort">Picks</th>
+                <th scope="col" class="nosort">Delete</th>
             </tr>
         </thead>
         <tbody>
@@ -15,14 +15,10 @@
                 <tr>
                     <td scope="row"><a href="{{ tvShow.tvDbURL }}" target="_blank">{{tvShow.title}}</a></td>
                     {% if not tvShow.picks %}
-                        <td>{{ tvShow.picks }} Abandonned</td>
+                        <td>Abandonned</td>
                     {% else %}
                         <td>
-                            <span class="picks_popup">
-                                <a href="#">
-                                    {{ tvShow.picks|length }}
-                                </a>
-                            </span>
+                            <a onclick="modalPicks({{ tvShow.id }}, this)" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#picksModal">{{ tvShow.picks|length }}</a>
                         </td>
                     {% endif %}
                     <td><a onclick="deleteMedia({{tvShow.id}}, this)" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
@@ -52,15 +48,59 @@
     <script>
         function modalPicks(media_id, obj) {
             var fetchURL = media_id+"/picks_modal"
+            countObj = obj
             $.ajax(fetchURL, {
                 method: 'GET',
                 dataType: 'html',
                 success: function(data) {
-                    var mediaTitle = obj.parentNode.parentNode.childNodes[1].text
+                    var mediaTitle = obj.parentNode.parentNode.childNodes[1].innerText
                     $("#picksTitle").text("Picks for "+mediaTitle)
                     $("#picksBody").html(data);
                 }
             });
+        }
+        
+        function removeCount(){
+            var num = parseInt(countObj.text)
+            if (num === 1) {
+                countObj.parentNode.innerHTML = "Abandonned"
+            } else {
+                countObj.text = (num - 1)
+            }
+        }
+
+        function deletePick1(pick_id, obj) {
+            var url = "/media/pick/"+pick_id+"/delete"
+            var row = obj.parentNode.parentNode
+            var rowIndex = row.rowIndex
+            var table = row.parentNode.parentNode
+            spinner.removeAttribute('hidden');
+            fetch(url, {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                method : "DELETE",
+                signal: AbortSignal.timeout(5_000)
+            })
+            .then(function (response){
+                spinner.setAttribute('hidden', '');
+                if (response.ok) {
+                    response.json()
+                    .then(function(response) {
+                        toastr.success(response.message)
+                    })
+                    table.deleteRow(rowIndex);
+                    removeCount()
+                } else {
+                    response.json()
+                    .then(function(response) {
+                        toastr.error(response.error)
+                    })
+                }
+            })
+            .catch(function(error) {
+                console.log(error)
+            })
         }
     </script>
 {% endblock %}
