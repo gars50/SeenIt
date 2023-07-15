@@ -14,7 +14,7 @@
             {% for movie in movies %}
                 <tr>
                     <td scope="row"><a href="{{ movie.theMovieDbURL }}" target="_blank">{{movie.title}} ({{movie.releaseDate.strftime('%Y')}})</a></td>
-                    <td></td>
+                    <td scope="row">{{ movie.deletionDate }}</a></td>
                     {% if current_user.is_anonymous %}
                     <td></td>
                     {% else %}

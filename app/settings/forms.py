@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, BooleanField, SubmitField, validators, ValidationError, SelectField, DateTimeField
+from wtforms import StringField, IntegerField, BooleanField, SubmitField, validators, ValidationError, SelectField, DateTimeLocalField
 from app.models import User
 
 
@@ -23,9 +23,9 @@ class AddUserForm(FlaskForm):
 class EditAppSettings(FlaskForm):
     expiryTimeNumber = IntegerField("After how much time should an abandonned media be marked expired", validators=[validators.NumberRange(min=0)])
     expiryTimeUnit = SelectField('Unit', choices=[("minutes","minutes"), ("hours","hours"), ("days","days"), ("weeks","weeks"), ("months","months")])
-    nextDelete = DateTimeField('When should the next check for deletion of expired media be', format='%Y-%m-%d %H:%M:%S')
-    deletionTimeNumber = IntegerField('How often should that be checked', validators=[validators.NumberRange(min=0)])
-    deletionTimeUnit = SelectField('Unit', choices=[("minutes","minutes"), ("hours","hours"), ("days","days"), ("weeks","weeks"), ("months","months")])
+    nextDelete = DateTimeLocalField('When should the next check for deletion of expired media be', format='%Y-%m-%dT%H:%M')
+    deletionTimeNumber = IntegerField('Reoccurs every', validators=[validators.NumberRange(min=0)])
+    deletionTimeUnit = SelectField('Unit', choices=[("hours","hours"), ("days","days"), ("weeks","weeks"), ("months","months")])
     appName = StringField('Application Name')
     radarrHost = StringField()
     radarrPort = IntegerField(validators=[validators.Optional()])

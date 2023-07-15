@@ -6,7 +6,6 @@ class AppSettings(db.Model):
     expiryTimeUnit = db.Column(db.String(50))
     
     nextDelete = db.Column(db.DateTime)
-    deletionInterval = db.Column(db.DateTime)
     deletionTimeNumber = db.Column(db.Integer)
     deletionTimeUnit = db.Column(db.String(50))
 

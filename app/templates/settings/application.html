@@ -23,8 +23,11 @@
                     <h2>Media Deletion</h2>
                     {{ form.nextDelete.label }}<br>
                     {{ form.nextDelete(type='datetime-local') }}<br>
-                    {{ form.deletionTimeNumber.label }}<br>
-                    Every {{ form.deletionTimeNumber }} {{ form.deletionTimeUnit }}<br>
+                    {% for error in form.nextDelete.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                    {% endfor %}
+                    <br>
+                    {{ form.deletionTimeNumber.label }} {{ form.deletionTimeNumber }} {{ form.deletionTimeUnit }}<br>
                     {% for error in form.deletionTimeNumber.errors %}
                         <span style="color: red;">[{{ error }}]</span>
                     {% endfor %}

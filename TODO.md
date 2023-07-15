@@ -5,10 +5,10 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex
 - Configure deletions in Ombi, Sonarr and Radarr. Add safe mode.
     - Monitor if someone is watching before deleting
 - Display the time according to user's time zone (Pick date)
+- Add logging
+- Add jobs to process deletions
 
 ### In Progress
-- Add expiry date / auto-deletion
-- Add popup on picks for admins
 - Add time Javascript (moments)
 
 ### Completed
@@ -19,9 +19,12 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex
     - Find a way to load app_settings with a unique ID for Plex
 - Add adoption/requested date
 - Users now have "picks", which allows multiple users per media
+- Add popup on picks for admins, admins can delete picks.
+- Add expiry date on media, and calculate its deletion date
 
 ### Possible Ameliorations
 - Add webhook in Tautulli and POST in SeenIt to add pick to media when they start watching something
     - Add Tautulli app information in settings
     - Add possibility to configure the notification agent in Tautulli from the app
 - Add Picks by seasons to allow deletion of a few season at a time.
+- Allow admins and users to add picks manually? Is it needed?

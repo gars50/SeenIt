@@ -1,11 +1,11 @@
 from flask import render_template, flash, redirect, request, url_for, jsonify
 from datetime import datetime
+from app import db
 from app.settings import bp
 from app.models import User, AppSettings, Media, Movie, TVShow, Pick
 from app.settings.forms import EditUserForm, AddUserForm, EditAppSettings
 from flask_login import login_required
 from app.scripts.media import import_all_requests
-from app import db
 
 @bp.route('/application', methods=['GET', 'POST'])
 @login_required
@@ -47,6 +47,8 @@ def application():
         form.ombiHost.data = app_settings.ombiHost
         form.ombiPort.data = app_settings.ombiPort
         form.ombiApiKey.data = app_settings.ombiApiKey
+    else :
+        flash('Error saving settings. Check error messages', "error")
     return render_template('settings/application.html', form=form)
 
 @bp.route('/users')

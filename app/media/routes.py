@@ -1,10 +1,32 @@
+import math
 from app.media import bp
 from app import db
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 from flask_login import login_required, current_user
 from flask import render_template
 from app.scripts.media import check_pick_creation
-from app.models import Media, Movie, TVShow, Pick
+from app.models import Media, Movie, TVShow, Pick, AppSettings
+
+def check_if_abandonned(media):
+    #If this was the last pick that was just deleted, we need to set the expiryDate and deletionDate
+    if (not media.picks):
+        app_settings = AppSettings.query.first()
+        media.expiryDate = datetime.utcnow() + relativedelta(**{app_settings.expiryTimeUnit: app_settings.expiryTimeNumber})
+        
+        delete_time = app_settings.nextDelete
+        if (delete_time < media.expiryDate):
+            #Find the next deletion date that lands after the expiration date
+            deletion_delta = relativedelta(**{app_settings.deletionTimeUnit: app_settings.deletionTimeNumber})
+            while delete_time < media.expiryDate:
+                delete_time += deletion_delta
+            #There should be a faster way to calculate this, but I do not know it
+            #It shouldn't have a big impact anyway.
+            #This method does not work because division of relativedelta is not doable.
+            #deltaMulti = math.ceil(relativedelta(media.expiryDate, delete_time)/deletion_delta)
+            #delete_time = deltaMulti * deletion_delta
+        media.deletionDate = delete_time
+        db.session.commit()
 
 @bp.route("/abandonned_movies")
 def abandonned_movies():
@@ -53,11 +75,12 @@ def add_pick(media_id):
 @login_required
 def delete_pick(pick_id):
     pick = Pick.query.get_or_404(pick_id)
-    title = pick.media.title
+    media = pick.media
     db.session.delete(pick)
     db.session.commit()
+    check_if_abandonned(media)
     return{
-        "message" : "Pick of "+title+" deleted"
+        "message" : "Pick of "+media.title+" deleted"
     }
 
 @bp.route("/<int:media_id>/delete", methods=['DELETE'])
