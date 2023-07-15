@@ -6,6 +6,7 @@
         <thead>
             <tr>
                 <th scope="col">Title</th>
+                <th scope="col">Deletion Date</th>
                 <th scope="col" class="nosort">Picks</th>
                 <th scope="col" class="nosort">Delete</th>
             </tr>
@@ -14,6 +15,11 @@
             {% for movie in movies %}
                 <tr>
                     <td scope="row"><a href="{{ movie.theMovieDbURL }}" target="_blank">{{movie.title}} ({{movie.releaseDate.strftime('%Y')}})</a></td>
+                    {% if movie.deletionDate %}
+                        <td scope="row" data-sort="{{ movie.deletionDate }}">{{ moment(movie.deletionDate).format('LLL') }}</a></td>
+                    {% else %}
+                        <td scope="row"></td>
+                    {% endif %}
                     {% if not movie.picks %}
                         <td>Abandonned</td>
                     {% else %}

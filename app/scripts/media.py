@@ -40,6 +40,8 @@ def check_pick_creation(media, requester, pickDate, pickMethod):
     if not pick:
         new_pick = Pick(media=media, user=requester, pick_date=pickDate, pick_method=pickMethod)
         db.session.add(new_pick)
+        media.deletionDate = None
+        media.expiryDate = None
         db.session.commit()
         addedToDB= True
     return Pick.query.filter_by(media=media, user=requester).first(), addedToDB

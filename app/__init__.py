@@ -1,6 +1,6 @@
 from flask import Flask
 from config import Config
-from app.extensions import db, login, migrate, mail
+from app.extensions import db, login, migrate, mail, moment
 from app.setup import setup_app
 
 
@@ -13,6 +13,7 @@ def create_app(config_class=Config):
     login.init_app(app)
     migrate.init_app(app,db)
     mail.init_app(app)
+    moment.init_app(app)
 
     # Register blueprints here
     from app.main import bp as main_bp

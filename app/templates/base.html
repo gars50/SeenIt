@@ -21,6 +21,7 @@
         <script src="{{ url_for('static', filename='DataTables/datatables.bootstrap5.min.js') }}"></script>
         <script src="{{ url_for('static', filename='toastr/toastr.min.js') }}"></script>
         <script src="{{ url_for('static', filename='custom.js') }}"></script>
+        {{ moment.include_moment() }}
 
         <title>{% block title %}{% endblock %}</title>
     </head>

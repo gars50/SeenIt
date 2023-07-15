@@ -6,6 +6,7 @@
         <thead>
             <tr>
                 <th scope="col">Title</th>
+                <th scope="col">Deletion Date</th>
                 <th scope="col" class="nosort">Picks</th>
                 <th scope="col" class="nosort">Delete</th>
             </tr>
@@ -14,6 +15,11 @@
             {% for tvShow in tvShows %}
                 <tr>
                     <td scope="row"><a href="{{ tvShow.tvDbURL }}" target="_blank">{{tvShow.title}}</a></td>
+                    {% if tvShow.deletionDate %}
+                        <td scope="row" data-sort="{{ tvShow.deletionDate }}">{{ moment(tvShow.deletionDate).format('LLL') }}</a></td>
+                    {% else %}
+                        <td scope="row"></td>
+                    {% endif %}
                     {% if not tvShow.picks %}
                         <td>Abandonned</td>
                     {% else %}

@@ -6,15 +6,15 @@
         <thead>
             <tr>
                 <th scope="col">Title</th>
-                <th>Deletion Date</th>
-                <th class="nosort" scope="col">Pick up</th>
+                <th scope="col">Deletion Date</th>
+                <th scope="col" class="nosort">Pick up</th>
             </tr>
         </thead>
         <tbody>
             {% for tvShow in tvShows %}
                 <tr>
                     <td scope="row"><a href="{{ tvShow.tvDbURL }}" target="_blank">{{ tvShow.title }}</a></td>
-                    <td scope="row">{{ tvShow.deletionDate }}</a></td>
+                    <td scope="row" data-sort="{{ tvShow.deletionDate }}">{{ moment(tvShow.deletionDate).format('LLL') }}</a></td>
                     {% if current_user.is_anonymous %}
                     <td></td>
                     {% else %}

@@ -4,12 +4,13 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex
 ### Planned
 - Configure deletions in Ombi, Sonarr and Radarr. Add safe mode.
     - Monitor if someone is watching before deleting
-- Display the time according to user's time zone (Pick date)
 - Add logging
-- Add jobs to process deletions
+- Implement APScheduler / BackgroundScheduler
+    - Add jobs to process deletions
+    - Add job to automatically import from Ombi
 
 ### In Progress
-- Add time Javascript (moments)
+
 
 ### Completed
 - Add a search option in medias
@@ -21,6 +22,8 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex
 - Users now have "picks", which allows multiple users per media
 - Add popup on picks for admins, admins can delete picks.
 - Add expiry date on media, and calculate its deletion date
+- Display the time according to user's time zone (Pick date)
+    - Add time Javascript (moments)
 
 ### Possible Ameliorations
 - Add webhook in Tautulli and POST in SeenIt to add pick to media when they start watching something

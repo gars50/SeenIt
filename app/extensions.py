@@ -2,10 +2,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_mail import Mail
+from flask_moment import Moment
 
 db = SQLAlchemy()
 migrate = Migrate()
 mail = Mail()
+moment = Moment()
 
 login = LoginManager()
 login.login_view = 'auth.login_choice'
