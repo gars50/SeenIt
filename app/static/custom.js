@@ -1,4 +1,4 @@
-function fetchToastRemoveRow(url, obj, type) {
+function fetchToastRemoveRowMediaTable(url, obj, type) {
     var row = obj.parentNode.parentNode
     var table = $('#mediaTable').DataTable();
     spinner.removeAttribute('hidden');
@@ -29,19 +29,56 @@ function fetchToastRemoveRow(url, obj, type) {
     })
 }
 
+function fetchToastRemoveRowTable(url, obj, type) {
+    var row = obj.parentNode.parentNode
+    var rowIndex = row.rowIndex
+    var table = row.parentNode.parentNode
+    spinner.removeAttribute('hidden');
+    fetch(url, {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        method : type,
+        signal: AbortSignal.timeout(5_000)
+    })
+    .then(function (response){
+        spinner.setAttribute('hidden', '');
+        if (response.ok) {
+            response.json()
+            .then(function(response) {
+                toastr.success(response.message)
+            })
+            table.deleteRow(rowIndex);
+        } else {
+            response.json()
+            .then(function(response) {
+                toastr.error(response.error)
+            })
+        }
+    })
+    .catch(function(error) {
+        console.log(error)
+    })
+}
+
+function deletePickModal(pick_id, obj) {
+    var fetchURL = "/media/pick/"+pick_id+"/delete"
+    fetchToastRemoveRowTable(fetchURL, obj, 'DELETE')
+}
+
 function addPick(media_id, obj) {
     var fetchURL = "/media/"+media_id+"/add_pick"
-    fetchToastRemoveRow(fetchURL, obj, 'POST')
+    fetchToastRemoveRowMediaTable(fetchURL, obj, 'POST')
 }
 
 function deletePick(pick_id, obj) {
     var fetchURL = "/media/pick/"+pick_id+"/delete"
-    fetchToastRemoveRow(fetchURL, obj, 'DELETE')
+    fetchToastRemoveRowMediaTable(fetchURL, obj, 'DELETE')
 }
 
 function deleteMedia(media_id, obj) {
     var fetchURL = "/media/"+media_id+"/delete"
-    fetchToastRemoveRow(fetchURL, obj, 'DELETE')
+    fetchToastRemoveRowMediaTable(fetchURL, obj, 'DELETE')
 }
 
 $(document).ready(function () {

@@ -31,7 +31,7 @@
     <script>
         function deleteUser(user_id, obj) {
             var fetchURL = "/settings/user/"+user_id+"/delete"
-            fetchToastRemoveRow(fetchURL, obj, 'DELETE')
+            fetchToastRemoveRowTable(fetchURL, obj, 'DELETE')
         }
     </script>
 {% endblock %}

@@ -15,7 +15,7 @@
             {% for pick in movie_picks %}
                 <tr>
                     <td scope="row"><a href="{{ pick.media.theMovieDbURL }}" target="_blank">{{pick.media.title}} ({{pick.media.releaseDate.strftime('%Y')}})</a></td>
-                    <td>{{ pick.pick_date }}</td>
+                    <td>{{ moment(pick.pick_date).format('LLL') }}</td>
                     <td>{{ pick.pick_method }}</td>
                     <td><a onclick="deletePick({{pick.id}}, this)" class="btn btn-warning"><i class="bi bi-dash-circle"></i></a></td>
                 </tr>

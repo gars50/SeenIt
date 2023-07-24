@@ -8,9 +8,10 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex
 - Implement APScheduler / BackgroundScheduler
     - Add jobs to process deletions
     - Add job to automatically import from Ombi
+- Tabbed settings
 
 ### In Progress
-
+- Implement APScheduler / BackgroundScheduler
 
 ### Completed
 - Add a search option in medias

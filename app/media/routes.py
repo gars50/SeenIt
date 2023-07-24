@@ -1,4 +1,3 @@
-import math
 from app.media import bp
 from app import db
 from datetime import datetime

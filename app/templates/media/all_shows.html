@@ -35,7 +35,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="picksModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="picksTitle">Picks</h1>
@@ -54,7 +54,6 @@
     <script>
         function modalPicks(media_id, obj) {
             var fetchURL = media_id+"/picks_modal"
-            countObj = obj
             $.ajax(fetchURL, {
                 method: 'GET',
                 dataType: 'html',
@@ -64,49 +63,6 @@
                     $("#picksBody").html(data);
                 }
             });
-        }
-        
-        function removeCount(){
-            var num = parseInt(countObj.text)
-            if (num === 1) {
-                countObj.parentNode.innerHTML = "Abandonned"
-            } else {
-                countObj.text = (num - 1)
-            }
-        }
-
-        function deletePick1(pick_id, obj) {
-            var url = "/media/pick/"+pick_id+"/delete"
-            var row = obj.parentNode.parentNode
-            var rowIndex = row.rowIndex
-            var table = row.parentNode.parentNode
-            spinner.removeAttribute('hidden');
-            fetch(url, {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                method : "DELETE",
-                signal: AbortSignal.timeout(5_000)
-            })
-            .then(function (response){
-                spinner.setAttribute('hidden', '');
-                if (response.ok) {
-                    response.json()
-                    .then(function(response) {
-                        toastr.success(response.message)
-                    })
-                    table.deleteRow(rowIndex);
-                    removeCount()
-                } else {
-                    response.json()
-                    .then(function(response) {
-                        toastr.error(response.error)
-                    })
-                }
-            })
-            .catch(function(error) {
-                console.log(error)
-            })
         }
     </script>
 {% endblock %}

@@ -4,7 +4,7 @@
             <th scope="col">User</th>
             <th>Pick date</th>
             <th>Pick method</th>
-            <th class="nosort" scope="col">Delete</th>
+            <th>Delete</th>
         </tr>
     </thead>
     <tbody>
@@ -13,7 +13,7 @@
                 <td scope="row">{{ pick.user.alias }}</td>
                 <td>{{ pick.pick_date }}</td>
                 <td>{{ pick.pick_method }}</td>
-                <td><a onclick="deletePick1({{pick.id}}, this)" class="btn btn-warning">Delete</a></td>
+                <td><a onclick="deletePickModal({{pick.id}}, this)" class="btn btn-warning">Delete</a></td>
             </tr>
         {% endfor %}
     </tbody>
