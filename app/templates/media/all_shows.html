@@ -7,6 +7,7 @@
             <tr>
                 <th scope="col">Title</th>
                 <th scope="col">Deletion Date</th>
+                <th scope="col">Size</th>
                 <th scope="col" class="nosort">Picks</th>
                 <th scope="col" class="nosort">Delete</th>
             </tr>
@@ -20,6 +21,7 @@
                     {% else %}
                         <td scope="row"></td>
                     {% endif %}
+                    <td data-sort="{{ tv_show.total_size }}">{{ tv_show.total_size | filesizeformat  }}</td>
                     {% if not tv_show.picks %}
                         <td>Abandonned</td>
                     {% else %}

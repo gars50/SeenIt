@@ -7,6 +7,7 @@
             <tr>
                 <th scope="col">Title</th>
                 <th scope="col">Deletion Date</th>
+                <th scope="col">Size</th>
                 <th scope="col" class="nosort">Pick up</th>
             </tr>
         </thead>
@@ -15,6 +16,7 @@
                 <tr>
                     <td scope="row"><a href="{{ tv_show.theTVDB_url }}" target="_blank">{{ tv_show.title }}</a></td>
                     <td scope="row" data-sort="{{ tv_show.deletion_date }}">{{ moment(tv_show.deletion_date).format('LLL') }}</a></td>
+                    <td data-sort="{{ tv_show.total_size }}">{{ tv_show.total_size | filesizeformat  }}</td>
                     {% if current_user.is_anonymous %}
                     <td></td>
                     {% else %}

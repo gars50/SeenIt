@@ -8,6 +8,7 @@
                 <th scope="col">Title</th>
                 <th>Pick date</th>
                 <th>Pick method</th>
+                <th>Size</th>
                 <th class="nosort" scope="col">Abandon</th>
             </tr>
         </thead>
@@ -17,6 +18,7 @@
                     <td scope="row"><a href="{{ pick.media.theTVDB_url }}" target="_blank">{{pick.media.title}}</a></td>
                     <td>{{ moment(pick.pick_date).format('LLL') }}</td>
                     <td>{{ pick.pick_method }}</td>
+                    <td data-sort="{{ pick.media.total_size }}">{{ pick.media.total_size | filesizeformat  }}</td>
                     <td><a onclick="deletePick({{pick.id}}, this)" class="btn btn-warning"><i class="bi bi-dash-circle"></i></a></td>
                 </tr>
             {% endfor %}

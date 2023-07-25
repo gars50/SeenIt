@@ -23,7 +23,7 @@ def check_movie_creation(title, TMDB_id, TMDB_url, release_date, ombi_id):
         added_to_db= True
     return Movie.query.filter_by(TMDB_id=TMDB_id).first(), added_to_db
 
-def check_tvShow_creation(title, theTVDB_id, theTVDB_url, ombi_id):
+def check_tv_show_creation(title, theTVDB_id, theTVDB_url, ombi_id):
     added_to_db = False
     show = TVShow.query.filter_by(theTVDB_id=theTVDB_id).first()
     if not show:
@@ -107,6 +107,15 @@ def import_all_requests():
 
         requester, added_user = check_user_creation(requester_email, requester_alias)
         movie, added_movie = check_movie_creation(title, TMDB_id, TMDB_url, release_date_mod, ombi_id)
+        if added_movie:
+            radarr_response = requests.get(radarr_base_url+"/api/v3/movie?tmdbid="+str(TMDB_id), headers=radarr_headers)
+            radarr_infos = radarr_response.json()
+            if radarr_infos:
+                movie.radarr_id = radarr_infos[0]["id"]
+                movie.total_size = radarr_infos[0]["sizeOnDisk"]
+            else:
+                movie.total_size = 0
+            db.session.commit()
         moviePick, added_movie_pick = check_pick_creation(movie, requester, pick_date_mod, "Ombi Request")
 
         if added_user:added_users+=1
@@ -130,8 +139,17 @@ def import_all_requests():
         pick_date_mod = datetime.strptime(pick_date.replace("T", " "), "%Y-%m-%d %H:%M:%S.%f")
 
         requester, added_user = check_user_creation(requester_email, requester_alias)
-        tvShow, added_tv_show = check_tvShow_creation(title, theTVDB_id, theTVDB_url, ombi_id)
-        tvShowPick, added_tv_show_pick = check_pick_creation(tvShow, requester, pick_date_mod, "Ombi Request")
+        tv_show, added_tv_show = check_tv_show_creation(title, theTVDB_id, theTVDB_url, ombi_id)
+        if added_tv_show:
+            sonarr_response = requests.get(sonarr_base_url+"/api/v3/series?tvdbId="+str(theTVDB_id), headers=sonarr_headers)
+            sonarr_infos = sonarr_response.json()
+            if sonarr_infos:
+                tv_show.sonarr_id = sonarr_infos[0]["id"]
+                tv_show.total_size = sonarr_infos[0]["statistics"]["sizeOnDisk"]
+            else:
+                tv_show.total_size = 0
+            db.session.commit()
+        tv_show_pick, added_tv_show_pick = check_pick_creation(tv_show, requester, pick_date_mod, "Ombi Request")
 
         if added_user:added_users+=1
         if added_tv_show:added_tv_shows+=1
