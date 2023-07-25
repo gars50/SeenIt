@@ -110,8 +110,8 @@ def plex_login():
         "accept": "application/json"
     }
     data = {
-        "X-Plex-Product": app_settings.appName,
-        "X-Plex-Client-Identifier": app_settings.plexClientID,
+        "X-Plex-Product": app_settings.app_name,
+        "X-Plex-Client-Identifier": app_settings.plex_client_id,
         "strong": "true"
     }
     try:
@@ -127,14 +127,14 @@ def plex_login():
     session['plex_oauth_id'] = id
     session['plex_oauth_code'] = code
     params = {
-        "clientID": app_settings.plexClientID,
+        "clientID": app_settings.plex_client_id,
         "code": code,
         "forwardUrl": call_back_url,
-        "context%5Bdevice%5D%5Bproduct%5D": app_settings.appName
+        "context%5Bdevice%5D%5Bproduct%5D": app_settings.app_name
     }
-    paramsUrl = urllib.parse.urlencode(params, quote_via=urllib.parse.quote)
-    fullPlexUrl = "https://app.plex.tv/auth/#?"+paramsUrl
-    return redirect(fullPlexUrl)
+    params_url = urllib.parse.urlencode(params, quote_via=urllib.parse.quote)
+    full_plex_url = "https://app.plex.tv/auth/#?"+params_url
+    return redirect(full_plex_url)
 
 @bp.route('/plex_callback')
 def plex_callback():
@@ -145,31 +145,31 @@ def plex_callback():
         return redirect(url_for('auth.login_choice'))
     
     #Verify if the PIN has been claimed
-    verifyPinUrl = "https://plex.tv/api/v2/pins/"+str(session['plex_oauth_id'])
+    verify_pin_url = "https://plex.tv/api/v2/pins/"+str(session['plex_oauth_id'])
     headers = {
         "accept": "application/json"
     }
     data = {
-        "X-Plex-Client-Identifier": app_settings.plexClientID,
+        "X-Plex-Client-Identifier": app_settings.plex_client_id,
         "X-Plex-Token": session['plex_oauth_code']
     }
-    response = requests.get(verifyPinUrl, headers=headers, data=data)
+    response = requests.get(verify_pin_url, headers=headers, data=data)
     plex_auth_token = response.json().get('authToken')
     if not plex_auth_token:
         flash('Login to Plex failed', "error")
         return redirect(url_for('auth.login_choice'))
     
     #If it was successfully claimed, we verify the user's email
-    verifyUserUrl = "https://plex.tv/api/v2/user"
+    verify_user_url = "https://plex.tv/api/v2/user"
     headers = {
         "accept": "application/json"
     }
     data = {
-        "X-Plex-Product": app_settings.appName,
-        "X-Plex-Client-Identifier": app_settings.plexClientID,
+        "X-Plex-Product": app_settings.app_name,
+        "X-Plex-Client-Identifier": app_settings.plex_client_id,
         "X-Plex-Token": plex_auth_token
     }
-    response = requests.get(verifyUserUrl, headers=headers, data=data)
+    response = requests.get(verify_user_url, headers=headers, data=data)
     user_email = response.json().get('email')
 
     user = User.query.filter_by(email=user_email).first()

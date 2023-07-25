@@ -9,7 +9,7 @@ def first_run_setup():
     app_settings = AppSettings.query.first()
     if not app_settings:
         plex_id = os.urandom(24).hex()
-        app_settings = AppSettings(expiryTimeNumber=0, lastMediaImport = datetime.min, plexClientID = plex_id, appName = "SeenIt")
+        app_settings = AppSettings(expiry_time_number=0, last_media_import = datetime.min, plex_client_id = plex_id, app_name = "SeenIt")
         db.session.add(app_settings)
         db.session.commit()
     

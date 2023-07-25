@@ -13,40 +13,40 @@ def application():
     app_settings = AppSettings.query.first()
     form = EditAppSettings()
     if form.validate_on_submit():
-        app_settings.expiryTimeNumber = form.expiryTimeNumber.data
-        app_settings.expiryTimeUnit = form.expiryTimeUnit.data
-        app_settings.nextDelete = form.nextDelete.data
-        app_settings.deletionTimeNumber = form.deletionTimeNumber.data
-        app_settings.deletionTimeUnit = form.deletionTimeUnit.data
-        app_settings.appName = form.appName.data
-        app_settings.radarrHost = form.radarrHost.data
-        app_settings.radarrPort = form.radarrPort.data
-        app_settings.radarrApiKey = form.radarrApiKey.data
-        app_settings.sonarrHost = form.sonarrHost.data
-        app_settings.sonarrPort = form.sonarrPort.data
-        app_settings.sonarrApiKey = form.sonarrApiKey.data
-        app_settings.ombiHost = form.ombiHost.data
-        app_settings.ombiPort = form.ombiPort.data
-        app_settings.ombiApiKey = form.ombiApiKey.data
+        app_settings.expiry_time_number = form.expiry_time_number.data
+        app_settings.expiry_time_unit = form.expiry_time_unit.data
+        app_settings.next_delete = form.next_delete.data
+        app_settings.deletion_time_number = form.deletion_time_number.data
+        app_settings.deletion_time_unit = form.deletion_time_unit.data
+        app_settings.app_name = form.app_name.data
+        app_settings.radarr_host = form.radarr_host.data
+        app_settings.radarr_port = form.radarr_port.data
+        app_settings.radarr_api_key = form.radarr_api_key.data
+        app_settings.sonarr_host = form.sonarr_host.data
+        app_settings.sonarr_port = form.sonarr_port.data
+        app_settings.sonarr_api_key = form.sonarr_api_key.data
+        app_settings.ombi_host = form.ombi_host.data
+        app_settings.ombi_port = form.ombi_port.data
+        app_settings.ombi_api_key = form.ombi_api_key.data
         db.session.commit()
         flash('Your changes have been saved.', "success")
         return redirect(url_for('settings.application'))
     elif request.method == 'GET':
-        form.expiryTimeNumber.data = app_settings.expiryTimeNumber
-        form.expiryTimeUnit.data = app_settings.expiryTimeUnit
-        form.nextDelete.data = app_settings.nextDelete
-        form.deletionTimeNumber.data = app_settings.deletionTimeNumber
-        form.deletionTimeUnit.data = app_settings.deletionTimeUnit
-        form.appName.data = app_settings.appName
-        form.radarrHost.data = app_settings.radarrHost
-        form.radarrPort.data = app_settings.radarrPort
-        form.radarrApiKey.data = app_settings.radarrApiKey
-        form.sonarrHost.data = app_settings.sonarrHost
-        form.sonarrPort.data = app_settings.sonarrPort
-        form.sonarrApiKey.data = app_settings.sonarrApiKey
-        form.ombiHost.data = app_settings.ombiHost
-        form.ombiPort.data = app_settings.ombiPort
-        form.ombiApiKey.data = app_settings.ombiApiKey
+        form.expiry_time_number.data = app_settings.expiry_time_number
+        form.expiry_time_unit.data = app_settings.expiry_time_unit
+        form.next_delete.data = app_settings.next_delete
+        form.deletion_time_number.data = app_settings.deletion_time_number
+        form.deletion_time_unit.data = app_settings.deletion_time_unit
+        form.app_name.data = app_settings.app_name
+        form.radarr_host.data = app_settings.radarr_host
+        form.radarr_port.data = app_settings.radarr_port
+        form.radarr_api_key.data = app_settings.radarr_api_key
+        form.sonarr_host.data = app_settings.sonarr_host
+        form.sonarr_port.data = app_settings.sonarr_port
+        form.sonarr_api_key.data = app_settings.sonarr_api_key
+        form.ombi_host.data = app_settings.ombi_host
+        form.ombi_port.data = app_settings.ombi_port
+        form.ombi_api_key.data = app_settings.ombi_api_key
     else :
         flash('Error saving settings. Check error messages', "error")
     return render_template('settings/application.html', form=form)
@@ -64,8 +64,8 @@ def user(user_id):
     form = EditUserForm()
     if form.validate_on_submit():
         #If this user is the last admin and the user unchecks admin, we deny it.
-        lastAdmin = db.one_or_404(db.select(User).filter_by(admin=True))
-        if ((user == lastAdmin) and (not form.admin.data)):
+        last_admin = db.one_or_404(db.select(User).filter_by(admin=True))
+        if ((user == last_admin) and (not form.admin.data)):
             flash('Cannot disable the last administrator', "error")
         else:
             user.alias = form.alias.data
@@ -109,26 +109,26 @@ def add_user():
 @login_required
 def import_requests():
     try:
-        scriptResult = import_all_requests()
+        script_result = import_all_requests()
     except Exception as err:
         return jsonify(error=str(err)), 500
 
     app_settings = AppSettings.query.first()
-    app_settings.lastMediaImport = datetime.utcnow()
+    app_settings.last_media_import = datetime.utcnow()
     db.session.commit()
     return {
-        'message' : scriptResult
+        'message' : script_result
     }
 
 @bp.route('/delete_medias', methods=['DELETE'])
 @login_required
 def delete_medias():
-    numMovies = Movie.query.delete()
-    numTVShows = TVShow.query.delete()
+    num_movies = Movie.query.delete()
+    num_tv_shows = TVShow.query.delete()
     Media.query.delete()
     db.session.commit()
     return {
-        'message' : "Deleted "+str(numMovies)+" movies and "+str(numTVShows)+" TV shows"
+        'message' : "Deleted "+str(num_movies)+" movies and "+str(num_tv_shows)+" TV shows"
     }
 
 @bp.route('/delete_picks', methods=['DELETE'])

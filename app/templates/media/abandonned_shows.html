@@ -11,14 +11,14 @@
             </tr>
         </thead>
         <tbody>
-            {% for tvShow in tvShows %}
+            {% for tv_show in tv_shows %}
                 <tr>
-                    <td scope="row"><a href="{{ tvShow.tvDbURL }}" target="_blank">{{ tvShow.title }}</a></td>
-                    <td scope="row" data-sort="{{ tvShow.deletionDate }}">{{ moment(tvShow.deletionDate).format('LLL') }}</a></td>
+                    <td scope="row"><a href="{{ tv_show.theTVDB_url }}" target="_blank">{{ tv_show.title }}</a></td>
+                    <td scope="row" data-sort="{{ tv_show.deletion_date }}">{{ moment(tv_show.deletion_date).format('LLL') }}</a></td>
                     {% if current_user.is_anonymous %}
                     <td></td>
                     {% else %}
-                    <td><a onclick="addPick({{tvShow.id}}, this)" class="btn btn-success"><i class="bi bi-plus-circle"></i></a></td>
+                    <td><a onclick="addPick({{tv_show.id}}, this)" class="btn btn-success"><i class="bi bi-plus-circle"></i></a></td>
                     {% endif %}
                 </tr>
             {% endfor %}

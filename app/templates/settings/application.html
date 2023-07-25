@@ -7,28 +7,28 @@
         <div class="container">
             {{ form.hidden_tag() }}
 
-            {{ form.appName.label }}<br>
-            {{ form.appName(size=32) }}
+            {{ form.app_name.label }}<br>
+            {{ form.app_name(size=32) }}
             <hr>
             <div class="row row-cols-auto">
                 <div class="column">
                     <h2>Media Expiry</h2>
-                    {{ form.expiryTimeNumber.label }}<br>
-                    {{ form.expiryTimeNumber }}  {{ form.expiryTimeUnit }}<br>
-                    {% for error in form.expiryTimeNumber.errors %}
+                    {{ form.expiry_time_number.label }}<br>
+                    {{ form.expiry_time_number }}  {{ form.expiry_time_unit }}<br>
+                    {% for error in form.expiry_time_number.errors %}
                         <span style="color: red;">[{{ error }}]</span>
                     {% endfor %}
                 </div>
                 <div class="column">
                     <h2>Media Deletion</h2>
-                    {{ form.nextDelete.label }}<br>
-                    {{ form.nextDelete(type='datetime-local') }}<br>
-                    {% for error in form.nextDelete.errors %}
+                    {{ form.next_delete.label }}<br>
+                    {{ form.next_delete(type='datetime-local') }}<br>
+                    {% for error in form.next_delete.errors %}
                         <span style="color: red;">[{{ error }}]</span>
                     {% endfor %}
                     <br>
-                    {{ form.deletionTimeNumber.label }} {{ form.deletionTimeNumber }} {{ form.deletionTimeUnit }}<br>
-                    {% for error in form.deletionTimeNumber.errors %}
+                    {{ form.deletion_time_number.label }} {{ form.deletion_time_number }} {{ form.deletion_time_unit }}<br>
+                    {% for error in form.deletion_time_number.errors %}
                         <span style="color: red;">[{{ error }}]</span>
                     {% endfor %}
                 </div>
@@ -48,27 +48,27 @@
                 <tbody>
                     <tr>
                         <th scope="row">Radarr</th>
-                        <td> {{ form.radarrHost }} </td>
-                        <td> {{ form.radarrPort }} </td>
-                        <td> {{ form.radarrApiKey(size=35) }} </td>
+                        <td> {{ form.radarr_host }} </td>
+                        <td> {{ form.radarr_port }} </td>
+                        <td> {{ form.radarr_api_key(size=35) }} </td>
                         <td><a onclick="testRadarr()" class="btn btn-info">Test</a></td>
                     </tr>
                 </tbody>
                 <tbody>
                     <tr>
                         <th scope="row">Sonarr</th>
-                        <td> {{ form.sonarrHost }} </td>
-                        <td> {{ form.sonarrPort }} </td>
-                        <td> {{ form.sonarrApiKey(size=35) }} </td>
+                        <td> {{ form.sonarr_host }} </td>
+                        <td> {{ form.sonarr_port }} </td>
+                        <td> {{ form.sonarr_api_key(size=35) }} </td>
                         <td><a onclick="testSonarr()" class="btn btn-info">Test</a></td>
                     </tr>
                 </tbody>
                 <tbody>
                     <tr>
                         <th scope="row">Ombi</th>
-                        <td> {{ form.ombiHost }} </td>
-                        <td> {{ form.ombiPort }} </td>
-                        <td> {{ form.ombiApiKey(size=35) }} </td>
+                        <td> {{ form.ombi_host }} </td>
+                        <td> {{ form.ombi_port }} </td>
+                        <td> {{ form.ombi_api_key(size=35) }} </td>
                         <td><a onclick="testOmbi()" class="btn btn-info">Test</a></td>
                     </tr>
                 </tbody>
@@ -84,11 +84,11 @@
     <a onclick="deleteUsers()" class="btn btn-danger">Delete users</a>
     <script>
         async function testRadarr() {
-            radarrURL = "http://"+document.getElementById('radarrHost').value+":"+document.getElementById('radarrPort').value+"/api/v3/system/status"
+            radarr_url = "http://"+document.getElementById('radarr_host').value+":"+document.getElementById('radarr_port').value+"/api/v3/system/status"
             try{
-                response = await fetch(radarrURL, {
+                response = await fetch(radarr_url, {
                     headers: {
-                        "X-Api-Key": document.getElementById('radarrApiKey').value
+                        "X-Api-Key": document.getElementById('radarr_api_key').value
                     },
                     signal: AbortSignal.timeout(5_000)
                 })
@@ -103,11 +103,11 @@
         }
 
         async function testSonarr() {
-            sonarrURL = "http://"+document.getElementById('sonarrHost').value+":"+document.getElementById('sonarrPort').value+"/api/v3/system/status"
+            sonarr_url = "http://"+document.getElementById('sonarr_host').value+":"+document.getElementById('sonarr_port').value+"/api/v3/system/status"
             try{
-                response = await fetch(sonarrURL, {
+                response = await fetch(sonarr_url, {
                     headers: {
-                        "X-Api-Key": document.getElementById('sonarrApiKey').value
+                        "X-Api-Key": document.getElementById('sonarr_api_key').value
                     },
                     signal: AbortSignal.timeout(5_000)
                 })
@@ -122,11 +122,11 @@
         }
 
         async function testOmbi() {
-            ombiURL = "http://"+document.getElementById('ombiHost').value+":"+document.getElementById('ombiPort').value+"/api/v1/Status"
+            ombi_url = "http://"+document.getElementById('ombi_host').value+":"+document.getElementById('ombi_port').value+"/api/v1/Status"
             try{
-                response = await fetch(ombiURL, {
+                response = await fetch(ombi_url, {
                     headers: {
-                        ApiKey: document.getElementById('ombiApiKey').value
+                        ApiKey: document.getElementById('ombi_api_key').value
                     },
                     signal: AbortSignal.timeout(5_000)
                 })

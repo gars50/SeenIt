@@ -5,10 +5,10 @@ class Media(db.Model):
     type = db.Column(db.String(50))
     title = db.Column(db.String(100), nullable = False)
 
-    ombiID = db.Column(db.Integer, nullable = False)
-    totalSize = db.Column(db.Integer)
-    expiryDate = db.Column(db.DateTime)
-    deletionDate = db.Column(db.DateTime)
+    ombi_id = db.Column(db.Integer, nullable = False)
+    total_size = db.Column(db.Integer)
+    expiry_date = db.Column(db.DateTime)
+    deletion_date = db.Column(db.DateTime)
 
     picks = db.relationship('Pick', back_populates='media', cascade='all, delete')
 
@@ -19,10 +19,10 @@ class Media(db.Model):
 
 class Movie(Media):
     id = db.Column(db.Integer, db.ForeignKey('media.id'), primary_key=True)
-    releaseDate = db.Column(db.DateTime, nullable=False)
-    theMovieDbID = db.Column(db.Integer, nullable=False, unique=True)
-    theMovieDbURL = db.Column(db.String(100))
-    radarrID = db.Column(db.Integer, unique=True)
+    release_date = db.Column(db.DateTime, nullable=False)
+    TMDB_id = db.Column(db.Integer, nullable=False, unique=True)
+    TMDB_url = db.Column(db.String(100))
+    radarr_id = db.Column(db.Integer, unique=True)
 
     __mapper_args__ = {
         "polymorphic_identity": "movie",
@@ -34,9 +34,9 @@ class Movie(Media):
 
 class TVShow(Media):
     id = db.Column(db.Integer, db.ForeignKey('media.id'), primary_key=True)
-    tvDbID = db.Column(db.Integer, nullable=False, unique=True)
-    tvDbURL = db.Column(db.String(100))
-    sonarrID = db.Column(db.Integer)
+    theTVDB_id = db.Column(db.Integer, nullable=False, unique=True)
+    theTVDB_url = db.Column(db.String(100))
+    sonarr_id = db.Column(db.Integer)
 
     __mapper_args__ = {
         "polymorphic_identity": "tv_show",

@@ -14,9 +14,9 @@
         <tbody>
             {% for movie in movies %}
                 <tr>
-                    <td scope="row"><a href="{{ movie.theMovieDbURL }}" target="_blank">{{movie.title}} ({{movie.releaseDate.strftime('%Y')}})</a></td>
-                    {% if movie.deletionDate %}
-                        <td scope="row" data-sort="{{ movie.deletionDate }}">{{ moment(movie.deletionDate).format('LLL') }}</a></td>
+                    <td scope="row"><a href="{{ movie.TMDB_url }}" target="_blank">{{movie.title}} ({{movie.release_date.strftime('%Y')}})</a></td>
+                    {% if movie.deletion_date %}
+                        <td scope="row" data-sort="{{ movie.deletion_date }}">{{ moment(movie.deletion_date).format('LLL') }}</a></td>
                     {% else %}
                         <td scope="row"></td>
                     {% endif %}

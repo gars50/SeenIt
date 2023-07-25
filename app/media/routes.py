@@ -4,27 +4,27 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from flask_login import login_required, current_user
 from flask import render_template
-from app.scripts.media import check_pick_creation
+from app.scripts.media import check_pick_creation, delete_media_everywhere
 from app.models import Media, Movie, TVShow, Pick, AppSettings
 
 def check_if_abandonned(media):
     #If this was the last pick that was just deleted, we need to set the expiryDate and deletionDate
     if (not media.picks):
         app_settings = AppSettings.query.first()
-        media.expiryDate = datetime.utcnow() + relativedelta(**{app_settings.expiryTimeUnit: app_settings.expiryTimeNumber})
-        
-        delete_time = app_settings.nextDelete
-        if (delete_time < media.expiryDate):
+        media.expiry_date = datetime.utcnow() + relativedelta(**{app_settings.expiry_time_unit: app_settings.expiry_time_number})
+
+        delete_time = app_settings.next_delete
+        if (delete_time < media.expiry_date):
             #Find the next deletion date that lands after the expiration date
-            deletion_delta = relativedelta(**{app_settings.deletionTimeUnit: app_settings.deletionTimeNumber})
-            while delete_time < media.expiryDate:
+            deletion_delta = relativedelta(**{app_settings.deletion_time_unit: app_settings.deletion_time_number})
+            while delete_time < media.expiry_date:
                 delete_time += deletion_delta
             #There should be a faster way to calculate this, but I do not know it
             #It shouldn't have a big impact anyway.
             #This method does not work because division of relativedelta is not doable.
             #deltaMulti = math.ceil(relativedelta(media.expiryDate, delete_time)/deletion_delta)
             #delete_time = deltaMulti * deletion_delta
-        media.deletionDate = delete_time
+        media.deletion_date = delete_time
         db.session.commit()
 
 @bp.route("/abandonned_movies")
@@ -34,8 +34,8 @@ def abandonned_movies():
 
 @bp.route("/abandonned_shows")
 def abandonned_shows():
-    tvShows = TVShow.query.filter_by(picks=None)
-    return render_template("media/abandonned_shows.html", tvShows=tvShows)
+    tv_shows = TVShow.query.filter_by(picks=None)
+    return render_template("media/abandonned_shows.html", tv_shows=tv_shows)
 
 @bp.route("/my_movies")
 @login_required
@@ -58,8 +58,8 @@ def all_movies():
 @bp.route("/all_shows")
 @login_required
 def all_shows():
-    all_tvShows = TVShow.query.all()
-    return render_template("media/all_shows.html", tvShows=all_tvShows)
+    all_tv_shows = TVShow.query.all()
+    return render_template("media/all_shows.html", tv_shows=all_tv_shows)
 
 @bp.route("/<int:media_id>/add_pick", methods=['POST'])
 @login_required
@@ -86,11 +86,9 @@ def delete_pick(pick_id):
 @login_required
 def delete_media(media_id):
     media = Media.query.get_or_404(media_id)
-    title = media.title
-    db.session.delete(media)
-    db.session.commit()
+    script_result = delete_media_everywhere(media)
     return {
-        "message" : "Deleted "+title
+        "message" : script_result
     }
 
 @bp.route("/<int:media_id>/picks_modal", methods=['GET'])
