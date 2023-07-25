@@ -5,7 +5,7 @@ from app.settings import bp
 from app.models import User, AppSettings, Media, Movie, TVShow, Pick
 from app.settings.forms import EditUserForm, AddUserForm, EditAppSettings
 from flask_login import login_required
-from app.scripts.media import import_all_requests
+from app.scripts.media import import_requests
 
 @bp.route('/application', methods=['GET', 'POST'])
 @login_required
@@ -105,11 +105,11 @@ def add_user():
         return redirect(url_for('settings.users'))
     return render_template('settings/add_user.html', form=form)
 
-@bp.route('/import_requests', methods=['POST'])
+@bp.route('/trigger_import_requests', methods=['POST'])
 @login_required
-def import_requests():
+def trigger_import_requests():
     try:
-        script_result = import_all_requests()
+        script_result = import_requests()
     except Exception as err:
         return jsonify(error=str(err)), 500
 
@@ -120,7 +120,7 @@ def import_requests():
         'message' : script_result
     }
 
-@bp.route('/delete_medias', methods=['DELETE'])
+@bp.route('/delete_all_medias', methods=['DELETE'])
 @login_required
 def delete_medias():
     num_movies = Movie.query.delete()

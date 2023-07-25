@@ -142,7 +142,7 @@
 
         function importData() {
             spinner.removeAttribute('hidden');
-            fetch("/settings/import_requests", {
+            fetch("/settings/trigger_import_requests", {
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -194,7 +194,7 @@
         }
 
         function deleteMedias() {
-            fetch("/settings/delete_medias", {
+            fetch("/settings/delete_all_medias", {
                 headers: {
                     'Content-Type': 'application/json'
                 },

@@ -64,8 +64,7 @@ def test_services():
     except Exception as err:
         raise Exception(str(err))
 
-
-def import_all_requests():
+def import_requests():
     test_services()
 
     added_users = 0
@@ -158,8 +157,27 @@ def import_all_requests():
     response = "Imported \n"+str(added_users)+" Users.\n"+str(added_movies)+" Movies.\n"+str(added_movie_picks)+" Movie Picks.\n"+str(added_tv_shows)+" TV Shows.\n"+str(added_tv_show_picks)+" TV Show Picks"
     return response
 
-def import_requests_delta():
-    test_services()
-
 def delete_media_everywhere(media):
     test_services()
+
+    app_settings = AppSettings.query.first()
+    radarr_base_url = "http://"+app_settings.radarr_host+":"+f'{app_settings.radarr_port}'
+    radarr_headers = {'X-Api-Key' : app_settings.radarr_api_key}
+
+    sonarr_base_url = "http://"+app_settings.sonarr_host+":"+f'{app_settings.sonarr_port}'
+    sonarr_headers = {'X-Api-Key' : app_settings.sonarr_api_key}
+
+    ombi_base_url = "http://"+app_settings.ombi_host+":"+f'{app_settings.ombi_port}'
+    ombi_headers = {'ApiKey' : app_settings.ombi_api_key}
+
+    if media.type == "movie":
+        requests.delete(ombi_base_url+"/api/v1/Request/movie/"+str(media.ombi_id), headers=ombi_headers)
+        requests.delete(radarr_base_url+"/api/v3/movie/"+str(media.radarr_id)+"?deleteFiles=true", headers=radarr_headers)
+        message = "Deleted"+media.title+"from Radarr and Ombi"
+    else:
+        requests.delete(ombi_base_url+"/api/v1/Request/tv/"+str(media.ombi_id), headers=ombi_headers)
+        requests.delete(sonarr_base_url+"/api/v3/series/"+str(media.sonarr_id)+"?deleteFiles=true", headers=sonarr_headers)
+        message = "Deleted"+media.title+"from Sonarr and Ombi"
+    db.session.delete(media)
+    db.session.commit()
+    return message

@@ -29,7 +29,7 @@ class Movie(Media):
     }
 
     def __repr__(self) -> str:
-        return f'Movie: {self.title} ({self.releaseDate.strftime("%Y")})'
+        return f'Movie: {self.title} ({self.release_date.strftime("%Y")})'
 
 
 class TVShow(Media):
