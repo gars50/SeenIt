@@ -133,3 +133,9 @@ def import_all_requests():
 
     response = "Imported \n"+str(addedUsers)+" Users.\n"+str(addedTVShows)+" TV Shows.\n"+str(addedMovies)+" Movies.\n"+str(addedMoviePicks)+" Movie Picks.\n"+str(addedTVShowPicks)+" TV Show Picks"
     return response
+
+def import_requests_delta():
+    test_services()
+
+def delete_media():
+    test_services()

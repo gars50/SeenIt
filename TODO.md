@@ -11,7 +11,7 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex
 - Tabbed settings
 
 ### In Progress
-- Implement APScheduler / BackgroundScheduler
+-Configure connections to Radarr/Sonarr
 
 ### Completed
 - Add a search option in medias
@@ -25,6 +25,7 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex
 - Add expiry date on media, and calculate its deletion date
 - Display the time according to user's time zone (Pick date)
     - Add time Javascript (moments)
+- Implement APScheduler / BackgroundScheduler
 
 ### Possible Ameliorations
 - Add webhook in Tautulli and POST in SeenIt to add pick to media when they start watching something

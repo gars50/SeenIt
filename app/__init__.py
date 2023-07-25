@@ -1,7 +1,9 @@
 from flask import Flask
 from config import Config
-from app.extensions import db, login, migrate, mail, moment
-from app.setup import setup_app
+from app.extensions import db, login, migrate, mail, moment, scheduler
+from app.setup import first_run_setup
+from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
+import logging
 
 
 def create_app(config_class=Config):
@@ -14,6 +16,11 @@ def create_app(config_class=Config):
     migrate.init_app(app,db)
     mail.init_app(app)
     moment.init_app(app)
+    scheduler.init_app(app)
+
+    with app.app_context():
+        scheduler.scheduler.add_jobstore(SQLAlchemyJobStore(engine=db.engine, metadata=db.metadata))
+        scheduler.start()
 
     # Register blueprints here
     from app.main import bp as main_bp
@@ -33,6 +40,6 @@ def create_app(config_class=Config):
 
     @app.before_first_request
     def before_first_request():
-        setup_app()
+        first_run_setup()
 
     return app
