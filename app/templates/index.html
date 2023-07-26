@@ -1,10 +1,17 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{% block title %} Index Page {% endblock %}</h1>
-    <div class="test">
-        Hello World!
-        Please login to do anything.
-        Hello {{ current_user.email }}
+    <h1>{% block title %} SeenIt {% endblock %}</h1>
+    <br>
+    Hello {{ current_user.alias }}!<br>
+    <br>
+    Here are some statistics : <br>
+    <div style="margin: 1em;">
+        Medias are using {{ total_used_space | filesizeformat }} out of the ~{{ total_available_space | filesizeformat }} available. <br>
+        {{ (total_used_space / total_available_space * 100) | round(1) }}% of the storage is used. <br>
+        <br>
+        You have {{ movie_picks_count + tv_show_picks_count }} Picks :<br>
+        - {{ movie_picks_count }} Movies. Using a total of {{ total_movie_size | filesizeformat }}. This is {{ (total_movie_size / total_available_space * 100) | round(1) }}% of the total storage <br>
+        - {{ tv_show_picks_count }} TV Shows. Using a total of {{ total_tv_show_size | filesizeformat }}. This is {{ (total_tv_show_size / total_available_space * 100) | round(1) }}% of the total storage <br>
     </div>
 {% endblock %}

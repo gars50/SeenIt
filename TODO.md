@@ -3,7 +3,6 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex
 
 ### Planned
 - Website looks
-    - Better login/welcome screen
     - Tabbed settings
     - Better settings selection for updating the db (schedule)
     - Figure out a better way to mass delete
@@ -34,6 +33,8 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex
     - Check if the media was added to Sonarr/Radarr
         - Update file sizes
     - Import new Ombi requests
+- Website looks
+    - Better login/welcome screen
 
 ### Possible Ameliorations
 - Add possibility to configure the notification agent in Tautulli from the app
