@@ -14,7 +14,6 @@ def check_user_creation(email, alias):
     return User.query.filter_by(email=email).first(), added_to_db
 
 def check_movie_creation(TMDB_id, ombi_id=0, title=""):
-    print("Checking movie for creation. TMDB : "+str(TMDB_id)+", "+title)
     added_to_db = False
     movie = Movie.query.filter_by(TMDB_id=TMDB_id).first()
     if not movie:
@@ -47,7 +46,6 @@ def check_movie_creation(TMDB_id, ombi_id=0, title=""):
     return Movie.query.filter_by(TMDB_id=TMDB_id).first(), added_to_db
 
 def check_tv_show_creation(theTVDB_id, ombi_id=0, title=""):
-    print("Checking show for creation. TVDB: "+str(theTVDB_id) + ", "+title)
     added_to_db = False
     show = TVShow.query.filter_by(theTVDB_id=theTVDB_id).first()
     if not show:
@@ -79,7 +77,6 @@ def check_tv_show_creation(theTVDB_id, ombi_id=0, title=""):
 
 def check_pick_creation(media, user, pick_date, pick_method):
     added_to_db = False
-    print("Checking pick creation for "+str(user)+" with media : "+str(media))
     pick = Pick.query.filter_by(media=media, user=user).first()
     if not pick:
         new_pick = Pick(media=media, user=user, pick_date=pick_date, pick_method=pick_method)
@@ -109,7 +106,7 @@ def test_services():
     except Exception as err:
         raise Exception(str(err))
 
-def import_requests():
+def import_requests_from_ombi():
     test_services()
 
     added_users = 0
@@ -128,50 +125,59 @@ def import_requests():
     movie_requests = movie_requests_response.json()
 
     for movie_request in movie_requests:
-        title = movie_request["title"]
-        TMDB_id = movie_request["theMovieDbId"]
-        requester_email = movie_request["requestedUser"]["email"]
-        requester_alias = movie_request["requestedUser"]["userAlias"]
-        ombi_id = movie_request["id"]
-        pick_date = movie_request["requestedDate"]
-
+        request_date = movie_request["requestedDate"]
         #Weird bug with Ombi where sometimes the requested date is wrong?
-        if (pick_date == "0001-01-01T00:00:00"):
-            pick_date_mod = datetime.min
+        if (request_date == "0001-01-01T00:00:00"):
+            request_date_mod = datetime.min
         else:
-            pick_date_mod = datetime.strptime(pick_date.replace("T", " "), "%Y-%m-%d %H:%M:%S.%f")
+            request_date_mod = datetime.strptime(request_date.replace("T", " "), "%Y-%m-%d %H:%M:%S.%f")
 
-        requester, added_user = check_user_creation(requester_email, requester_alias)
-        movie, added_movie = check_movie_creation(TMDB_id, ombi_id, title)
-        moviePick, added_movie_pick = check_pick_creation(movie, requester, pick_date_mod, "Ombi Request")
+        #If this request was made after the last media import, we import it
+        if request_date_mod >= app_settings.last_media_import:
+            title = movie_request["title"]
+            TMDB_id = movie_request["theMovieDbId"]
+            requester_email = movie_request["requestedUser"]["email"]
+            requester_alias = movie_request["requestedUser"]["userAlias"]
+            ombi_id = movie_request["id"]
 
-        if added_user:added_users+=1
-        if added_movie:added_movies+=1
-        if added_movie_pick:added_movie_picks+=1
+            requester, added_user = check_user_creation(requester_email, requester_alias)
+            movie, added_movie = check_movie_creation(TMDB_id, ombi_id, title)
+            moviePick, added_movie_pick = check_pick_creation(movie, requester, request_date_mod, "Ombi Request")
+
+            if added_user:added_users+=1
+            if added_movie:added_movies+=1
+            if added_movie_pick:added_movie_picks+=1
 
 
     tv_requests_response = requests.get(ombi_base_url+"/api/v1/Request/tv", headers=ombi_headers)
     tv_requests = tv_requests_response.json()
 
     for tv_request in tv_requests:
-        title = tv_request["title"]
-        theTVDB_id = tv_request["tvDbId"]
-        requester_email = tv_request["childRequests"][0]["requestedUser"]["email"]
-        requester_alias = tv_request["childRequests"][0]["requestedUser"]["userAlias"]
-        ombi_id = tv_request["id"]
-        pick_date = tv_request["childRequests"][0]["requestedDate"]
+        request_date = tv_request["childRequests"][0]["requestedDate"]
+        #Weird bug with Ombi where sometimes the requested date is wrong?
+        if (request_date == "0001-01-01T00:00:00"):
+            request_date_mod = datetime.min
+        else:
+            request_date_mod = datetime.strptime(request_date.replace("T", " "), "%Y-%m-%d %H:%M:%S.%f")
 
-        pick_date_mod = datetime.strptime(pick_date.replace("T", " "), "%Y-%m-%d %H:%M:%S.%f")
+        if request_date_mod >= app_settings.last_media_import:
+            title = tv_request["title"]
+            theTVDB_id = tv_request["tvDbId"]
+            requester_email = tv_request["childRequests"][0]["requestedUser"]["email"]
+            requester_alias = tv_request["childRequests"][0]["requestedUser"]["userAlias"]
+            ombi_id = tv_request["id"]
 
-        requester, added_user = check_user_creation(requester_email, requester_alias)
-        tv_show, added_tv_show = check_tv_show_creation(theTVDB_id, ombi_id, title)
-        tv_show_pick, added_tv_show_pick = check_pick_creation(tv_show, requester, pick_date_mod, "Ombi Request")
+            requester, added_user = check_user_creation(requester_email, requester_alias)
+            tv_show, added_tv_show = check_tv_show_creation(theTVDB_id, ombi_id, title)
+            tv_show_pick, added_tv_show_pick = check_pick_creation(tv_show, requester, request_date_mod, "Ombi Request")
 
-        if added_user:added_users+=1
-        if added_tv_show:added_tv_shows+=1
-        if added_tv_show_pick:added_tv_show_picks+=1
+            if added_user:added_users+=1
+            if added_tv_show:added_tv_shows+=1
+            if added_tv_show_pick:added_tv_show_picks+=1
 
     response = "Imported \n"+str(added_users)+" Users.\n"+str(added_movies)+" Movies.\n"+str(added_movie_picks)+" Movie Picks.\n"+str(added_tv_shows)+" TV Shows.\n"+str(added_tv_show_picks)+" TV Show Picks"
+    app_settings.last_media_import = datetime.utcnow()
+    db.session.commit()
     return response
 
 def delete_media_everywhere(media):
@@ -198,3 +204,31 @@ def delete_media_everywhere(media):
     db.session.delete(media)
     db.session.commit()
     return message
+
+def update_media_infos():
+    all_movies = Movie.query.all()
+    app_settings = AppSettings.query.first()
+    radarr_base_url = "http://"+app_settings.radarr_host+":"+f'{app_settings.radarr_port}'
+    radarr_headers = {'X-Api-Key' : app_settings.radarr_api_key}
+    sonarr_base_url = "http://"+app_settings.sonarr_host+":"+f'{app_settings.sonarr_port}'
+    sonarr_headers = {'X-Api-Key' : app_settings.sonarr_api_key}
+
+    all_movies = Movie.query.all()
+    for movie in all_movies:
+        print("Updating "+str(movie))
+        radarr_get_movie = requests.get(radarr_base_url+"/api/v3/movie?tmdbid="+str(movie.TMDB_id), headers=radarr_headers)
+        radarr_infos = radarr_get_movie.json()
+        if radarr_infos:
+            movie.radarr_id = radarr_infos[0]["id"]
+            movie.total_size = radarr_infos[0]["sizeOnDisk"]
+            db.session.commit()
+
+    all_shows = TVShow.query.all()
+    for show in all_shows:
+        print("Updating "+str(show))
+        sonarr_response = requests.get(sonarr_base_url+"/api/v3/series?tvdbId="+str(show.theTVDB_id), headers=sonarr_headers)
+        sonarr_infos = sonarr_response.json()
+        if sonarr_infos:
+            show.sonarr_id = sonarr_infos[0]["id"]
+            show.total_size = sonarr_infos[0]["statistics"]["sizeOnDisk"]
+            db.session.commit()

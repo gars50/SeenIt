@@ -10,8 +10,6 @@ class AppSettings(db.Model):
     deletion_time_unit = db.Column(db.String(50))
 
     last_media_import = db.Column(db.DateTime)
-    import_nterval = db.Column(db.DateTime)
-    next_import_date = db.Column(db.DateTime)
 
     radarr_host = db.Column(db.String(100))
     radarr_port = db.Column(db.Integer)

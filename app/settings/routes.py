@@ -1,11 +1,10 @@
 from flask import render_template, flash, redirect, request, url_for, jsonify
 from datetime import datetime
-from app import db
+from app import db, scheduler
 from app.settings import bp
 from app.models import User, AppSettings, Media, Movie, TVShow, Pick
 from app.settings.forms import EditUserForm, AddUserForm, EditAppSettings
 from flask_login import login_required
-from app.scripts.media import import_requests
 
 @bp.route('/application', methods=['GET', 'POST'])
 @login_required
@@ -105,19 +104,12 @@ def add_user():
         return redirect(url_for('settings.users'))
     return render_template('settings/add_user.html', form=form)
 
-@bp.route('/trigger_import_requests', methods=['POST'])
+@bp.route('/trigger_update_medias_and_requests_job', methods=['POST'])
 @login_required
-def trigger_import_requests():
-    try:
-        script_result = import_requests()
-    except Exception as err:
-        return jsonify(error=str(err)), 500
-
-    app_settings = AppSettings.query.first()
-    app_settings.last_media_import = datetime.utcnow()
-    db.session.commit()
+def trigger_update_medias_and_requests_job():
+    scheduler.modify_job("update_medias_and_requests-job", next_run_time=datetime.utcnow())
     return {
-        'message' : script_result
+        'message' : "Job triggered"
     }
 
 @bp.route('/delete_all_medias', methods=['DELETE'])
@@ -125,7 +117,9 @@ def trigger_import_requests():
 def delete_medias():
     num_movies = Movie.query.delete()
     num_tv_shows = TVShow.query.delete()
+    app_settings = AppSettings.query.first()
     Media.query.delete()
+    app_settings.last_media_import = datetime.min
     db.session.commit()
     return {
         'message' : "Deleted "+str(num_movies)+" movies and "+str(num_tv_shows)+" TV shows"

@@ -78,7 +78,7 @@
     </form>
     <br><hr>
     <h2>Jobs</h2>
-    <a onclick="importData()" class="btn btn-success">Import Data from Ombi</a>
+    <a onclick="update_medias_and_requests()" class="btn btn-success">Trigger Update Job</a>
     <a onclick="deletePicks()" class="btn btn-danger">Delete all picks</a>
     <a onclick="deleteMedias()" class="btn btn-danger">Delete all medias</a>
     <a onclick="deleteUsers()" class="btn btn-danger">Delete users</a>
@@ -140,9 +140,9 @@
             }
         }
 
-        function importData() {
+        function update_medias_and_requests() {
             spinner.removeAttribute('hidden');
-            fetch("/settings/trigger_import_requests", {
+            fetch("/settings/trigger_update_medias_and_requests_job", {
                 headers: {
                     'Content-Type': 'application/json'
                 },

@@ -20,6 +20,7 @@ def create_app(config_class=Config):
 
     with app.app_context():
         scheduler.scheduler.add_jobstore(SQLAlchemyJobStore(engine=db.engine, metadata=db.metadata))
+        scheduler.scheduler.configure(timezone='UTC')
         scheduler.start()
 
     # Register blueprints here
