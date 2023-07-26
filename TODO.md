@@ -2,8 +2,6 @@
 SeenIt allows user to delete/abandon the media they watch/request on Plex
 
 ### Planned
-- Monitor if someone is watching before deleting
-    -This might be automatically done with Tautulli webhooks
 - Configure housekeeping jobs to keep database up to date
     - Update file sizes
     - Import new Ombi requests
@@ -28,10 +26,12 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex
 - Implement APScheduler / BackgroundScheduler
 - Configure connections to Radarr/Sonarr
 - Media deletion works
+- Monitor if someone is watching before deleting
+    -This might be automatically done with Tautulli webhooks
+- Add webhook in Tautulli and POST in SeenIt to add pick to media when they start watching something
 
 ### Possible Ameliorations
-- Add webhook in Tautulli and POST in SeenIt to add pick to media when they start watching something
-    - Add Tautulli app information in settings
+- Add Tautulli app information in settings
     - Add possibility to configure the notification agent in Tautulli from the app
 - Add Picks by seasons to allow deletion of a few season at a time.
 - Allow admins and users to add picks manually? Is it needed?

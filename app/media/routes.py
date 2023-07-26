@@ -1,10 +1,11 @@
+import json
 from app.media import bp
 from app import db
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from flask_login import login_required, current_user
-from flask import render_template
-from app.scripts.media import check_pick_creation, delete_media_everywhere
+from flask import render_template, request
+from app.scripts.media import check_pick_creation, delete_media_everywhere, check_user_creation, check_movie_creation, check_tv_show_creation
 from app.models import Media, Movie, TVShow, Pick, AppSettings
 
 def check_if_abandonned(media):
@@ -98,3 +99,21 @@ def picks_modal(media_id):
     picks = Pick.query.filter_by(media=media)
     content = render_template("media/picks_modal.html", picks=picks)
     return content
+
+@bp.route("/add_pick_watching", methods=['POST'])
+def add_pick_watching():
+    data = json.loads((request.data.decode("utf-8")))
+    user, added_user = check_user_creation(data["email"], data["alias"])
+
+    if data["type"] == "movie":
+        #Only process if this is an actual movie
+        if data["themoviedb_id"]:
+            movie, added_movie = check_movie_creation(TMDB_id=data["themoviedb_id"])
+            check_pick_creation(movie, user, datetime.utcnow(), "Watched")
+
+    elif data["type"] == "tv_show":
+        #Only process if this is an actual show
+        if data["thetvdb_id"]:
+            tv_show, added_to_db = check_tv_show_creation(theTVDB_id=data["thetvdb_id"])
+            check_pick_creation(tv_show, user, datetime.utcnow(), "Watched")
+    return {}, 204

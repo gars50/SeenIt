@@ -13,37 +13,82 @@ def check_user_creation(email, alias):
         added_to_db = True
     return User.query.filter_by(email=email).first(), added_to_db
 
-def check_movie_creation(title, TMDB_id, TMDB_url, release_date, ombi_id):
-    added_to_db= False
+def check_movie_creation(TMDB_id, ombi_id=0, title=""):
+    print("Checking movie for creation. TMDB : "+str(TMDB_id)+", "+title)
+    added_to_db = False
     movie = Movie.query.filter_by(TMDB_id=TMDB_id).first()
     if not movie:
-        new_movie_request = Movie(title=title, TMDB_id=TMDB_id, TMDB_url=TMDB_url, release_date=release_date, ombi_id=ombi_id)
-        db.session.add(new_movie_request)
+        #Get the required info from Radarr
+        app_settings = AppSettings.query.first()
+        radarr_base_url = "http://"+app_settings.radarr_host+":"+f'{app_settings.radarr_port}'
+        radarr_headers = {'X-Api-Key' : app_settings.radarr_api_key}
+        radarr_get_movie = requests.get(radarr_base_url+"/api/v3/movie?tmdbid="+str(TMDB_id), headers=radarr_headers)
+        radarr_infos = radarr_get_movie.json()
+        if radarr_infos:
+            #Movie is already in Radarr, process its information
+            title = radarr_infos[0]["title"]
+            year = radarr_infos[0]["year"]
+            radarr_id = radarr_infos[0]["id"]
+            total_size = radarr_infos[0]["sizeOnDisk"]
+        else:
+            #Movie is not in Radarr, have to look up its information
+            radarr_id = -1
+            total_size = 0
+            year = 0
+            radarr_lookup = requests.get(radarr_base_url+"/api/v3/movie/lookup/tmdb?tmdbid="+str(TMDB_id), headers=radarr_headers)
+            if not radarr_lookup.status_code == 500:
+                radarr_infos = radarr_lookup.json()
+                title = radarr_infos["title"]
+                year = radarr_infos["year"]
+        new_movie = Movie(title=title, TMDB_id=TMDB_id, year=year, ombi_id=ombi_id, total_size=total_size, radarr_id=radarr_id)
+        db.session.add(new_movie)
         db.session.commit()
-        added_to_db= True
+        added_to_db = True
     return Movie.query.filter_by(TMDB_id=TMDB_id).first(), added_to_db
 
-def check_tv_show_creation(title, theTVDB_id, theTVDB_url, ombi_id):
+def check_tv_show_creation(theTVDB_id, ombi_id=0, title=""):
+    print("Checking show for creation. TVDB: "+str(theTVDB_id) + ", "+title)
     added_to_db = False
     show = TVShow.query.filter_by(theTVDB_id=theTVDB_id).first()
     if not show:
-        new_show = TVShow(title=title, theTVDB_id=theTVDB_id, theTVDB_url=theTVDB_url, ombi_id=ombi_id)
+        #Get the required info from Sonarr
+        app_settings = AppSettings.query.first()
+        sonarr_base_url = "http://"+app_settings.sonarr_host+":"+f'{app_settings.sonarr_port}'
+        sonarr_headers = {'X-Api-Key' : app_settings.sonarr_api_key}
+        sonarr_response = requests.get(sonarr_base_url+"/api/v3/series?tvdbId="+str(theTVDB_id), headers=sonarr_headers)
+        sonarr_infos = sonarr_response.json()
+        if sonarr_infos:
+            #Show is already in Sonarr, process its information
+            title = sonarr_infos[0]["title"]
+            sonarr_id = sonarr_infos[0]["id"]
+            total_size = sonarr_infos[0]["statistics"]["sizeOnDisk"]
+        else:
+            #Show is not in Sonarr, have to look up its information
+            sonarr_id = -1
+            total_size = 0
+            sonarr_lookup = requests.get(sonarr_base_url+"/api/v3/series/lookup?term=tvdbid:"+str(theTVDB_id), headers=sonarr_headers)
+            if not sonarr_lookup.status_code == 500:
+                sonarr_infos = sonarr_lookup.json()
+                title = sonarr_infos[0]["title"]
+            
+        new_show = TVShow(title=title, theTVDB_id=theTVDB_id, ombi_id=ombi_id, sonarr_id=sonarr_id, total_size=total_size)
         db.session.add(new_show)
         db.session.commit()
         added_to_db = True
     return TVShow.query.filter_by(theTVDB_id=theTVDB_id).first(), added_to_db
 
-def check_pick_creation(media, requester, pick_date, pick_method):
-    added_to_db= False
-    pick = Pick.query.filter_by(media=media, user=requester).first()
+def check_pick_creation(media, user, pick_date, pick_method):
+    added_to_db = False
+    print("Checking pick creation for "+str(user)+" with media : "+str(media))
+    pick = Pick.query.filter_by(media=media, user=user).first()
     if not pick:
-        new_pick = Pick(media=media, user=requester, pick_date=pick_date, pick_method=pick_method)
+        new_pick = Pick(media=media, user=user, pick_date=pick_date, pick_method=pick_method)
         db.session.add(new_pick)
         media.deletion_date = None
         media.expiry_date = None
         db.session.commit()
-        added_to_db= True
-    return Pick.query.filter_by(media=media, user=requester).first(), added_to_db
+        added_to_db = True
+    return Pick.query.filter_by(media=media, user=user).first(), added_to_db
 
 def test_services():
     app_settings = AppSettings.query.first()
@@ -74,11 +119,6 @@ def import_requests():
     added_tv_show_picks = 0
 
     app_settings = AppSettings.query.first()
-    radarr_base_url = "http://"+app_settings.radarr_host+":"+f'{app_settings.radarr_port}'
-    radarr_headers = {'X-Api-Key' : app_settings.radarr_api_key}
-
-    sonarr_base_url = "http://"+app_settings.sonarr_host+":"+f'{app_settings.sonarr_port}'
-    sonarr_headers = {'X-Api-Key' : app_settings.sonarr_api_key}
 
     ombi_base_url = "http://"+app_settings.ombi_host+":"+f'{app_settings.ombi_port}'
     ombi_headers = {'ApiKey' : app_settings.ombi_api_key}
@@ -90,31 +130,19 @@ def import_requests():
     for movie_request in movie_requests:
         title = movie_request["title"]
         TMDB_id = movie_request["theMovieDbId"]
-        TMDB_url = "https://www.themoviedb.org/movie/"+str(TMDB_id)
-        release_date = movie_request["releaseDate"]
         requester_email = movie_request["requestedUser"]["email"]
         requester_alias = movie_request["requestedUser"]["userAlias"]
         ombi_id = movie_request["id"]
         pick_date = movie_request["requestedDate"]
 
-        release_date_mod = datetime.strptime(release_date.replace("T", " "), "%Y-%m-%d %H:%M:%S")
-        #Weird bug with Ombi where sometimes the date is wrong?
+        #Weird bug with Ombi where sometimes the requested date is wrong?
         if (pick_date == "0001-01-01T00:00:00"):
             pick_date_mod = datetime.min
         else:
             pick_date_mod = datetime.strptime(pick_date.replace("T", " "), "%Y-%m-%d %H:%M:%S.%f")
 
         requester, added_user = check_user_creation(requester_email, requester_alias)
-        movie, added_movie = check_movie_creation(title, TMDB_id, TMDB_url, release_date_mod, ombi_id)
-        if added_movie:
-            radarr_response = requests.get(radarr_base_url+"/api/v3/movie?tmdbid="+str(TMDB_id), headers=radarr_headers)
-            radarr_infos = radarr_response.json()
-            if radarr_infos:
-                movie.radarr_id = radarr_infos[0]["id"]
-                movie.total_size = radarr_infos[0]["sizeOnDisk"]
-            else:
-                movie.total_size = 0
-            db.session.commit()
+        movie, added_movie = check_movie_creation(TMDB_id, ombi_id, title)
         moviePick, added_movie_pick = check_pick_creation(movie, requester, pick_date_mod, "Ombi Request")
 
         if added_user:added_users+=1
@@ -128,8 +156,6 @@ def import_requests():
     for tv_request in tv_requests:
         title = tv_request["title"]
         theTVDB_id = tv_request["tvDbId"]
-        theTVDB_url = "https://www.thetvdb.com/?id="+str(theTVDB_id)+"&tab=series"
-
         requester_email = tv_request["childRequests"][0]["requestedUser"]["email"]
         requester_alias = tv_request["childRequests"][0]["requestedUser"]["userAlias"]
         ombi_id = tv_request["id"]
@@ -138,16 +164,7 @@ def import_requests():
         pick_date_mod = datetime.strptime(pick_date.replace("T", " "), "%Y-%m-%d %H:%M:%S.%f")
 
         requester, added_user = check_user_creation(requester_email, requester_alias)
-        tv_show, added_tv_show = check_tv_show_creation(title, theTVDB_id, theTVDB_url, ombi_id)
-        if added_tv_show:
-            sonarr_response = requests.get(sonarr_base_url+"/api/v3/series?tvdbId="+str(theTVDB_id), headers=sonarr_headers)
-            sonarr_infos = sonarr_response.json()
-            if sonarr_infos:
-                tv_show.sonarr_id = sonarr_infos[0]["id"]
-                tv_show.total_size = sonarr_infos[0]["statistics"]["sizeOnDisk"]
-            else:
-                tv_show.total_size = 0
-            db.session.commit()
+        tv_show, added_tv_show = check_tv_show_creation(theTVDB_id, ombi_id, title)
         tv_show_pick, added_tv_show_pick = check_pick_creation(tv_show, requester, pick_date_mod, "Ombi Request")
 
         if added_user:added_users+=1

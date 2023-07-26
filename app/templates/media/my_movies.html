@@ -15,7 +15,7 @@
         <tbody>
             {% for pick in movie_picks %}
                 <tr>
-                    <td scope="row"><a href="{{ pick.media.TMDB_url }}" target="_blank">{{ pick.media.title }} ({{ pick.media.release_date.strftime('%Y') }})</a></td>
+                    <td scope="row"><a href="{{ pick.media.TMDB_url }}" target="_blank">{{ pick.media.title }} ({{ pick.media.year }})</a></td>
                     <td>{{ moment(pick.pick_date).format('LLL') }}</td>
                     <td>{{ pick.pick_method }}</td>
                     <td data-sort="{{ pick.media.total_size }}">{{ pick.media.total_size | filesizeformat  }}</td>
