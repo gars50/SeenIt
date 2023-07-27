@@ -1,11 +1,12 @@
 from flask import render_template
 from app.main import bp
-from app.models import Pick, Media
+from app.models import Pick, Media, AppSettings
 from flask_login import login_required, current_user
 
 @bp.route("/")
 @login_required
 def index():
+    app_settings = AppSettings.query.first()
     movie_picks = Pick.query.filter_by(user=current_user, media_type="movie")
     tv_show_picks = Pick.query.filter_by(user=current_user, media_type="tv_show")
     movie_picks_count = movie_picks.count()
@@ -25,4 +26,4 @@ def index():
     for media in Media.query.all():
         total_used_space += media.total_size
 
-    return render_template("index.html", movie_picks_count=movie_picks_count, tv_show_picks_count=tv_show_picks_count, total_movie_size=total_movie_size, total_tv_show_size=total_tv_show_size, total_used_space=total_used_space, total_available_space=total_available_space)
+    return render_template("index.html", movie_picks_count=movie_picks_count, tv_show_picks_count=tv_show_picks_count, total_movie_size=total_movie_size, total_tv_show_size=total_tv_show_size, total_used_space=total_used_space, total_available_space=total_available_space, app_name=app_settings.app_name)

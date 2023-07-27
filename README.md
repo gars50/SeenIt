@@ -95,3 +95,22 @@ server {
 ```
 ln -s /etc/nginx/sites-available/seenit /etc/nginx/sites-enabled
 ```
+
+WARNING
+If you are using a subfolder to expose SeenIt, add the following to your NGINX config file :
+```
+proxy_set_header SCRIPT_NAME /seenit;
+```
+As such :
+```
+server {
+    listen 80;
+    server_name your_domain www.your_domain;
+
+    location /seenit {
+        include proxy_params;
+        proxy_pass http://unix:/home/YOURUSER/SeenIt/SeenIt.sock;
+        proxy_set_header SCRIPT_NAME /seenit;
+    }
+}
+```
