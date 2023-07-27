@@ -90,7 +90,7 @@ def user(user_id):
 @login_required
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
-    current_app.logger.info("Deleting user : "+user)
+    current_app.logger.info("Deleting user : "+str(user))
     if user.admin:
         return {
             "error" : user.email+" is an admin and cannot be deleted"

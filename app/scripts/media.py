@@ -12,12 +12,13 @@ def check_user_creation(email, alias):
         new_user = User(email=email, alias=alias)
         db.session.add(new_user)
         db.session.commit()
-        current_app.logger.debug("Created user "+str(user))
+        current_app.logger.info("Created user "+str(user))
         added_to_db = True
     return User.query.filter_by(email=email).first(), added_to_db
 
 def check_movie_creation(TMDB_id, ombi_id=0, title=""):
     added_to_db = False
+    current_app.logger.debug("Checking if movie "+str(TMDB_id)+" exists")
     movie = Movie.query.filter_by(TMDB_id=TMDB_id).first()
     if not movie:
         #Get the required info from Radarr
@@ -45,11 +46,13 @@ def check_movie_creation(TMDB_id, ombi_id=0, title=""):
         new_movie = Movie(title=title, TMDB_id=TMDB_id, year=year, ombi_id=ombi_id, total_size=total_size, radarr_id=radarr_id)
         db.session.add(new_movie)
         db.session.commit()
+        current_app.logger.info("Created "+str(movie))
         added_to_db = True
     return Movie.query.filter_by(TMDB_id=TMDB_id).first(), added_to_db
 
 def check_tv_show_creation(theTVDB_id, ombi_id=0, title=""):
     added_to_db = False
+    current_app.logger.debug("Checking if tv show "+str(theTVDB_id)+" exists")
     show = TVShow.query.filter_by(theTVDB_id=theTVDB_id).first()
     if not show:
         #Get the required info from Sonarr
@@ -75,11 +78,13 @@ def check_tv_show_creation(theTVDB_id, ombi_id=0, title=""):
         new_show = TVShow(title=title, theTVDB_id=theTVDB_id, ombi_id=ombi_id, sonarr_id=sonarr_id, total_size=total_size)
         db.session.add(new_show)
         db.session.commit()
+        current_app.logger.info("Created "+str(new_show))
         added_to_db = True
     return TVShow.query.filter_by(theTVDB_id=theTVDB_id).first(), added_to_db
 
 def check_pick_creation(media, user, pick_date, pick_method):
     added_to_db = False
+    current_app.logger.debug("Checking if pick for "+str(media)+" by "+str(user)+" exists")
     pick = Pick.query.filter_by(media=media, user=user).first()
     if not pick:
         new_pick = Pick(media=media, user=user, pick_date=pick_date, pick_method=pick_method)
@@ -87,6 +92,7 @@ def check_pick_creation(media, user, pick_date, pick_method):
         media.deletion_date = None
         media.expiry_date = None
         db.session.commit()
+        current_app.logger.info(str(new_pick)+" created")
         added_to_db = True
     return Pick.query.filter_by(media=media, user=user).first(), added_to_db
 
@@ -221,7 +227,7 @@ def update_media_infos():
 
     all_movies = Movie.query.all()
     for movie in all_movies:
-        print("Updating "+str(movie))
+        current_app.logger.debug("Updating "+str(movie))
         radarr_get_movie = requests.get(radarr_base_url+"/api/v3/movie?tmdbid="+str(movie.TMDB_id), headers=radarr_headers)
         radarr_infos = radarr_get_movie.json()
         if radarr_infos:
@@ -231,7 +237,7 @@ def update_media_infos():
 
     all_shows = TVShow.query.all()
     for show in all_shows:
-        print("Updating "+str(show))
+        current_app.logger.debug("Updating "+str(show))
         sonarr_response = requests.get(sonarr_base_url+"/api/v3/series?tvdbId="+str(show.theTVDB_id), headers=sonarr_headers)
         sonarr_infos = sonarr_response.json()
         if sonarr_infos:

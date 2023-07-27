@@ -30,7 +30,7 @@
 
     <script>
         function deleteUser(user_id, obj) {
-            var fetchURL = `${BASE_URL}settings/user/"+user_id+"/delete`
+            var fetchURL = BASE_URL+"settings/user/"+user_id+"/delete"
             fetchToastRemoveRowTable(fetchURL, obj, 'DELETE')
         }
     </script>
