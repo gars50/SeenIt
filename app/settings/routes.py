@@ -4,11 +4,14 @@ from app import db, scheduler
 from app.settings import bp
 from app.models import User, AppSettings, Media, Movie, TVShow, Pick
 from app.settings.forms import EditUserForm, AddUserForm, EditAppSettings
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 @bp.route('/application', methods=['GET', 'POST'])
 @login_required
 def application():
+    if not current_user.admin:
+        flash('You do not have access to this.', "error")
+        return redirect(url_for('main.index'))
     app_settings = AppSettings.query.first()
     form = EditAppSettings()
     if form.validate_on_submit():
@@ -27,6 +30,7 @@ def application():
         app_settings.ombi_host = form.ombi_host.data
         app_settings.ombi_port = form.ombi_port.data
         app_settings.ombi_api_key = form.ombi_api_key.data
+        app_settings.safe_mode = form.safe_mode.data
         db.session.commit()
         flash('Your changes have been saved.', "success")
         return redirect(url_for('settings.application'))
@@ -46,6 +50,7 @@ def application():
         form.ombi_host.data = app_settings.ombi_host
         form.ombi_port.data = app_settings.ombi_port
         form.ombi_api_key.data = app_settings.ombi_api_key
+        form.safe_mode.data = app_settings.safe_mode
     else :
         flash('Error saving settings. Check error messages', "error")
     return render_template('settings/application.html', form=form)
@@ -53,6 +58,9 @@ def application():
 @bp.route('/users')
 @login_required
 def users():
+    if not current_user.admin:
+        flash('You do not have access to this.', "error")
+        return redirect(url_for('main.index'))
     users = User.query.all()
     return render_template('settings/users.html', users=users)
 

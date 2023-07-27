@@ -38,6 +38,7 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex
     - Import new Ombi requests
 - Website looks
     - Better login/welcome screen
+- Add Safe Mode
 
 ### Possible Ameliorations
 - Add possibility to configure the notification agent in Tautulli from the app

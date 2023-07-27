@@ -25,6 +25,7 @@ class AppSettings(db.Model):
 
     plex_client_id = db.Column(db.String(100))
     app_name = db.Column(db.String(100))
+    safe_mode = db.Column(db.Boolean, default=False)
 
     def __repr__(self) -> str:
         return f'''

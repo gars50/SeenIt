@@ -1,15 +1,18 @@
 import requests
+from flask import current_app
 from datetime import datetime
 from app.models import User, Movie, TVShow, AppSettings, Pick
 from app import db
 
 def check_user_creation(email, alias):
     added_to_db = False
+    current_app.logger.debug("Checking if user "+email+" exists")
     user = User.query.filter_by(email=email).first()
     if not user:
         new_user = User(email=email, alias=alias)
         db.session.add(new_user)
         db.session.commit()
+        current_app.logger.debug("Created user "+str(user))
         added_to_db = True
     return User.query.filter_by(email=email).first(), added_to_db
 
@@ -193,14 +196,17 @@ def delete_media_everywhere(media):
     ombi_base_url = "http://"+app_settings.ombi_host+":"+f'{app_settings.ombi_port}'
     ombi_headers = {'ApiKey' : app_settings.ombi_api_key}
 
-    if media.type == "movie":
-        requests.delete(ombi_base_url+"/api/v1/Request/movie/"+str(media.ombi_id), headers=ombi_headers)
-        requests.delete(radarr_base_url+"/api/v3/movie/"+str(media.radarr_id)+"?deleteFiles=true", headers=radarr_headers)
-        message = "Deleted"+media.title+"from Radarr and Ombi"
+    if app_settings.safe_mode:
+        message = "Deleted "+media.title+" from the database only."
     else:
-        requests.delete(ombi_base_url+"/api/v1/Request/tv/"+str(media.ombi_id), headers=ombi_headers)
-        requests.delete(sonarr_base_url+"/api/v3/series/"+str(media.sonarr_id)+"?deleteFiles=true", headers=sonarr_headers)
-        message = "Deleted"+media.title+"from Sonarr and Ombi"
+        if media.type == "movie":
+            requests.delete(ombi_base_url+"/api/v1/Request/movie/"+str(media.ombi_id), headers=ombi_headers)
+            requests.delete(radarr_base_url+"/api/v3/movie/"+str(media.radarr_id)+"?deleteFiles=true", headers=radarr_headers)
+            message = "Deleted "+media.title+" from Radarr and Ombi"
+        else:
+            requests.delete(ombi_base_url+"/api/v1/Request/tv/"+str(media.ombi_id), headers=ombi_headers)
+            requests.delete(sonarr_base_url+"/api/v3/series/"+str(media.sonarr_id)+"?deleteFiles=true", headers=sonarr_headers)
+            message = "Deleted "+media.title+" from Sonarr and Ombi"
     db.session.delete(media)
     db.session.commit()
     return message

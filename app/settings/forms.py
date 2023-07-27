@@ -36,4 +36,5 @@ class EditAppSettings(FlaskForm):
     ombi_host = StringField()
     ombi_port = IntegerField(validators=[validators.Optional()])
     ombi_api_key = StringField()
+    safe_mode = BooleanField('Safe Mode. Allows to delete objects only from the SeenIt database, and not from Ombi/Radarr/Sonarr')
     submit = SubmitField('Save')

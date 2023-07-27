@@ -7,8 +7,15 @@
         <div class="container">
             {{ form.hidden_tag() }}
 
-            {{ form.app_name.label }}<br>
-            {{ form.app_name(size=32) }}
+            <div class="row row-cols-auto">
+                <div class="column">
+                    {{ form.app_name.label }}<br>
+                    {{ form.app_name(size=32) }}
+                </div>
+                <div class="column">
+                    {{ form.safe_mode }}{{ form.safe_mode.label }}
+                </div>
+            </div>
             <hr>
             <div class="row row-cols-auto">
                 <div class="column">
