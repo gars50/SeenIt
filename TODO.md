@@ -7,6 +7,7 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex
     - Better settings selection for updating the db (schedule)
     - Figure out a better way to mass delete
 - Add logging
+- Test services to come from the application instead of client
 
 ### In Progress
 

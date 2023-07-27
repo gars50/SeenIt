@@ -12,7 +12,7 @@ class Media(db.Model):
     title = db.Column(db.String(100), nullable = False)
 
     ombi_id = db.Column(db.Integer, nullable = False)
-    total_size = db.Column(db.Integer)
+    total_size = db.Column(db.BigInteger)
     expiry_date = db.Column(db.DateTime)
     deletion_date = db.Column(db.DateTime)
 
