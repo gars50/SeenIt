@@ -7,11 +7,12 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex
     - Better settings selection for updating the db (schedule)
     - Figure out a better way to mass delete
 - Add logging
+- Add check for admin on data update
 - Test services to come from the application instead of client
 - Fix error where server gets rate-limited with DNS queries. Python's "requests" does a lookup at each request. (https://stackoverflow.com/questions/36087637/how-often-does-python-requests-perform-dns-queries#:~:text=Yes%2C%20the%20Python%20requests%20lib,with%20the%20python%20requests%20library.)
 
 ### In Progress
-
+- Add logging
 
 ### Completed
 - Add a search option in medias

@@ -62,23 +62,36 @@ function fetchToastRemoveRowTable(url, obj, type) {
 }
 
 function deletePickModal(pick_id, obj) {
-    var fetchURL = "/media/pick/"+pick_id+"/delete"
+    var fetchURL = BASE_URL+"/media/pick/"+pick_id+"/delete"
     fetchToastRemoveRowTable(fetchURL, obj, 'DELETE')
 }
 
 function addPick(media_id, obj) {
-    var fetchURL = "/media/"+media_id+"/add_pick"
+    var fetchURL = BASE_URL+"/media/"+media_id+"/add_pick"
     fetchToastRemoveRowMediaTable(fetchURL, obj, 'POST')
 }
 
 function deletePick(pick_id, obj) {
-    var fetchURL = "/media/pick/"+pick_id+"/delete"
+    var fetchURL = BASE_URL+"/media/pick/"+pick_id+"/delete"
     fetchToastRemoveRowMediaTable(fetchURL, obj, 'DELETE')
 }
 
 function deleteMedia(media_id, obj) {
-    var fetchURL = "/media/"+media_id+"/delete"
+    var fetchURL = BASE_URL+"/media/"+media_id+"/delete"
     fetchToastRemoveRowMediaTable(fetchURL, obj, 'DELETE')
+}
+
+function modalPicks(media_id, obj) {
+    var fetchURL = BASE_URL+"media/"+media_id+"/picks_modal"
+    $.ajax(fetchURL, {
+        method: 'GET',
+        dataType: 'html',
+        success: function(data) {
+            var mediaTitle = obj.parentNode.parentNode.childNodes[1].innerText
+            $("#picksTitle").text("Picks for "+mediaTitle)
+            $("#picksBody").html(data);
+        }
+    });
 }
 
 $(document).ready(function () {

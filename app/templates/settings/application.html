@@ -142,7 +142,7 @@
 
         function update_medias_and_requests() {
             spinner.removeAttribute('hidden');
-            fetch("/settings/trigger_update_medias_and_requests_job", {
+            fetch(BASE_URL+"settings/trigger_update_medias_and_requests_job", {
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -168,7 +168,7 @@
         }
 
         function deletePicks() {
-            fetch("/settings/delete_picks", {
+            fetch(BASE_URL+"settings/delete_picks", {
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -194,7 +194,7 @@
         }
 
         function deleteMedias() {
-            fetch("/settings/delete_all_medias", {
+            fetch(BASE_URL+"settings/delete_all_medias", {
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -220,7 +220,7 @@
         }
 
         function deleteUsers() {
-            fetch("/settings/delete_users", {
+            fetch(BASE_URL+"settings/delete_users", {
                 headers: {
                     'Content-Type': 'application/json'
                 },
