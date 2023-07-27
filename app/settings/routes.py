@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, request, url_for, jsonify
+from flask import render_template, flash, redirect, request, url_for, current_app
 from datetime import datetime
 from app import db, scheduler
 from app.settings import bp
@@ -82,6 +82,7 @@ def user(user_id):
 @login_required
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
+    current_app.logger.info("Deleting user : "+user)
     if user.admin:
         return {
             "error" : user.email+" is an admin and cannot be deleted"
@@ -107,6 +108,7 @@ def add_user():
 @bp.route('/trigger_update_medias_and_requests_job', methods=['POST'])
 @login_required
 def trigger_update_medias_and_requests_job():
+    current_app.logger.info("Forcing a trigger of the update medias and requests job")
     scheduler.modify_job("update_medias_and_requests-job", next_run_time=datetime.utcnow())
     return {
         'message' : "Job triggered"
@@ -115,6 +117,7 @@ def trigger_update_medias_and_requests_job():
 @bp.route('/delete_all_medias', methods=['DELETE'])
 @login_required
 def delete_medias():
+    current_app.logger.info("Deleting all medias")
     num_movies = Movie.query.delete()
     num_tv_shows = TVShow.query.delete()
     app_settings = AppSettings.query.first()
@@ -128,6 +131,7 @@ def delete_medias():
 @bp.route('/delete_picks', methods=['DELETE'])
 @login_required
 def delete_picks():
+    current_app.logger.info("Deleting all picks")
     numPicks = Pick.query.delete()
     db.session.commit()
     return {
@@ -137,8 +141,9 @@ def delete_picks():
 @bp.route('/delete_users', methods=['DELETE'])
 @login_required
 def delete_users():
+    current_app.logger.info("Deleting all non-admin users")
     numUsers = User.query.filter_by(admin=False).delete()
     db.session.commit()
     return {
-        'message' : str(numUsers)+" non-admins deleted"
+        'message' : str(numUsers)+" non-admin users deleted"
     }

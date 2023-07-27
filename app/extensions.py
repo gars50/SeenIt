@@ -4,12 +4,14 @@ from flask_migrate import Migrate
 from flask_mail import Mail
 from flask_moment import Moment
 from flask_apscheduler import APScheduler
+from app.flask_logs import LogSetup
 
 db = SQLAlchemy()
 migrate = Migrate()
 mail = Mail()
 moment = Moment()
 scheduler = APScheduler()
+logs = LogSetup()
 
 login = LoginManager()
 login.login_view = 'auth.login_choice'

@@ -1,15 +1,48 @@
-from flask import Flask
+import logging
+from flask import Flask, request
+from datetime import datetime
 from config import Config
-from app.extensions import db, login, migrate, mail, moment, scheduler
+from app.extensions import db, login, migrate, mail, moment, scheduler, logs
 from app.setup import first_run_setup
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
-import logging
 
 
 def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
+    register_extensions(app)
+    register_blueprints(app)
 
+    with app.app_context():
+        scheduler.scheduler.add_jobstore(SQLAlchemyJobStore(engine=db.engine, metadata=db.metadata))
+        scheduler.scheduler.configure(timezone='UTC')
+        scheduler.start()
+
+    @app.before_first_request
+    def before_first_request():
+        first_run_setup()
+
+    @app.after_request
+    def after_request(response):
+        """ Logging after every request. """
+        logger = logging.getLogger("app.access")
+        logger.info(
+            "%s [%s] %s %s %s %s %s %s %s",
+            request.remote_addr,
+            datetime.utcnow().strftime("%d/%b/%Y:%H:%M:%S.%f")[:-3],
+            request.method,
+            request.path,
+            request.scheme,
+            response.status,
+            response.content_length,
+            request.referrer,
+            request.user_agent,
+        )
+        return response
+
+    return app
+
+def register_extensions(app):
     # Initialize Flask extensions here
     db.init_app(app)
     login.init_app(app)
@@ -17,12 +50,11 @@ def create_app(config_class=Config):
     mail.init_app(app)
     moment.init_app(app)
     scheduler.init_app(app)
+    logs.init_app(app)
 
-    with app.app_context():
-        scheduler.scheduler.add_jobstore(SQLAlchemyJobStore(engine=db.engine, metadata=db.metadata))
-        scheduler.scheduler.configure(timezone='UTC')
-        scheduler.start()
+    return None
 
+def register_blueprints(app):
     # Register blueprints here
     from app.main import bp as main_bp
     app.register_blueprint(main_bp)
@@ -39,8 +71,4 @@ def create_app(config_class=Config):
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp, url_prefix='/errors')
 
-    @app.before_first_request
-    def before_first_request():
-        first_run_setup()
-
-    return app
+    return None
