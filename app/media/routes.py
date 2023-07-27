@@ -75,7 +75,7 @@ def add_pick(media_id):
 @login_required
 def delete_pick(pick_id):
     pick = Pick.query.get_or_404(pick_id)
-    current_app.logger.info("User "+current_user.alias+" is trying to delete pick "+str(pick))
+    current_app.logger.debug("User "+current_user.alias+" is trying to delete pick "+str(pick))
     if (not current_user.admin) and (not current_user==pick.user):
         return {
             "error" : "Not allowed!"
@@ -97,7 +97,7 @@ def delete_media(media_id):
             "error" : "Not allowed!"
         }, 405
     media = Media.query.get_or_404(media_id)
-    current_app.logger.info("User "+current_user+" is trying to delete media "+ media)
+    current_app.logger.info("User "+str(current_user)+" is trying to delete media "+ media)
     script_result = delete_media_everywhere(media)
     return {
         "message" : script_result

@@ -46,7 +46,7 @@ def check_movie_creation(TMDB_id, ombi_id=0, title=""):
         new_movie = Movie(title=title, TMDB_id=TMDB_id, year=year, ombi_id=ombi_id, total_size=total_size, radarr_id=radarr_id)
         db.session.add(new_movie)
         db.session.commit()
-        current_app.logger.info("Created "+str(movie))
+        current_app.logger.info("Created "+str(new_movie))
         added_to_db = True
     return Movie.query.filter_by(TMDB_id=TMDB_id).first(), added_to_db
 
@@ -92,7 +92,7 @@ def check_pick_creation(media, user, pick_date, pick_method):
         media.deletion_date = None
         media.expiry_date = None
         db.session.commit()
-        current_app.logger.info(str(new_pick)+" created")
+        current_app.logger.info("Created "+str(new_pick))
         added_to_db = True
     return Pick.query.filter_by(media=media, user=user).first(), added_to_db
 
