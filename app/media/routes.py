@@ -97,7 +97,7 @@ def delete_media(media_id):
             "error" : "Not allowed!"
         }, 405
     media = Media.query.get_or_404(media_id)
-    current_app.logger.info("User "+str(current_user)+" is trying to delete media "+ media)
+    current_app.logger.info("User "+str(current_user)+" is trying to delete media "+str(media))
     script_result = delete_media_everywhere(media)
     return {
         "message" : script_result
