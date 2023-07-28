@@ -1,8 +1,8 @@
 # SeenIt
 SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 
-### Planned
-Issues
+## Planned
+### Issues
 - Test services to come from the application instead of client browser
 - Fix issue where server gets rate-limited with DNS queries. Python's "requests" does a lookup at each request. (https://stackoverflow.com/questions/36087637/how-often-does-python-requests-perform-dns-queries#:~:text=Yes%2C%20the%20Python%20requests%20lib,with%20the%20python%20requests%20library.)
     - This happens when importing everything as there are multiple queries to Ombi/Radarr/Sonarr
@@ -22,10 +22,10 @@ Improvements
     - Add information on user type
 - Add option to view the logs within the application
 
-### In Progress
+## In Progress
 
 
-### Completed
+## Completed
 - Add a search option in medias
 - Merge toastr and flash notifications
 - Add an option to "order by" fields in media
@@ -58,7 +58,7 @@ Improvements
     - When changing deletion date options, update deletion dates of abandonned media
 - Add logging
 
-### Possible improvements
+## Possible improvements
 - Add possibility to configure the notification agent in Tautulli from the app
     - Add Tautulli app information in settings
 - Add Picks by seasons to allow deletion of a few season at a time.
