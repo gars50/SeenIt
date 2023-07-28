@@ -16,7 +16,7 @@ function fetchToastRemoveRowMediaTable(url, obj, type) {
             .then(function(response) {
                 toastr.success(response.message)
             })
-            table.row(row).remove().draw()
+            table.row(row).remove().draw(false)
         } else {
             response.json()
             .then(function(response) {

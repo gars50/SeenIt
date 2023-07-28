@@ -24,3 +24,9 @@ class ResetPasswordForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField('Repeat Password', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Reset Password')
+
+class UpdateProfile(FlaskForm):
+    password = PasswordField('Password')
+    password2 = PasswordField('Repeat Password', validators=[EqualTo('password')])
+    alias = StringField('You alias', validators=[DataRequired()])
+    submit = SubmitField('Save')

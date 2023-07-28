@@ -44,7 +44,7 @@ gunicorn --bind 0.0.0.0:5000 wsgi:app
 Systemd Service :
 1. Configure systemd service
 ```
-touch /etc/systemd/system/seenit.service
+nano /etc/systemd/system/seenit.service
 ```
 ```
 [Unit]
@@ -63,6 +63,9 @@ WantedBy=multi-user.target
 ```
 
 2. Put environment variables in the service
+```
+systemctl edit seenit
+```
 ```
 [Service]
 Environment="SECRET_KEY=XXXXXXXXXXXXXXXXXX"

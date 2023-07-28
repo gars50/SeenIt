@@ -1,8 +1,8 @@
-from flask import render_template, redirect, url_for, flash, session, abort, current_app
+from flask import render_template, redirect, url_for, flash, session, abort, current_app, request
 from app.auth import bp
 from app.extensions import db
 from flask_login import current_user, login_user, logout_user, login_required
-from app.auth.forms import LoginForm, RegistrationForm, ResetPasswordRequestForm, ResetPasswordForm
+from app.auth.forms import LoginForm, RegistrationForm, ResetPasswordRequestForm, ResetPasswordForm, UpdateProfile
 from app.scripts.email import send_password_reset_email
 from app.models import User, AppSettings
 import requests
@@ -93,12 +93,16 @@ def reset_password(token):
 @login_required
 def update_profile():
     user = current_user
-    form = ResetPasswordForm()
+    form = UpdateProfile()
     if form.validate_on_submit():
-        user.set_password(form.password.data)
+        if form.password.data:
+            user.set_password(form.password.data)
+        user.alias = form.alias.data
         db.session.commit()
-        flash('Your password has been changed.', "success")
+        flash('Your settings has been changed.', "success")
         return redirect(url_for('auth.login'))
+    elif request.method == 'GET':
+        form.alias.data = user.alias
     return render_template('auth/update_profile.html', form=form)
 
 @bp.route('/plex_login')
