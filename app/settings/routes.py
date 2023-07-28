@@ -71,7 +71,12 @@ def user(user_id):
     form = EditUserForm()
     if form.validate_on_submit():
         #If this user is the last admin and the user unchecks admin, we deny it.
-        last_admin = db.one_or_404(db.select(User).filter_by(admin=True))
+        try:
+            last_admin = User.query.filter_by(admin=True).one()
+        except Exception as err:
+            current_app.logger.info("More than one admin or none : "+str(err))
+            last_admin = None
+        
         if ((user == last_admin) and (not form.admin.data)):
             flash('Cannot disable the last administrator', "error")
         else:

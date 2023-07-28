@@ -174,7 +174,7 @@ def plex_callback():
     user_email = response.json().get('email')
     
     user = User.query.filter_by(email=user_email).first()
-    current_app.logger.info("User with email "+user_email+" is trying to login. Found corresponding user: "+str(user))
+    current_app.logger.info("User with email "+user_email+" is trying to login through Plex. Corresponding user: "+str(user))
     #If there are no users, we create an admin
     if not User.query.first():
             user = User(email=user_email)
