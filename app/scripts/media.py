@@ -92,6 +92,7 @@ def check_pick_creation(media, user, pick_date, pick_method):
         db.session.add(new_pick)
         media.deletion_date = None
         media.expiry_date = None
+        media.abandonned_date = None
         db.session.commit()
         current_app.logger.info("Created "+str(new_pick))
         added_to_db = True
@@ -263,5 +264,5 @@ def modify_deletion_date(medias):
             #deltaMulti = math.ceil(relativedelta(media.expiryDate, delete_time)/deletion_delta)
             #delete_time = deltaMulti * deletion_delta
         media.deletion_date = delete_time
-        current_app.logger.debug("Deletion date of "+str(media)+" set to "+str(media.deletion_date))
         db.session.commit()
+        current_app.logger.debug("Deletion date of "+str(media)+" set to "+str(media.deletion_date))

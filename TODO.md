@@ -2,19 +2,28 @@
 SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 
 ### Planned
+Issues
+- Test services to come from the application instead of client browser
+- Fix issue where server gets rate-limited with DNS queries. Python's "requests" does a lookup at each request. (https://stackoverflow.com/questions/36087637/how-often-does-python-requests-perform-dns-queries#:~:text=Yes%2C%20the%20Python%20requests%20lib,with%20the%20python%20requests%20library.)
+    - This happens when importing everything as there are multiple queries to Ombi/Radarr/Sonarr
+- Application settings, Media Deletion. Date is UTC, not moment
+
+Improvements
 - Website looks
     - Tabbed settings
     - Better settings selection for updating the db (schedule)
     - Figure out a better way to mass delete
-- Add logging
-- Test services to come from the application instead of client
-- Fix error where server gets rate-limited with DNS queries. Python's "requests" does a lookup at each request. (https://stackoverflow.com/questions/36087637/how-often-does-python-requests-perform-dns-queries#:~:text=Yes%2C%20the%20Python%20requests%20lib,with%20the%20python%20requests%20library.)
-- Application settings, Media Deletion. Date is UTC, not moment
 - Add delete confirm prompt for Media deletion
 - Add title from Tautulli for better logs
+- Add option to send email for errors
+- Add option to save email settings inside the app instead of configuration file
+- Allow users to change their alias
+- Change user config so that a user is either a Plex user or a SeenIt user.
+    - Add information on user type
+- Add option to view the logs within the application
 
 ### In Progress
-- Add logging
+
 
 ### Completed
 - Add a search option in medias
@@ -47,9 +56,11 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Feedback on "Abandonned" vs "Let go" only for the user
 - Fix deletion date
     - When changing deletion date options, update deletion dates of abandonned media
+- Add logging
 
-### Possible Ameliorations
+### Possible improvements
 - Add possibility to configure the notification agent in Tautulli from the app
     - Add Tautulli app information in settings
 - Add Picks by seasons to allow deletion of a few season at a time.
 - Allow admins and users to add picks manually? Is it needed?
+- Logs for each day instead of lumped into one
