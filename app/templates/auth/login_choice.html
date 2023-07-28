@@ -3,6 +3,10 @@
 {% block content %}
     <div class="position-absolute top-50 start-50 translate-middle">
         <div class="d-grid gap-2 col-12 mx-auto">
+            <h2>{{ app_name }}</h2><br>
+            <br>
+            <br>
+            <br>
             <a href="{{ url_for('auth.login') }}" class="btn btn-lg btn-outline-primary">Sign in with SeenIt</a><br>
             <br>
             <a href="{{ url_for('auth.plex_login') }}" class="btn btn-lg btn-plex">Sign in with Plex</a><br>

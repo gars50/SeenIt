@@ -10,7 +10,8 @@ import urllib.parse
 
 @bp.route('/login_choice', methods=['GET'])
 def login_choice():
-    return render_template('auth/login_choice.html')
+    app_settings = AppSettings.query.first()
+    return render_template('auth/login_choice.html', app_name=app_settings.app_name)
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
@@ -171,7 +172,6 @@ def plex_callback():
     }
     response = requests.get(verify_user_url, headers=headers, data=data)
     user_email = response.json().get('email')
-
     
     user = User.query.filter_by(email=user_email).first()
     current_app.logger.info("User with email "+user_email+" is trying to login. Found corresponding user: "+str(user))
