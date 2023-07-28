@@ -1,5 +1,5 @@
 # SeenIt
-SeenIt allows user to delete/abandon the media they watch/request on Plex
+SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 
 ### Planned
 - Website looks
@@ -7,9 +7,11 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex
     - Better settings selection for updating the db (schedule)
     - Figure out a better way to mass delete
 - Add logging
-- Add check for admin on data update
 - Test services to come from the application instead of client
 - Fix error where server gets rate-limited with DNS queries. Python's "requests" does a lookup at each request. (https://stackoverflow.com/questions/36087637/how-often-does-python-requests-perform-dns-queries#:~:text=Yes%2C%20the%20Python%20requests%20lib,with%20the%20python%20requests%20library.)
+- Application settings, Media Deletion. Date is UTC, not moment
+- Add delete confirm prompt for Media deletion
+- Add title from Tautulli for better logs
 
 ### In Progress
 - Add logging
@@ -39,10 +41,15 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex
 - Website looks
     - Better login/welcome screen
 - Add Safe Mode
+- Add check for admin on data update
+- Add storage information per user / total
+- Add explanation to the index page
+- Feedback on "Abandonned" vs "Let go" only for the user
+- Fix deletion date
+    - When changing deletion date options, update deletion dates of abandonned media
 
 ### Possible Ameliorations
 - Add possibility to configure the notification agent in Tautulli from the app
     - Add Tautulli app information in settings
 - Add Picks by seasons to allow deletion of a few season at a time.
 - Allow admins and users to add picks manually? Is it needed?
-- Add storage information per user / total

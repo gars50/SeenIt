@@ -2,6 +2,7 @@ from flask import render_template, flash, redirect, request, url_for, current_ap
 from datetime import datetime
 from app import db, scheduler
 from app.settings import bp
+from app.scripts.media import modify_deletion_date
 from app.models import User, AppSettings, Media, Movie, TVShow, Pick
 from app.settings.forms import EditUserForm, AddUserForm, EditAppSettings
 from flask_login import login_required, current_user
@@ -15,6 +16,13 @@ def application():
     app_settings = AppSettings.query.first()
     form = EditAppSettings()
     if form.validate_on_submit():
+        deletion_settings_changed = (
+            app_settings.expiry_time_number != form.expiry_time_number.data or
+            app_settings.expiry_time_unit != form.expiry_time_unit.data or
+            app_settings.next_delete != form.next_delete.data or
+            app_settings.deletion_time_number != form.deletion_time_number.data or
+            app_settings.deletion_time_unit != form.deletion_time_unit.data
+        )
         app_settings.expiry_time_number = form.expiry_time_number.data
         app_settings.expiry_time_unit = form.expiry_time_unit.data
         app_settings.next_delete = form.next_delete.data
@@ -32,6 +40,10 @@ def application():
         app_settings.ombi_api_key = form.ombi_api_key.data
         app_settings.safe_mode = form.safe_mode.data
         db.session.commit()
+        if deletion_settings_changed:
+            current_app.logger.info("Deletion settings have been changed. Will update deletion date of abandonned medias.")
+            abandonned_medias = Media.query.filter_by(picks=None)
+            modify_deletion_date(abandonned_medias)
         flash('Your changes have been saved.', "success")
         return redirect(url_for('settings.application'))
     elif request.method == 'GET':

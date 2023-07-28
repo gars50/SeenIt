@@ -1,6 +1,7 @@
 import requests
 from flask import current_app
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 from app.models import User, Movie, TVShow, AppSettings, Pick
 from app import db
 
@@ -244,3 +245,23 @@ def update_media_infos():
             show.sonarr_id = sonarr_infos[0]["id"]
             show.total_size = sonarr_infos[0]["statistics"]["sizeOnDisk"]
             db.session.commit()
+
+def modify_deletion_date(medias):
+    app_settings = AppSettings.query.first()
+    for media in medias:
+        media.expiry_date = media.abandonned_date + relativedelta(**{app_settings.expiry_time_unit: app_settings.expiry_time_number})
+        current_app.logger.debug("Expiry date of "+str(media)+" set to "+str(media.expiry_date))
+        delete_time = app_settings.next_delete
+        if (delete_time < media.expiry_date):
+            #Find the next deletion date that lands after the expiration date
+            deletion_delta = relativedelta(**{app_settings.deletion_time_unit: app_settings.deletion_time_number})
+            while delete_time < media.expiry_date:
+                delete_time += deletion_delta
+            #There should be a faster way to calculate this, but I do not know it
+            #It shouldn't have a big impact anyway.
+            #This method does not work because division of relativedelta is not doable.
+            #deltaMulti = math.ceil(relativedelta(media.expiryDate, delete_time)/deletion_delta)
+            #delete_time = deltaMulti * deletion_delta
+        media.deletion_date = delete_time
+        current_app.logger.debug("Deletion date of "+str(media)+" set to "+str(media.deletion_date))
+        db.session.commit()

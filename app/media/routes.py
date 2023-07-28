@@ -2,31 +2,19 @@ import json
 from app.media import bp
 from app import db
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from flask_login import login_required, current_user
 from flask import render_template, request, current_app
-from app.scripts.media import check_pick_creation, delete_media_everywhere, check_user_creation, check_movie_creation, check_tv_show_creation
+from app.scripts.media import check_pick_creation, delete_media_everywhere, check_user_creation, check_movie_creation, check_tv_show_creation, modify_deletion_date
 from app.models import Media, Movie, TVShow, Pick, AppSettings
 
 def check_if_abandonned(media):
+    abandonned = (not media.picks)
     #If this was the last pick that was just deleted, we need to set the expiryDate and deletionDate
-    if (not media.picks):
-        app_settings = AppSettings.query.first()
-        media.expiry_date = datetime.utcnow() + relativedelta(**{app_settings.expiry_time_unit: app_settings.expiry_time_number})
-
-        delete_time = app_settings.next_delete
-        if (delete_time < media.expiry_date):
-            #Find the next deletion date that lands after the expiration date
-            deletion_delta = relativedelta(**{app_settings.deletion_time_unit: app_settings.deletion_time_number})
-            while delete_time < media.expiry_date:
-                delete_time += deletion_delta
-            #There should be a faster way to calculate this, but I do not know it
-            #It shouldn't have a big impact anyway.
-            #This method does not work because division of relativedelta is not doable.
-            #deltaMulti = math.ceil(relativedelta(media.expiryDate, delete_time)/deletion_delta)
-            #delete_time = deltaMulti * deletion_delta
-        media.deletion_date = delete_time
-        db.session.commit()
+    if abandonned:
+        media.abandonned_date = datetime.utcnow()
+        modify_deletion_date([media])
+        current_app.logger.info(str(media)+" has been abandonned.")
+    return abandonned
 
 @bp.route("/abandonned_movies")
 def abandonned_movies():
@@ -68,7 +56,7 @@ def add_pick(media_id):
     media = Media.query.get(media_id)
     check_pick_creation(media, current_user, datetime.utcnow(), "Picked up")
     return{
-        "message" : "Picked up "+media.title
+        "message" : "Picked up "+str(media)
     }
 
 @bp.route("/pick/<int:pick_id>/delete", methods=['DELETE'])
@@ -83,11 +71,17 @@ def delete_pick(pick_id):
     media = pick.media
     db.session.delete(pick)
     db.session.commit()
-    current_app.logger.info("User "+current_user.alias+" deleted pick "+str(pick))
-    check_if_abandonned(media)
-    return{
-        "message" : "Pick of "+media.title+" deleted"
-    }
+    current_app.logger.info("User "+current_user.alias+" deleted "+str(pick))
+    abandonned = check_if_abandonned(media)
+    if abandonned:
+        return{
+            "message" : str(media)+" was let go. It has been abandonned as this was its last pick."
+        }
+    else:
+        return{
+            "message" : str(media)+" was let go. Others have picked this media, and it has not been abandonned yet."
+        }
+
 
 @bp.route("/<int:media_id>/delete", methods=['DELETE'])
 @login_required
