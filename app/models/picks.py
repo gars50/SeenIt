@@ -22,4 +22,4 @@ class Pick(db.Model):
         self.pick_method = pick_method
 
     def __repr__(self) -> str:
-        return f'{self.media} requested by {self.user} on {self.pick_date} through {self.pick_method}'
+        return f'Pick: {self.media} requested by {self.user} on {self.pick_date} through {self.pick_method}'
