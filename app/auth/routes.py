@@ -1,4 +1,4 @@
-from flask import render_template, redirect, url_for, flash, session, abort
+from flask import render_template, redirect, url_for, flash, session, abort, current_app
 from app.auth import bp
 from app.extensions import db
 from flask_login import current_user, login_user, logout_user, login_required
@@ -172,7 +172,9 @@ def plex_callback():
     response = requests.get(verify_user_url, headers=headers, data=data)
     user_email = response.json().get('email')
 
+    
     user = User.query.filter_by(email=user_email).first()
+    current_app.logger.info("User with email "+user_email+" is trying to login. Found corresponding user: "+str(user))
     #If there are no users, we create an admin
     if not User.query.first():
             user = User(email=user_email)
