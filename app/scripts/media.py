@@ -12,7 +12,7 @@ def check_user_creation(email, alias):
         new_user = User(email=email, alias=alias)
         db.session.add(new_user)
         db.session.commit()
-        current_app.logger.info("Created user "+str(user))
+        current_app.logger.info("Created user "+str(new_user))
         added_to_db = True
     return User.query.filter_by(email=email).first(), added_to_db
 
