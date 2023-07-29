@@ -1,8 +1,8 @@
 """Initial
 
-Revision ID: a7e57ce4c0d6
+Revision ID: 9e66c6480319
 Revises: 
-Create Date: 2023-07-27 08:35:08.839129
+Create Date: 2023-07-29 17:15:37.877753
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a7e57ce4c0d6'
+revision = '9e66c6480319'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -37,6 +37,7 @@ def upgrade():
     sa.Column('ombi_api_key', sa.String(length=100), nullable=True),
     sa.Column('plex_client_id', sa.String(length=100), nullable=True),
     sa.Column('app_name', sa.String(length=100), nullable=True),
+    sa.Column('safe_mode', sa.Boolean(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('apscheduler_jobs',
@@ -54,6 +55,7 @@ def upgrade():
     sa.Column('title', sa.String(length=100), nullable=False),
     sa.Column('ombi_id', sa.Integer(), nullable=False),
     sa.Column('total_size', sa.BigInteger(), nullable=True),
+    sa.Column('abandonned_date', sa.DateTime(), nullable=True),
     sa.Column('expiry_date', sa.DateTime(), nullable=True),
     sa.Column('deletion_date', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id')

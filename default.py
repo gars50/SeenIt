@@ -3,7 +3,7 @@ class Config:
     #Generate this key with os.urandom(24).hex()
     SECRET_KEY = os.environ.get("SECRET_KEY")
 
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URI")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URI", "sqlite:///SeenIt.db")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     MAIL_SERVER="XXXXXXXXXXXXXXXXXXXXXXXXXXX"
@@ -13,7 +13,7 @@ class Config:
     MAIL_PASSWORD=os.environ.get("MAIL_PASSWORD")
 
     # Logging Setup
-    LOG_TYPE = os.environ.get("LOG_TYPE", "watched")
+    LOG_TYPE = os.environ.get("LOG_TYPE", "rotating")
     LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
 
     # File Logging Setup

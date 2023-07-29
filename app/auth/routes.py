@@ -45,6 +45,7 @@ def register():
             user.set_password(form.password.data)    
             user.set_admin('true')
             db.session.add(user)
+            current_app.logger.info("User with email "+user.email+" was created as an admin as it is the first user login.")
         else:
             #We verify the user is allowed to register
             user = User.query.filter_by(email=form.email.data).first()
@@ -178,17 +179,18 @@ def plex_callback():
     user_email = response.json().get('email')
     
     user = User.query.filter_by(email=user_email).first()
-    current_app.logger.info("User with email "+user_email+" is trying to login through Plex. Corresponding user: "+str(user))
+    current_app.logger.debug("User with email "+user_email+" is trying to login through Plex. Corresponding user: "+str(user))
     #If there are no users, we create an admin
     if not User.query.first():
             user = User(email=user_email)
-            user.set_admin('true')
+            user.admin=True
             db.session.add(user)
             db.session.commit()
-    
+            current_app.logger.info("User with email "+user.email+" was created as an admin as it is the first user login.")
     #If the user is not in the list, we do not allow them to login
     if user is None:
             flash("You are not allowed to login.", "error")
             return redirect(url_for('auth.login'))
     login_user(user)
+    current_app.logger.info(str(user)+" logged in.")
     return redirect(url_for('main.index'))
