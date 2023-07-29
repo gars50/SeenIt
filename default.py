@@ -13,7 +13,7 @@ class Config:
     MAIL_PASSWORD=os.environ.get("MAIL_PASSWORD")
 
     # Logging Setup
-    LOG_TYPE = os.environ.get("LOG_TYPE", "stream")  # Default is a Stream handler
+    LOG_TYPE = os.environ.get("LOG_TYPE", "watched")
     LOG_LEVEL = os.environ.get("LOG_LEVEL", "INFO")
 
     # File Logging Setup

@@ -17,6 +17,9 @@ def create_app(config_class=Config):
         scheduler.scheduler.add_jobstore(SQLAlchemyJobStore(engine=db.engine, metadata=db.metadata))
         scheduler.scheduler.configure(timezone='UTC')
         scheduler.start()
+        import requests_cache
+        requests_cache.install_cache('seenit_dns_cache')
+
 
     @app.before_first_request
     def before_first_request():

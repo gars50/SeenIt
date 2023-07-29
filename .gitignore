@@ -164,3 +164,4 @@ cython_debug/
 #Custom
 config.py
 populate_db.py
+seenit_dns_cache.sqlite
