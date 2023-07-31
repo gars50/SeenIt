@@ -29,7 +29,9 @@
                 <div class="column">
                     <h2>Media Deletion</h2>
                     {{ form.next_delete.label }}<br>
-                    {{ form.next_delete }}<br>
+                    {{ form.next_delete(type="hidden") }}
+                    <input class="form-control" name="next_delete_local" required type="datetime-local" id="next_delete_local">
+                    <br>
                     {% for error in form.next_delete.errors %}
                         <span style="color: red;">[{{ error }}]</span>
                     {% endfor %}
@@ -90,6 +92,18 @@
     <a onclick="deleteMedias()" class="btn btn-danger">Delete all medias</a>
     <a onclick="deleteUsers()" class="btn btn-danger">Delete users</a>
     <script>
+        document.querySelector('#next_delete_local').addEventListener("change", (event) => {
+            var datetimeLocal = document.querySelector('#next_delete_local').value;
+            var datetimeUTC = moment.utc(new Date(datetimeLocal)).format('YYYY-MM-DDTHH:mm');
+            document.querySelector('#next_delete').value = datetimeUTC;
+        });
+
+        $(document).ready(function () {
+            var datetimeUTC = document.querySelector('#next_delete').value+"Z";
+            var datetimeLocal = moment(datetimeUTC).format('YYYY-MM-DD HH:mm');
+            document.querySelector('#next_delete_local').value = datetimeLocal;
+        });
+
         async function testRadarr() {
             spinner.removeAttribute('hidden');
             params ={

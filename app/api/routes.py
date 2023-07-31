@@ -67,8 +67,8 @@ def delete_pick(pick_id):
             "error" : "Not allowed!"
         }, 405
     media = pick.media
-    if pick.method == "Ombi Request":
-        
+    if pick.pick_method == "Ombi Request":
+        #Should we delete the ombi request at this point and avoid double data in the db?
         current_app.logger.debug("Deleting Ombi Request for "+str(pick.media))
     db.session.delete(pick)
     db.session.commit()
