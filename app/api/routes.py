@@ -1,5 +1,5 @@
 from app.api import bp
-from app import db, scheduler
+from app.extensions import db, scheduler
 from flask import json, request, current_app, render_template
 from flask_login import login_required, current_user
 from app.models import *
@@ -67,6 +67,9 @@ def delete_pick(pick_id):
             "error" : "Not allowed!"
         }, 405
     media = pick.media
+    if pick.method == "Ombi Request":
+        
+        current_app.logger.debug("Deleting Ombi Request for "+str(pick.media))
     db.session.delete(pick)
     db.session.commit()
     current_app.logger.info("User "+current_user.alias+" deleted "+str(pick))

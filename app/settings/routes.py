@@ -1,9 +1,8 @@
 from flask import render_template, flash, redirect, request, url_for, current_app
-from datetime import datetime
-from app import db, scheduler
+from app import db
 from app.settings import bp
 from app.scripts.media import modify_deletion_date
-from app.models import User, AppSettings, Media, Movie, TVShow, Pick
+from app.models import User, AppSettings, Media
 from app.settings.forms import EditUserForm, AddUserForm, EditAppSettings
 from flask_login import login_required, current_user
 

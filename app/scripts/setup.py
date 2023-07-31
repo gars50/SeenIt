@@ -1,5 +1,5 @@
 import os
-from app.models.application_settings import AppSettings
+from app.models import AppSettings
 from datetime import datetime, timedelta
 from app import db, scheduler
 from app.scripts.jobs import update_medias_and_requests

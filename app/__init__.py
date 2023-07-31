@@ -3,7 +3,7 @@ from flask import Flask, request
 from datetime import datetime
 from config import Config
 from app.extensions import db, login, migrate, mail, moment, scheduler, logs
-from app.setup import first_run_setup
+from app.scripts.setup import first_run_setup
 from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 
 
