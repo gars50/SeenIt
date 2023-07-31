@@ -3,7 +3,6 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 
 ## Planned
 ### Issues
-- Test services to come from the application instead of client browser
 - Application settings, Media Deletion. Date is UTC, not moment
 
 ### Improvements
@@ -64,6 +63,7 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Add title from Tautulli for better logs
 - Pick dates in admin, wrong timezone
 - Change API calls to an API route
+- Test services to come from the application instead of client browser
 
 ## Possible improvements
 - Add possibility to configure the notification agent in Tautulli from the app
