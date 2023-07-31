@@ -91,7 +91,7 @@ def delete_media(media_id):
             "error" : "Not allowed!"
         }, 405
     media = Media.query.get_or_404(media_id)
-    current_app.logger.info("User "+str(current_user)+" is trying to delete media "+str(media))
+    current_app.logger.debug(str(current_user)+" is trying to delete "+str(media))
     script_result = delete_media_everywhere(media)
     return {
         "message" : script_result
@@ -113,14 +113,14 @@ def add_pick_watching():
     if data["type"] == "movie":
         #Only process if this is an actual movie
         if data["themoviedb_id"]:
-            current_app.logger.info(str(user)+" started watching movie "+data["themoviedb_id"])
+            current_app.logger.info(str(user)+" started watching movie: "+data["title"])
             movie, added_movie = check_movie_creation(TMDB_id=data["themoviedb_id"])
             check_pick_creation(movie, user, datetime.utcnow(), "Watched")
 
     elif data["type"] == "tv_show":
         #Only process if this is an actual show
         if data["thetvdb_id"]:
-            current_app.logger.info(str(user)+" started watching tv show "+data["thetvdb_id"])
+            current_app.logger.info(str(user)+" started watching tv show: "+data["show_title"])
             tv_show, added_to_db = check_tv_show_creation(theTVDB_id=data["thetvdb_id"])
             check_pick_creation(tv_show, user, datetime.utcnow(), "Watched")
     return {}, 204

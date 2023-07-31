@@ -206,6 +206,7 @@ def delete_media_everywhere(media):
 
     if app_settings.safe_mode:
         message = "Deleted "+media.title+" from the database only."
+        current_app.logger.info(str(media)+" deleted from the database only")
     else:
         if media.type == "movie":
             requests.delete(ombi_base_url+"/api/v1/Request/movie/"+str(media.ombi_id), headers=ombi_headers)
@@ -215,6 +216,7 @@ def delete_media_everywhere(media):
             requests.delete(ombi_base_url+"/api/v1/Request/tv/"+str(media.ombi_id), headers=ombi_headers)
             requests.delete(sonarr_base_url+"/api/v3/series/"+str(media.sonarr_id)+"?deleteFiles=true", headers=sonarr_headers)
             message = "Deleted "+media.title+" from Sonarr and Ombi"
+        current_app.logger.info(str(media)+" deleted everywhere")
     db.session.delete(media)
     db.session.commit()
     return message
