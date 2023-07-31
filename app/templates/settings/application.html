@@ -91,60 +91,102 @@
     <a onclick="deleteUsers()" class="btn btn-danger">Delete users</a>
     <script>
         async function testRadarr() {
-            radarr_url = "http://"+document.getElementById('radarr_host').value+":"+document.getElementById('radarr_port').value+"/api/v3/system/status"
-            try{
-                response = await fetch(radarr_url, {
-                    headers: {
-                        "X-Api-Key": document.getElementById('radarr_api_key').value
-                    },
-                    signal: AbortSignal.timeout(5_000)
-                })
-                if (response.ok) {
-                    toastr.success("Test to Radarr successful")
-                } else {
-                    throw "Error"
-                }
-            } catch (error) {
-                toastr.error("Could not connect to Radarr")
+            spinner.removeAttribute('hidden');
+            params ={
+                'radarr_host': document.getElementById('radarr_host').value,
+                'radarr_port': document.getElementById('radarr_port').value,
+                'radarr_api_key': document.getElementById('radarr_api_key').value
             }
+            fetch(BASE_URL+"api/settings/test_radarr_from_server", {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                method : 'POST',
+                body: JSON.stringify(params)
+            })
+            .then(function (response){
+                spinner.setAttribute('hidden', '');
+                if (response.ok) {
+                    response.json()
+                    .then(function(response) {
+                        toastr.success(response.message)
+                    })
+                } else {
+                    response.json()
+                    .then(function(response) {
+                        toastr.error(response.error)
+                    })
+                }
+            })
+            .catch(function(error) {
+                console.log(error)
+            })
         }
 
         async function testSonarr() {
-            sonarr_url = "http://"+document.getElementById('sonarr_host').value+":"+document.getElementById('sonarr_port').value+"/api/v3/system/status"
-            try{
-                response = await fetch(sonarr_url, {
-                    headers: {
-                        "X-Api-Key": document.getElementById('sonarr_api_key').value
-                    },
-                    signal: AbortSignal.timeout(5_000)
-                })
-                if (response.ok) {
-                    toastr.success("Test to Sonarr successful")
-                } else {
-                    throw "Error"
-                }
-            } catch (error) {
-                toastr.error("Could not connect to Sonarr")
+            spinner.removeAttribute('hidden');
+            params ={
+                'sonarr_host': document.getElementById('sonarr_host').value,
+                'sonarr_port': document.getElementById('sonarr_port').value,
+                'sonarr_api_key': document.getElementById('sonarr_api_key').value
             }
+            fetch(BASE_URL+"api/settings/test_sonarr_from_server", {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                method : 'POST',
+                body: JSON.stringify(params)
+            })
+            .then(function (response){
+                spinner.setAttribute('hidden', '');
+                if (response.ok) {
+                    response.json()
+                    .then(function(response) {
+                        toastr.success(response.message)
+                    })
+                } else {
+                    response.json()
+                    .then(function(response) {
+                        toastr.error(response.error)
+                    })
+                }
+            })
+            .catch(function(error) {
+                console.log(error)
+            })
         }
 
         async function testOmbi() {
-            ombi_url = "http://"+document.getElementById('ombi_host').value+":"+document.getElementById('ombi_port').value+"/api/v1/Status"
-            try{
-                response = await fetch(ombi_url, {
-                    headers: {
-                        ApiKey: document.getElementById('ombi_api_key').value
-                    },
-                    signal: AbortSignal.timeout(5_000)
-                })
-                if (response.ok) {
-                    toastr.success("Test to Ombi successful")
-                } else {
-                    throw response
-                }
-            } catch (error) {
-                toastr.error("Could not connect to Ombi")
+            spinner.removeAttribute('hidden');
+            params ={
+                'ombi_host': document.getElementById('ombi_host').value,
+                'ombi_port': document.getElementById('ombi_port').value,
+                'ombi_api_key': document.getElementById('ombi_api_key').value
             }
+            fetch(BASE_URL+"api/settings/test_ombi_from_server", {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                method : 'POST',
+                body: JSON.stringify(params)
+            })
+            .then(function (response){
+                spinner.setAttribute('hidden', '');
+                if (response.ok) {
+                    response.json()
+                    .then(function(response) {
+                        toastr.success(response.message)
+                    })
+                } else {
+                    response.json()
+                    .then(function(response) {
+                        toastr.error(response.error)
+                    })
+                }
+            })
+            .catch(function(error) {
+                console.log(error)
+            })
         }
 
         function update_medias_and_requests() {

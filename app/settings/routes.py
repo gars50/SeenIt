@@ -85,7 +85,7 @@ def user(user_id):
         try:
             last_admin = User.query.filter_by(admin=True).one()
         except Exception as err:
-            current_app.logger.info("More than one admin or none : "+str(err))
+            current_app.logger.debug("More than one admin or none : "+str(err))
             last_admin = None
         
         if ((user == last_admin) and (not form.admin.data)):

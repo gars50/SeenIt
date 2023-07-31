@@ -98,24 +98,69 @@ def check_pick_creation(media, user, pick_date, pick_method):
         added_to_db = True
     return Pick.query.filter_by(media=media, user=user).first(), added_to_db
 
+def test_ombi(ombi_host, ombi_port, ombi_api_key):
+    ombi_base_url = "http://"+ombi_host+":"+f'{ombi_port}'
+    ombi_headers = {'ApiKey' : ombi_api_key, 'Cache-Control': 'no-cache'}
+
+    try:
+        response = requests.get(ombi_base_url+"/api/v1/Status", headers=ombi_headers)
+    except Exception as err:
+        raise Exception(str(err))
+    else:
+        if response:
+            current_app.logger.debug("Test to Ombi successful.")
+            return {
+                "message" : "Test to Ombi successful"
+            } 
+        else:
+            return {
+                "error" : "Could not connect to Ombi"
+            }, 500
+
+def test_radarr(radarr_host, radarr_port, radarr_api_key):
+    radarr_base_url = "http://"+radarr_host+":"+f'{radarr_port}'
+    radarr_headers = {'X-Api-Key' : radarr_api_key, 'Cache-Control': 'no-cache'}
+    try:
+        response = requests.get(radarr_base_url+"/api/v3/System/Status", headers=radarr_headers)
+    except Exception as err:
+        raise Exception(str(err))
+    else:
+        if response:
+            current_app.logger.debug("Test to Radarr successful.")
+            return {
+                "message" : "Test to Radarr successful"
+            } 
+        else:
+            return {
+                "error" : "Could not connect to Radarr"
+            }, 500
+
+
+def test_sonarr(sonarr_host, sonarr_port, sonarr_api_key):
+    sonarr_base_url = "http://"+sonarr_host+":"+f'{sonarr_port}'
+    sonarr_headers = {'X-Api-Key' : sonarr_api_key, 'Cache-Control': 'no-cache'}
+
+    try:
+        response = requests.get(sonarr_base_url+"/api/v3/System/Status", headers=sonarr_headers)
+    except Exception as err:
+        raise Exception(str(err))
+    else:
+        if response:
+            current_app.logger.debug("Test to Sonarr successful.")
+            return {
+                "message" : "Test to Sonarr successful"
+            } 
+        else:
+            return {
+                "error" : "Could not connect to Sonarr"
+            }, 500
+
 def test_services():
     app_settings = AppSettings.query.first()
 
-    radarr_base_url = "http://"+app_settings.radarr_host+":"+f'{app_settings.radarr_port}'
-    radarr_headers = {'X-Api-Key' : app_settings.radarr_api_key}
-
-    sonarr_base_url = "http://"+app_settings.sonarr_host+":"+f'{app_settings.sonarr_port}'
-    sonarr_headers = {'X-Api-Key' : app_settings.sonarr_api_key}
-
-    ombi_base_url = "http://"+app_settings.ombi_host+":"+f'{app_settings.ombi_port}'
-    ombi_headers = {'ApiKey' : app_settings.ombi_api_key}
-
-    try:
-        requests.get(radarr_base_url+"/api/v3/system/status", headers=radarr_headers)
-        requests.get(sonarr_base_url+"/api/v3/system/status", headers=sonarr_headers)
-        requests.get(ombi_base_url+"/api/v1/Status", headers=ombi_headers)
-    except Exception as err:
-        raise Exception(str(err))
+    test_ombi(app_settings.ombi_host, app_settings.ombi_port, app_settings.ombi_api_key)
+    test_radarr(app_settings.radarr_host, app_settings.radarr_port, app_settings.radarr_api_key)
+    test_sonarr(app_settings.sonarr_host, app_settings.sonarr_port, app_settings.sonarr_api_key)
 
 def import_requests_from_ombi():
     test_services()
@@ -191,32 +236,48 @@ def import_requests_from_ombi():
     db.session.commit()
     return response
 
+def delete_media_from_ombi(media):
+    app_settings = AppSettings.query.first()
+    ombi_base_url = "http://"+app_settings.ombi_host+":"+f'{app_settings.ombi_port}'
+    ombi_headers = {'ApiKey' : app_settings.ombi_api_key}
+    if media.type == "movie":
+        requests.delete(ombi_base_url+"/api/v1/Request/movie/"+str(media.ombi_id), headers=ombi_headers)
+    else:
+        requests.delete(ombi_base_url+"/api/v1/Request/tv/"+str(media.ombi_id), headers=ombi_headers)
+    current_app.logger.info(str(media)+" deleted from Ombi.")
+
+def delete_media_from_radarr(media):
+    app_settings = AppSettings.query.first()
+    radarr_base_url = "http://"+app_settings.radarr_host+":"+f'{app_settings.radarr_port}'
+    radarr_headers = {'X-Api-Key' : app_settings.radarr_api_key}
+    requests.delete(radarr_base_url+"/api/v3/movie/"+str(media.radarr_id)+"?deleteFiles=true", headers=radarr_headers)
+    current_app.logger.info(str(media)+" deleted from Radarr.")
+
+def delete_media_from_sonarr(media):
+    app_settings = AppSettings.query.first()
+    sonarr_base_url = "http://"+app_settings.sonarr_host+":"+f'{app_settings.sonarr_port}'
+    sonarr_headers = {'X-Api-Key' : app_settings.sonarr_api_key}
+    requests.delete(sonarr_base_url+"/api/v3/series/"+str(media.sonarr_id)+"?deleteFiles=true", headers=sonarr_headers)
+    current_app.logger.info(str(media)+" deleted from Sonarr.")
+
+def delete_media_from_media_manager(media):
+    if media.type == "movie":
+        delete_media_from_radarr(media)
+    elif media.type == "tv_show":
+        delete_media_from_sonarr(media)
+
 def delete_media_everywhere(media):
     test_services()
 
     app_settings = AppSettings.query.first()
-    radarr_base_url = "http://"+app_settings.radarr_host+":"+f'{app_settings.radarr_port}'
-    radarr_headers = {'X-Api-Key' : app_settings.radarr_api_key}
-
-    sonarr_base_url = "http://"+app_settings.sonarr_host+":"+f'{app_settings.sonarr_port}'
-    sonarr_headers = {'X-Api-Key' : app_settings.sonarr_api_key}
-
-    ombi_base_url = "http://"+app_settings.ombi_host+":"+f'{app_settings.ombi_port}'
-    ombi_headers = {'ApiKey' : app_settings.ombi_api_key}
 
     if app_settings.safe_mode:
         message = "Deleted "+media.title+" from the database only."
-        current_app.logger.info(str(media)+" deleted from the database only")
+        current_app.logger.info(str(media)+" deleted from the database only.")
     else:
-        if media.type == "movie":
-            requests.delete(ombi_base_url+"/api/v1/Request/movie/"+str(media.ombi_id), headers=ombi_headers)
-            requests.delete(radarr_base_url+"/api/v3/movie/"+str(media.radarr_id)+"?deleteFiles=true", headers=radarr_headers)
-            message = "Deleted "+media.title+" from Radarr and Ombi"
-        else:
-            requests.delete(ombi_base_url+"/api/v1/Request/tv/"+str(media.ombi_id), headers=ombi_headers)
-            requests.delete(sonarr_base_url+"/api/v3/series/"+str(media.sonarr_id)+"?deleteFiles=true", headers=sonarr_headers)
-            message = "Deleted "+media.title+" from Sonarr and Ombi"
-        current_app.logger.info(str(media)+" deleted everywhere")
+        delete_media_from_ombi(media)
+        delete_media_from_media_manager(media)
+        message = "Deleted "+media.title+" everywhere."
     db.session.delete(media)
     db.session.commit()
     return message
