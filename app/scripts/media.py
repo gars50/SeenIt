@@ -268,3 +268,12 @@ def modify_deletion_date(medias):
         media.deletion_date = delete_time
         db.session.commit()
         current_app.logger.debug("Deletion date of "+str(media)+" set to "+str(media.deletion_date))
+
+def check_if_abandonned(media):
+    abandonned = (not media.picks)
+    #If this was the last pick that was just deleted, we need to set the expiryDate and deletionDate
+    if abandonned:
+        media.abandonned_date = datetime.utcnow()
+        modify_deletion_date([media])
+        current_app.logger.info(str(media)+" has been abandonned.")
+    return abandonned

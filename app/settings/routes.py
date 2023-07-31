@@ -103,21 +103,6 @@ def user(user_id):
         form.admin.data = user.admin
     return render_template('settings/user.html', form=form)
 
-@bp.route('/user/<int:user_id>/delete', methods=['DELETE'])
-@login_required
-def delete_user(user_id):
-    user = User.query.get_or_404(user_id)
-    current_app.logger.info("Deleting user : "+str(user))
-    if user.admin:
-        return {
-            "error" : user.email+" is an admin and cannot be deleted"
-        }, 400
-    db.session.delete(user)
-    db.session.commit()
-    return {
-        "message" : user.email+" has been deleted"
-    }
-
 @bp.route('/add_user', methods=['GET', 'POST'])
 @login_required
 def add_user():
@@ -129,46 +114,3 @@ def add_user():
         flash('User has been added.', "success")
         return redirect(url_for('settings.users'))
     return render_template('settings/add_user.html', form=form)
-
-@bp.route('/trigger_update_medias_and_requests_job', methods=['POST'])
-@login_required
-def trigger_update_medias_and_requests_job():
-    current_app.logger.info("Forcing a trigger of the update medias and requests job")
-    scheduler.modify_job("update_medias_and_requests-job", next_run_time=datetime.utcnow())
-    return {
-        'message' : "Job triggered"
-    }
-
-@bp.route('/delete_all_medias', methods=['DELETE'])
-@login_required
-def delete_medias():
-    current_app.logger.info("Deleting all medias")
-    num_movies = Movie.query.delete()
-    num_tv_shows = TVShow.query.delete()
-    app_settings = AppSettings.query.first()
-    Media.query.delete()
-    app_settings.last_media_import = datetime.min
-    db.session.commit()
-    return {
-        'message' : "Deleted "+str(num_movies)+" movies and "+str(num_tv_shows)+" TV shows"
-    }
-
-@bp.route('/delete_picks', methods=['DELETE'])
-@login_required
-def delete_picks():
-    current_app.logger.info("Deleting all picks")
-    numPicks = Pick.query.delete()
-    db.session.commit()
-    return {
-        'message' : "Deleted "+str(numPicks)+" picks"
-    }
-
-@bp.route('/delete_users', methods=['DELETE'])
-@login_required
-def delete_users():
-    current_app.logger.info("Deleting all non-admin users")
-    numUsers = User.query.filter_by(admin=False).delete()
-    db.session.commit()
-    return {
-        'message' : str(numUsers)+" non-admin users deleted"
-    }

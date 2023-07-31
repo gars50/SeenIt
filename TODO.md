@@ -18,6 +18,8 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
     - Add information on user type
 - Add option to view the logs within the application
 - Plex login displays a warning? Warning about locatiom of the application
+- Add option to change the jobs' schedule
+- Change datatables to AJAX
 
 ## In Progress
 
@@ -61,6 +63,7 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Add delete confirm prompt for Media deletion
 - Add title from Tautulli for better logs
 - Pick dates in admin, wrong timezone
+- Change API calls to an API route
 
 ## Possible improvements
 - Add possibility to configure the notification agent in Tautulli from the app

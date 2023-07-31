@@ -29,7 +29,7 @@
                 <div class="column">
                     <h2>Media Deletion</h2>
                     {{ form.next_delete.label }}<br>
-                    {{ form.next_delete(type='datetime-local') }}<br>
+                    {{ form.next_delete }}<br>
                     {% for error in form.next_delete.errors %}
                         <span style="color: red;">[{{ error }}]</span>
                     {% endfor %}
@@ -149,7 +149,7 @@
 
         function update_medias_and_requests() {
             spinner.removeAttribute('hidden');
-            fetch(BASE_URL+"settings/trigger_update_medias_and_requests_job", {
+            fetch(BASE_URL+"api/jobs/trigger_update_medias_and_requests_job", {
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -175,7 +175,7 @@
         }
 
         function deletePicks() {
-            fetch(BASE_URL+"settings/delete_picks", {
+            fetch(BASE_URL+"api/picks/delete_all", {
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -201,7 +201,7 @@
         }
 
         function deleteMedias() {
-            fetch(BASE_URL+"settings/delete_all_medias", {
+            fetch(BASE_URL+"api/medias/delete_all", {
                 headers: {
                     'Content-Type': 'application/json'
                 },
@@ -227,7 +227,7 @@
         }
 
         function deleteUsers() {
-            fetch(BASE_URL+"settings/delete_users", {
+            fetch(BASE_URL+"api/users/delete_all", {
                 headers: {
                     'Content-Type': 'application/json'
                 },

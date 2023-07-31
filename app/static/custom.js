@@ -62,22 +62,22 @@ function fetchToastRemoveRowTable(url, obj, type) {
 }
 
 function deletePickModal(pick_id, obj) {
-    var fetchURL = BASE_URL+"/media/pick/"+pick_id+"/delete"
+    var fetchURL = BASE_URL+"/api/picks/"+pick_id+"/delete"
     fetchToastRemoveRowTable(fetchURL, obj, 'DELETE')
 }
 
 function addPick(media_id, obj) {
-    var fetchURL = BASE_URL+"/media/"+media_id+"/add_pick"
+    var fetchURL = BASE_URL+"/api/picks/"+media_id+"/add"
     fetchToastRemoveRowMediaTable(fetchURL, obj, 'POST')
 }
 
 function deletePick(pick_id, obj) {
-    var fetchURL = BASE_URL+"/media/pick/"+pick_id+"/delete"
+    var fetchURL = BASE_URL+"/api/picks/"+pick_id+"/delete"
     fetchToastRemoveRowMediaTable(fetchURL, obj, 'DELETE')
 }
 
 function deleteMedia(media_id, obj) {
-    var fetchURL = BASE_URL+"/media/"+media_id+"/delete"
+    var fetchURL = BASE_URL+"/api/medias/"+media_id+"/delete"
     var result = confirm("Are you sure you want to delete this media : "+obj.parentNode.parentNode.firstChild.nextElementSibling.innerText)
     if (result) {
         fetchToastRemoveRowMediaTable(fetchURL, obj, 'DELETE')
@@ -85,7 +85,7 @@ function deleteMedia(media_id, obj) {
 }
 
 function modalPicks(media_id, obj) {
-    var fetchURL = BASE_URL+"media/"+media_id+"/picks_modal"
+    var fetchURL = BASE_URL+"/api/medias/"+media_id+"/picks_modal"
     $.ajax(fetchURL, {
         method: 'GET',
         dataType: 'html',
