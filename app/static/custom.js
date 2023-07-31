@@ -93,6 +93,7 @@ function modalPicks(media_id, obj) {
             var mediaTitle = obj.parentNode.parentNode.childNodes[1].innerText
             $("#picksTitle").text("Picks for "+mediaTitle)
             $("#picksBody").html(data);
+            flask_moment_render_all();
         }
     });
 }
