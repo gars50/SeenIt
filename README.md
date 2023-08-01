@@ -29,8 +29,6 @@ export MAIL_PASSWORD="XXXXXXXXXXXXXXXXXX"
 3. Prep the database
 
 ```
-flask db init
-flask db migrate -m "Initial Commit"
 flask db upgrade
 ```
 

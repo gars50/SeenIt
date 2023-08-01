@@ -3,6 +3,7 @@ from flask import current_app
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 from app.models import User, Movie, TVShow, AppSettings, Pick
+from app.extensions import cache_session
 from app import db
 
 def check_user_creation(email, alias):
@@ -26,7 +27,7 @@ def check_movie_creation(TMDB_id, ombi_id=0, title=""):
         app_settings = AppSettings.query.first()
         radarr_base_url = "http://"+app_settings.radarr_host+":"+f'{app_settings.radarr_port}'
         radarr_headers = {'X-Api-Key' : app_settings.radarr_api_key}
-        radarr_get_movie = requests.get(radarr_base_url+"/api/v3/movie?tmdbid="+str(TMDB_id), headers=radarr_headers)
+        radarr_get_movie = cache_session.request("GET",radarr_base_url+"/api/v3/movie?tmdbid="+str(TMDB_id), headers=radarr_headers)
         radarr_infos = radarr_get_movie.json()
         if radarr_infos:
             #Movie is already in Radarr, process its information
@@ -39,7 +40,7 @@ def check_movie_creation(TMDB_id, ombi_id=0, title=""):
             radarr_id = -1
             total_size = 0
             year = 0
-            radarr_lookup = requests.get(radarr_base_url+"/api/v3/movie/lookup/tmdb?tmdbid="+str(TMDB_id), headers=radarr_headers)
+            radarr_lookup = cache_session.request("GET",radarr_base_url+"/api/v3/movie/lookup/tmdb?tmdbid="+str(TMDB_id), headers=radarr_headers)
             if not radarr_lookup.status_code == 500:
                 radarr_infos = radarr_lookup.json()
                 title = radarr_infos["title"]
@@ -60,7 +61,7 @@ def check_tv_show_creation(theTVDB_id, ombi_id=0, title=""):
         app_settings = AppSettings.query.first()
         sonarr_base_url = "http://"+app_settings.sonarr_host+":"+f'{app_settings.sonarr_port}'
         sonarr_headers = {'X-Api-Key' : app_settings.sonarr_api_key}
-        sonarr_response = requests.get(sonarr_base_url+"/api/v3/series?tvdbId="+str(theTVDB_id), headers=sonarr_headers)
+        sonarr_response = cache_session.request("GET",sonarr_base_url+"/api/v3/series?tvdbId="+str(theTVDB_id), headers=sonarr_headers)
         sonarr_infos = sonarr_response.json()
         if sonarr_infos:
             #Show is already in Sonarr, process its information
@@ -71,7 +72,7 @@ def check_tv_show_creation(theTVDB_id, ombi_id=0, title=""):
             #Show is not in Sonarr, have to look up its information
             sonarr_id = -1
             total_size = 0
-            sonarr_lookup = requests.get(sonarr_base_url+"/api/v3/series/lookup?term=tvdbid:"+str(theTVDB_id), headers=sonarr_headers)
+            sonarr_lookup = cache_session.request("GET",sonarr_base_url+"/api/v3/series/lookup?term=tvdbid:"+str(theTVDB_id), headers=sonarr_headers)
             if not sonarr_lookup.status_code == 500:
                 sonarr_infos = sonarr_lookup.json()
                 title = sonarr_infos[0]["title"]
@@ -177,7 +178,7 @@ def import_requests_from_ombi():
     ombi_headers = {'ApiKey' : app_settings.ombi_api_key}
 
 
-    movie_requests_response = requests.get(ombi_base_url+"/api/v1/Request/movie", headers=ombi_headers)
+    movie_requests_response = cache_session.request("GET",ombi_base_url+"/api/v1/Request/movie", headers=ombi_headers)
     movie_requests = movie_requests_response.json()
 
     for movie_request in movie_requests:
@@ -205,7 +206,7 @@ def import_requests_from_ombi():
             if added_movie_pick:added_movie_picks+=1
 
 
-    tv_requests_response = requests.get(ombi_base_url+"/api/v1/Request/tv", headers=ombi_headers)
+    tv_requests_response = cache_session.request("GET",ombi_base_url+"/api/v1/Request/tv", headers=ombi_headers)
     tv_requests = tv_requests_response.json()
 
     for tv_request in tv_requests:
@@ -293,7 +294,7 @@ def update_media_infos():
     all_movies = Movie.query.all()
     for movie in all_movies:
         current_app.logger.debug("Updating "+str(movie))
-        radarr_get_movie = requests.get(radarr_base_url+"/api/v3/movie?tmdbid="+str(movie.TMDB_id), headers=radarr_headers)
+        radarr_get_movie = cache_session.request("GET",radarr_base_url+"/api/v3/movie?tmdbid="+str(movie.TMDB_id), headers=radarr_headers)
         radarr_infos = radarr_get_movie.json()
         if radarr_infos:
             movie.radarr_id = radarr_infos[0]["id"]
@@ -303,7 +304,7 @@ def update_media_infos():
     all_shows = TVShow.query.all()
     for show in all_shows:
         current_app.logger.debug("Updating "+str(show))
-        sonarr_response = requests.get(sonarr_base_url+"/api/v3/series?tvdbId="+str(show.theTVDB_id), headers=sonarr_headers)
+        sonarr_response = cache_session.request("GET",sonarr_base_url+"/api/v3/series?tvdbId="+str(show.theTVDB_id), headers=sonarr_headers)
         sonarr_infos = sonarr_response.json()
         if sonarr_infos:
             show.sonarr_id = sonarr_infos[0]["id"]
