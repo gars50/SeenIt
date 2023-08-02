@@ -16,7 +16,11 @@
                 <tr>
                     <td scope="row" class="wrapper">
                         <a href="{{ movie.TMDB_url }}" target="_blank">{{ movie.title }} ({{ movie.year }})
-                            <span><img src="{{ movie.poster_url }}" loading="lazy" height="150"></span>
+                            {% if movie.poster_url %}
+                                <span><img src="{{ movie.poster_url }}" loading="lazy" height="150"></span>
+                            {% else %}
+                                <span><img src="{{ url_for('static', filename='no_picture.png') }}" loading="lazy" height="150"></span>
+                            {% endif %}
                         </a>
                     </td>
                     <td data-sort="{{ movie.deletionDate }}">{{ moment(movie.deletion_date).format('LLL') }}</a></td>

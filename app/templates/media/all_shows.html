@@ -17,7 +17,11 @@
                 <tr>
                     <td scope="row" class="wrapper">
                         <a href="{{ tv_show.theTVDB_url }}" target="_blank">{{ tv_show.title }}
-                            <span><img src="{{ tv_show.poster_url }}" loading="lazy" height="150"></span>
+                            {% if tv_show.poster_url %}
+                                <span><img src="{{ tv_show.poster_url }}" loading="lazy" height="150"></span>
+                            {% else %}
+                                <span><img src="{{ url_for('static', filename='no_picture.png') }}" loading="lazy" height="150"></span>
+                            {% endif %}
                         </a>
                     </td>
                     {% if tv_show.deletion_date %}
