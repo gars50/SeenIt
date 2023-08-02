@@ -19,9 +19,13 @@ pip install gunicorn
 
 2. Configure necessary variables
 
-Export Secrets. You can leave out DATABASE_URI if you want to use a local database
+Create you secret key :
 ```
-export SECRET_KEY="XXXXXXXXXXXXXXXXXX"
+os.urandom(24).hex()
+```
+Export secrets. You can leave out DATABASE_URI if you want to use a local database
+```
+export SECRET_KEY="previously_created_secret_key_string"
 export DATABASE_URI="XXXXXXXXXXXXXXXXXXXXXX"
 export MAIL_USERNAME="xxxxxx@xxxxxx.xxx"
 export MAIL_PASSWORD="XXXXXXXXXXXXXXXXXX"

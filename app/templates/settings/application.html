@@ -88,9 +88,6 @@
     <br><hr>
     <h2>Jobs</h2>
     <a onclick="update_medias_and_requests()" class="btn btn-success">Trigger Update Job</a>
-    <a onclick="deletePicks()" class="btn btn-danger">Delete all picks</a>
-    <a onclick="deleteMedias()" class="btn btn-danger">Delete all medias</a>
-    <a onclick="deleteUsers()" class="btn btn-danger">Delete users</a>
     <script>
         document.querySelector('#next_delete_local').addEventListener("change", (event) => {
             var datetimeLocal = document.querySelector('#next_delete_local').value;
@@ -222,79 +219,6 @@
                     response.json()
                     .then(function(response) {
                         toastr.error(response.error)
-                    })
-                }
-            })
-            .catch(function(error) {
-                console.log(error)
-            })
-        }
-
-        function deletePicks() {
-            fetch(BASE_URL+"api/picks/delete_all", {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                method : 'DELETE',
-                signal: AbortSignal.timeout(5_000)
-            })
-            .then(function (response){
-                if (response.ok) {
-                    response.json()
-                    .then(function(response) {
-                        toastr.success(response.message)
-                    })
-                } else {
-                    response.json()
-                    .then(function(response) {
-                        toastr.error(response.error)
-                    })
-                }
-            })
-            .catch(function(error) {
-                console.log(error)
-            })
-        }
-
-        function deleteMedias() {
-            fetch(BASE_URL+"api/medias/delete_all", {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                method : 'DELETE',
-                signal: AbortSignal.timeout(5_000)
-            })
-            .then(function (response){
-                if (response.ok) {
-                    response.json()
-                    .then(function(response) {
-                        toastr.success(response.message)
-                    })
-                } else {
-                    response.json()
-                    .then(function(response) {
-                        toastr.error(response.error)
-                    })
-                }
-            })
-            .catch(function(error) {
-                console.log(error)
-            })
-        }
-
-        function deleteUsers() {
-            fetch(BASE_URL+"api/users/delete_all", {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                method : 'DELETE',
-                signal: AbortSignal.timeout(5_000)
-            })
-            .then(function (response){
-                if (response.ok) {
-                    response.json()
-                    .then(function(response) {
-                        toastr.success(response.message)
                     })
                 }
             })

@@ -24,6 +24,15 @@
                     <a {% if active_page == "myshows" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.my_shows') }}">My Shows</a>
                 </li>
                 <li class="nav-link">
+                <a>|</a>
+                </li>
+                <li class="nav-item">
+                    <a {% if active_page == "permanentmovies" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.permanent_movies') }}">Permanent Movies</a>
+                </li>
+                <li class="nav-item">
+                    <a {% if active_page == "permanentshows" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.permanent_shows') }}">Permanent Shows</a>
+                </li>
+                <li class="nav-link">
                 {% if current_user.admin %}
                     <a>|</a>
                     </li>

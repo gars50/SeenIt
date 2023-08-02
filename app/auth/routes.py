@@ -20,7 +20,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user is None or not user.password_hash or not user.check_password(form.password.data):
+        if user is None or user.system_user or not user.password_hash or not user.check_password(form.password.data):
             flash('Invalid username or password', 'warning')
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
@@ -39,17 +39,16 @@ def register():
         return redirect(url_for('main.index'))
     form = RegistrationForm()
     if form.validate_on_submit():
-        #If there are no users, we create an admin
-        if not User.query.first():
-            user = User(email=form.email.data)
-            user.set_password(form.password.data)    
-            user.set_admin('true')
+        #If there are no admin users, we create one
+        if not User.query.filter_by(admin=True).first():
+            user = User(email=form.email.data, admin=True)
+            user.set_password(form.password.data)
             db.session.add(user)
-            current_app.logger.info("User with email "+user.email+" was created as an admin as it is the first user login.")
+            current_app.logger.info("User with email "+user.email+" was created as an admin as it is the first user to log in.")
         else:
             #We verify the user is allowed to register
             user = User.query.filter_by(email=form.email.data).first()
-            if not user:
+            if not user or user.system_user:
                 flash("You are not allowed to register.", "error")
                 return redirect(url_for('auth.login'))
             elif user.password_hash:
@@ -180,15 +179,14 @@ def plex_callback():
     
     user = User.query.filter_by(email=user_email).first()
     current_app.logger.debug("User with email "+user_email+" is trying to login through Plex. Corresponding user: "+str(user))
-    #If there are no users, we create an admin
-    if not User.query.first():
-            user = User(email=user_email)
-            user.admin=True
-            db.session.add(user)
-            db.session.commit()
-            current_app.logger.info("User with email "+user.email+" was created as an admin as it is the first user login.")
+    #If there are no admin users, we create one
+    if not User.query.filter_by(admin=True).first():
+        user = User(email=user_email, admin=True)  
+        db.session.add(user)
+        db.session.commit()
+        current_app.logger.info("User with email "+user.email+" was created as an admin as it is the first user to log in.")
     #If the user is not in the list, we do not allow them to login
-    if user is None:
+    if user is None or user.system_user:
             flash("You are not allowed to login.", "error")
             return redirect(url_for('auth.login'))
     login_user(user)

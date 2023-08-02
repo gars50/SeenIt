@@ -23,6 +23,7 @@ def check_movie_creation(TMDB_id, ombi_id=0, title=""):
     current_app.logger.debug("Checking if movie "+str(TMDB_id)+" exists")
     movie = Movie.query.filter_by(TMDB_id=TMDB_id).first()
     if not movie:
+        current_app.logger.debug("It does not. Creating it.")
         #Get the required info from Radarr
         app_settings = AppSettings.query.first()
         radarr_base_url = "http://"+app_settings.radarr_host+":"+f'{app_settings.radarr_port}'
@@ -30,27 +31,33 @@ def check_movie_creation(TMDB_id, ombi_id=0, title=""):
         radarr_get_movie = cache_session.request("GET",radarr_base_url+"/api/v3/movie?tmdbid="+str(TMDB_id), headers=radarr_headers)
         radarr_infos = radarr_get_movie.json()
         if radarr_infos:
-            #Movie is already in Radarr, process its information
+            current_app.logger.debug("Movie is already in Radarr, processing its information")
             title = radarr_infos[0]["title"]
             year = radarr_infos[0]["year"]
             radarr_id = radarr_infos[0]["id"]
+            poster_url = None
             total_size = radarr_infos[0]["sizeOnDisk"]
             for image in radarr_infos[0]["images"]:
                 if image["coverType"] == "poster":
                     poster_url = image["remoteUrl"]
         else:
-            #Movie is not in Radarr, have to look up its information
+            current_app.logger.debug("Movie is not in Radarr, have to look up its information")
             radarr_id = -1
             total_size = 0
             year = 0
             radarr_lookup = cache_session.request("GET",radarr_base_url+"/api/v3/movie/lookup/tmdb?tmdbid="+str(TMDB_id), headers=radarr_headers)
-            if not radarr_lookup.status_code == 500:
+            if radarr_lookup.status_code == 500:
+                year = 0
+                poster_url = None
+            else:
                 radarr_infos = radarr_lookup.json()
                 title = radarr_infos["title"]
                 year = radarr_infos["year"]
+                poster_url = None
                 for image in radarr_infos["images"]:
                     if image["coverType"] == "poster":
-                        poster_url = image["remoteUrl"]
+                        poster_url = image["url"]
+
         new_movie = Movie(title=title, TMDB_id=TMDB_id, year=year, ombi_id=ombi_id, total_size=total_size, radarr_id=radarr_id, poster_url=poster_url)
         db.session.add(new_movie)
         db.session.commit()
@@ -63,28 +70,31 @@ def check_tv_show_creation(theTVDB_id, ombi_id=0, title=""):
     current_app.logger.debug("Checking if tv show "+str(theTVDB_id)+" exists")
     show = TVShow.query.filter_by(theTVDB_id=theTVDB_id).first()
     if not show:
-        #Get the required info from Sonarr
         app_settings = AppSettings.query.first()
         sonarr_base_url = "http://"+app_settings.sonarr_host+":"+f'{app_settings.sonarr_port}'
         sonarr_headers = {'X-Api-Key' : app_settings.sonarr_api_key}
         sonarr_response = cache_session.request("GET",sonarr_base_url+"/api/v3/series?tvdbId="+str(theTVDB_id), headers=sonarr_headers)
         sonarr_infos = sonarr_response.json()
         if sonarr_infos:
-            #Show is already in Sonarr, process its information
+            current_app.logger.debug("Show is already in Sonarr, process its information")
             title = sonarr_infos[0]["title"]
             sonarr_id = sonarr_infos[0]["id"]
             total_size = sonarr_infos[0]["statistics"]["sizeOnDisk"]
+            poster_url = None
             for image in sonarr_infos[0]["images"]:
                 if image["coverType"] == "poster":
                     poster_url = image["remoteUrl"]
         else:
-            #Show is not in Sonarr, have to look up its information
+            current_app.logger.debug("Show is not in Sonarr, have to look up its information")
             sonarr_id = -1
             total_size = 0
             sonarr_lookup = cache_session.request("GET",sonarr_base_url+"/api/v3/series/lookup?term=tvdbid:"+str(theTVDB_id), headers=sonarr_headers)
-            if not sonarr_lookup.status_code == 500:
+            if sonarr_lookup.status_code == 500:
+                poster_url = None
+            else:
                 sonarr_infos = sonarr_lookup.json()
                 title = sonarr_infos[0]["title"]
+                poster_url = None
                 for image in sonarr_infos[0]["images"]:
                     if image["coverType"] == "poster":
                         poster_url = image["remoteUrl"]
@@ -208,6 +218,8 @@ def import_requests_from_ombi():
             requester_email = movie_request["requestedUser"]["email"]
             requester_alias = movie_request["requestedUser"]["userAlias"]
             ombi_id = movie_request["id"]
+
+            current_app.logger.debug("Processing movie "+title+", requested by "+requester_email)
 
             requester, added_user = check_user_creation(requester_email, requester_alias)
             movie, added_movie = check_movie_creation(TMDB_id, ombi_id, title)

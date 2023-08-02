@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% set active_page = "permanentmovies" %}
+{% block content %}
+    <h1>{% block title %} Permanent Movies {% endblock %}</h1>
+    <table id="mediaTable" class="table table-hover table-dark">
+        <thead>
+            <tr>
+                <th scope="col">Title</th>
+                <th>Added</th>
+                <th>Size</th>
+                {% if current_user.admin %}
+                    <th class="nosort" scope="col">Let go</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for pick in movie_picks %}
+                <tr>
+                    <td scope="row" class="wrapper">
+                        <a href="{{ pick.media.TMDB_url }}" target="_blank">{{ pick.media.title }} ({{ pick.media.year }})
+                            {% if pick.media.poster_url %}
+                                <span><img src="{{ pick.media.poster_url }}" loading="lazy" height="150"></span>
+                            {% else %}
+                                <span><img src="{{ url_for('static', filename='no_picture.png') }}" loading="lazy" height="150"></span>
+                            {% endif %}
+                        </a>
+                    </td>
+                    <td data-sort="{{ pick.pick_date }}">{{ moment(pick.pick_date).format('LLL') }}</td>
+                    <td data-sort="{{ pick.media.total_size }}">{{ pick.media.total_size | filesizeformat  }}</td>
+                    {% if current_user.admin %}
+                        <td><a onclick="deletePick({{pick.id}}, this)" class="btn btn-warning"><i class="bi bi-dash-circle"></i></a></td>
+                    {% endif %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

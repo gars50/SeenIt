@@ -66,9 +66,14 @@ function deletePickModal(pick_id, obj) {
     fetchToastRemoveRowTable(fetchURL, obj, 'DELETE')
 }
 
-function addPick(media_id, obj) {
-    var fetchURL = BASE_URL+"/api/picks/"+media_id+"/add"
-    fetchToastRemoveRowMediaTable(fetchURL, obj, 'POST')
+function addPickCurrentUser(media_id, obj) {
+    var fetchURL = BASE_URL+"/api/picks/"+media_id+"/add_current_user"
+    fetchToastRemoveRowMediaTable(fetchURL, obj, 'PUT')
+}
+
+function addPickPermanent(media_id, obj) {
+    var fetchURL = BASE_URL+"/api/picks/"+media_id+"/add_permanent"
+    fetchToastRemoveRowMediaTable(fetchURL, obj, 'PUT')
 }
 
 function deletePick(pick_id, obj) {
@@ -104,7 +109,8 @@ $(document).ready(function () {
         "columnDefs": [{
             "targets": 'nosort',
             "orderable": false,
-            "width": "7%"
+            "width": "7%",
+            "className": "dt-center"
         }]
     });
   });

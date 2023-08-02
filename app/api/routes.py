@@ -28,7 +28,7 @@ def delete_media(media_id):
         "message" : script_result
     }
 
-@bp.route("picks/<int:media_id>/add", methods=['POST'])
+@bp.route("picks/<int:media_id>/add_current_user", methods=['PUT'])
 @login_required
 def add_pick(media_id):
     media = Media.query.get(media_id)
@@ -37,7 +37,17 @@ def add_pick(media_id):
         "message" : "Picked up "+str(media)
     }
 
-@bp.route("/picks/add_watching", methods=['POST'])
+@bp.route("picks/<int:media_id>/add_permanent", methods=['PUT'])
+@login_required
+def add_pick_permanent_collection(media_id):
+    media = Media.query.get(media_id)
+    user = User.query.filter_by(email="permanent").first()
+    check_pick_creation(media, user, datetime.utcnow(), "Picked up")
+    return{
+        "message" : str(media)+" added to the permanent collection"
+    }
+
+@bp.route("/picks/add_watching", methods=['PUT'])
 def add_pick_watching():
     data = json.loads((request.data.decode("utf-8")))
     user, added_user = check_user_creation(data["email"], data["alias"])
@@ -105,40 +115,6 @@ def trigger_update_medias_and_requests_job():
     scheduler.modify_job("update_medias_and_requests-job", next_run_time=datetime.utcnow())
     return {
         'message' : "Job triggered"
-    }
-
-@bp.route('/medias/delete_all', methods=['DELETE'])
-@login_required
-def delete_medias():
-    current_app.logger.info("Deleting all medias")
-    num_movies = Movie.query.delete()
-    num_tv_shows = TVShow.query.delete()
-    app_settings = AppSettings.query.first()
-    Media.query.delete()
-    app_settings.last_media_import = datetime.min
-    db.session.commit()
-    return {
-        'message' : "Deleted "+str(num_movies)+" movies and "+str(num_tv_shows)+" TV shows"
-    }
-
-@bp.route('/picks/delete_all', methods=['DELETE'])
-@login_required
-def delete_picks():
-    current_app.logger.info("Deleting all picks")
-    numPicks = Pick.query.delete()
-    db.session.commit()
-    return {
-        'message' : "Deleted "+str(numPicks)+" picks"
-    }
-
-@bp.route('users/delete_all', methods=['DELETE'])
-@login_required
-def delete_users():
-    current_app.logger.info("Deleting all non-admin users")
-    numUsers = User.query.filter_by(admin=False).delete()
-    db.session.commit()
-    return {
-        'message' : str(numUsers)+" non-admin users deleted"
     }
 
 @bp.route('/settings/test_ombi_from_server', methods=['POST'])

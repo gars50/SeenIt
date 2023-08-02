@@ -15,6 +15,7 @@ class User(UserMixin, db.Model):
     alias = db.Column(db.String(100), default=default_alias)
     admin = db.Column(db.Boolean, default=False)
     superuser = db.Column(db.Boolean, default=False)
+    system_user = db.Column(db.Boolean, default=False)
 
     picks = db.relationship('Pick', back_populates='user', cascade='all, delete')
 

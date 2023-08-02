@@ -1,7 +1,7 @@
 from app.media import bp
 from flask_login import login_required, current_user
 from flask import render_template
-from app.models import Movie, TVShow, Pick
+from app.models import Movie, TVShow, Pick, User
 
 @bp.route("/abandonned_movies")
 def abandonned_movies():
@@ -24,6 +24,18 @@ def my_movies():
 def my_shows():
     tv_show_picks = Pick.query.filter_by(user=current_user, media_type="tv_show")
     return render_template("media/my_shows.html", tv_show_picks=tv_show_picks)
+
+@bp.route("/permanent_movies")
+def permanent_movies():
+    permanent_user = User.query.filter_by(email="permanent").first()
+    movie_picks = Pick.query.filter_by(user=permanent_user, media_type="movie")
+    return render_template("media/permanent_movies.html", movie_picks=movie_picks)
+
+@bp.route("/permanent_shows")
+def permanent_shows():
+    permanent_user = User.query.filter_by(email="permanent").first()
+    tv_show_picks = Pick.query.filter_by(user=permanent_user, media_type="tv_show")
+    return render_template("media/permanent_shows.html", tv_show_picks=tv_show_picks)
 
 @bp.route("/all_movies")
 @login_required

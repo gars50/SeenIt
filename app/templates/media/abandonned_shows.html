@@ -9,6 +9,9 @@
                 <th scope="col">Deletion Date</th>
                 <th scope="col">Size</th>
                 <th scope="col" class="nosort">Pick up</th>
+                {% if current_user.admin %}
+                    <th scope="col" class="nosort">Make permanent</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -26,9 +29,12 @@
                     <td data-sort="{{ tv_show.deletion_date }}">{{ moment(tv_show.deletion_date).format('LLL') }}</a></td>
                     <td data-sort="{{ tv_show.total_size }}">{{ tv_show.total_size | filesizeformat  }}</td>
                     {% if current_user.is_anonymous %}
-                    <td></td>
+                        <td></td>
                     {% else %}
-                    <td><a onclick="addPick({{tv_show.id}}, this)" class="btn btn-success"><i class="bi bi-plus-circle"></i></a></td>
+                        <td><a onclick="addPickCurrentUser({{tv_show.id}}, this)" class="btn btn-success"><i class="bi bi-plus-circle"></i></a></td>
+                    {% endif %}
+                    {% if current_user.admin %}
+                        <td><a onclick="addPickPermanent({{tv_show.id}}, this)" class="btn btn-success"><i class="bi bi-plus-circle"></i></a></td>
                     {% endif %}
                 </tr>
             {% endfor %}
