@@ -34,7 +34,7 @@
                         <td><a onclick="addPickCurrentUser({{movie.id}}, this)" class="btn btn-success"><i class="bi bi-plus-circle"></i></a></td>
                     {% endif %}
                     {% if current_user.admin %}
-                        <td><a onclick="addPickPermanent({{movie.id}}, this)" class="btn btn-success"><i class="bi bi-plus-circle"></i></a></td>
+                        <td><a onclick="addPickPermanent({{movie.id}}, this)" class="btn btn-info"><i class="bi bi-arrow-right-circle"></i></a></td>
                     {% endif %}
                 </tr>
             {% endfor %}
