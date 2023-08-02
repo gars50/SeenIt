@@ -14,7 +14,11 @@
         <tbody>
             {% for movie in movies %}
                 <tr>
-                    <td scope="row"><a href="{{ movie.TMDB_url }}" target="_blank">{{ movie.title }} ({{ movie.year }})</a></td>
+                    <td scope="row" class="wrapper">
+                        <a href="{{ movie.TMDB_url }}" target="_blank">{{ movie.title }} ({{ movie.year }})
+                            <span><img src="{{ movie.poster_url }}" loading="lazy" height="150"></span>
+                        </a>
+                    </td>
                     <td data-sort="{{ movie.deletionDate }}">{{ moment(movie.deletion_date).format('LLL') }}</a></td>
                     <td data-sort="{{ movie.total_size }}">{{ movie.total_size | filesizeformat  }}</td>
                     {% if current_user.is_anonymous %}

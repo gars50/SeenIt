@@ -1,7 +1,7 @@
 from flask import render_template
 from app.main import bp
 from app.models import Pick, Media, AppSettings
-from flask_login import login_required, current_user
+from flask_login import current_user
 
 @bp.route("/")
 def index():
@@ -10,7 +10,7 @@ def index():
     total_movie_size = 0
     total_tv_show_size = 0
     total_used_space = 0
-    total_available_space = 18884100000000
+    total_available_space = 19254100000000
 
     for media in Media.query.all():
         total_used_space += media.total_size

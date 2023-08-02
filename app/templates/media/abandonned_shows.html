@@ -14,7 +14,11 @@
         <tbody>
             {% for tv_show in tv_shows %}
                 <tr>
-                    <td scope="row"><a href="{{ tv_show.theTVDB_url }}" target="_blank">{{ tv_show.title }}</a></td>
+                    <td scope="row" class="wrapper">
+                        <a href="{{ tv_show.theTVDB_url }}" target="_blank">{{ tv_show.title }}
+                            <span><img src="{{ tv_show.poster_url }}" loading="lazy" height="150"></span>
+                        </a>
+                    </td>
                     <td data-sort="{{ tv_show.deletion_date }}">{{ moment(tv_show.deletion_date).format('LLL') }}</a></td>
                     <td data-sort="{{ tv_show.total_size }}">{{ tv_show.total_size | filesizeformat  }}</td>
                     {% if current_user.is_anonymous %}

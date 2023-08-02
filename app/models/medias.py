@@ -13,6 +13,7 @@ class Media(db.Model):
 
     ombi_id = db.Column(db.Integer, nullable = False)
     total_size = db.Column(db.BigInteger)
+    poster_url = db.Column(db.String(50))
 
     abandonned_date = db.Column(db.DateTime)
     expiry_date = db.Column(db.DateTime)

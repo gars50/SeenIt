@@ -35,6 +35,9 @@ def check_movie_creation(TMDB_id, ombi_id=0, title=""):
             year = radarr_infos[0]["year"]
             radarr_id = radarr_infos[0]["id"]
             total_size = radarr_infos[0]["sizeOnDisk"]
+            for image in radarr_infos[0]["images"]:
+                if image["coverType"] == "poster":
+                    poster_url = image["remoteUrl"]
         else:
             #Movie is not in Radarr, have to look up its information
             radarr_id = -1
@@ -45,7 +48,10 @@ def check_movie_creation(TMDB_id, ombi_id=0, title=""):
                 radarr_infos = radarr_lookup.json()
                 title = radarr_infos["title"]
                 year = radarr_infos["year"]
-        new_movie = Movie(title=title, TMDB_id=TMDB_id, year=year, ombi_id=ombi_id, total_size=total_size, radarr_id=radarr_id)
+                for image in radarr_infos["images"]:
+                    if image["coverType"] == "poster":
+                        poster_url = image["remoteUrl"]
+        new_movie = Movie(title=title, TMDB_id=TMDB_id, year=year, ombi_id=ombi_id, total_size=total_size, radarr_id=radarr_id, poster_url=poster_url)
         db.session.add(new_movie)
         db.session.commit()
         current_app.logger.info("Created "+str(new_movie))
@@ -68,6 +74,9 @@ def check_tv_show_creation(theTVDB_id, ombi_id=0, title=""):
             title = sonarr_infos[0]["title"]
             sonarr_id = sonarr_infos[0]["id"]
             total_size = sonarr_infos[0]["statistics"]["sizeOnDisk"]
+            for image in sonarr_infos[0]["images"]:
+                if image["coverType"] == "poster":
+                    poster_url = image["remoteUrl"]
         else:
             #Show is not in Sonarr, have to look up its information
             sonarr_id = -1
@@ -76,8 +85,11 @@ def check_tv_show_creation(theTVDB_id, ombi_id=0, title=""):
             if not sonarr_lookup.status_code == 500:
                 sonarr_infos = sonarr_lookup.json()
                 title = sonarr_infos[0]["title"]
-            
-        new_show = TVShow(title=title, theTVDB_id=theTVDB_id, ombi_id=ombi_id, sonarr_id=sonarr_id, total_size=total_size)
+                for image in sonarr_infos[0]["images"]:
+                    if image["coverType"] == "poster":
+                        poster_url = image["remoteUrl"]
+                
+        new_show = TVShow(title=title, theTVDB_id=theTVDB_id, ombi_id=ombi_id, sonarr_id=sonarr_id, total_size=total_size, poster_url=poster_url)
         db.session.add(new_show)
         db.session.commit()
         current_app.logger.info("Created "+str(new_show))
@@ -299,6 +311,9 @@ def update_media_infos():
         if radarr_infos:
             movie.radarr_id = radarr_infos[0]["id"]
             movie.total_size = radarr_infos[0]["sizeOnDisk"]
+            for image in radarr_infos[0]["images"]:
+                if image["coverType"] == "poster":
+                    movie.poster_url = image["remoteUrl"]
             db.session.commit()
 
     all_shows = TVShow.query.all()
@@ -309,6 +324,9 @@ def update_media_infos():
         if sonarr_infos:
             show.sonarr_id = sonarr_infos[0]["id"]
             show.total_size = sonarr_infos[0]["statistics"]["sizeOnDisk"]
+            for image in sonarr_infos[0]["images"]:
+                if image["coverType"] == "poster":
+                    show.poster_url = image["remoteUrl"]
             db.session.commit()
 
 def modify_deletion_date(medias):

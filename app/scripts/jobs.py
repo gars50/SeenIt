@@ -7,4 +7,5 @@ def update_medias_and_requests():
         import_requests_from_ombi()
         scheduler.app.logger.debug("Updating media info from Sonarr/Radarr.")
         update_media_infos()
+        scheduler.app.logger.debug("Updating media info completed.")
     #Maybe import Medias from Sonarr/Radarr?

@@ -17,13 +17,24 @@ pip install -r requirements.txt
 pip install gunicorn
 ```
 
-2. Configure necessary environment variables
+2. Configure necessary variables
 
+Export Secrets. You can leave out DATABASE_URI if you want to use a local database
 ```
 export SECRET_KEY="XXXXXXXXXXXXXXXXXX"
 export DATABASE_URI="XXXXXXXXXXXXXXXXXXXXXX"
 export MAIL_USERNAME="xxxxxx@xxxxxx.xxx"
 export MAIL_PASSWORD="XXXXXXXXXXXXXXXXXX"
+```
+Edit the configuration file
+```
+cp default.py config.py
+nano config.py
+```
+```
+MAIL_SERVER
+MAIL_PORT
+MAIL_USE_TLS
 ```
 
 3. Prep the database
@@ -54,13 +65,13 @@ User=YOURUSER
 Group=www-data
 WorkingDirectory=/home/YOURUSER/SeenIt
 Environment="PATH=/home/YOURUSER/SeenIt/venv/bin"
-ExecStart=/home/YOURUSER/SeenIt/venv/bin/gunicorn --workers 3 --bind unix:SeenIt.sock -m 007 wsgi:app
+ExecStart=/home/YOURUSER/SeenIt/venv/bin/gunicorn --workers 4 --bind unix:SeenIt.sock -m 007 wsgi:app
 
 [Install]
 WantedBy=multi-user.target
 ```
 
-2. Put environment variables in the service
+2. Put environment variables in the service. You can leave out DATABASE_URI if you want to use a local database.
 ```
 systemctl edit seenit
 ```
