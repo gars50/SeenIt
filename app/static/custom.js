@@ -116,12 +116,17 @@ function modalPicks(media_id, obj) {
 $(document).ready(function () {
     $('#mediaTable').DataTable({
         "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
-        "columnDefs": [{
-            "targets": 'nosort',
-            "orderable": false,
-            "width": "7%",
-            "className": "dt-center"
-        }]
+        "columnDefs": [
+            {
+                "targets": 'nosort',
+                "orderable": false
+            },
+            {
+                "targets": 'button',
+                "width": "7%",
+                "className": "dt-center"
+            }
+        ]
     });
   });
 
