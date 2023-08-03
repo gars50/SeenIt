@@ -4,17 +4,33 @@
             <th scope="col">User</th>
             <th>Pick date</th>
             <th>Pick method</th>
-            <th>Delete</th>
+            {% if current_user.admin %}
+                <th>Delete</th>
+            {% endif %}
         </tr>
     </thead>
     <tbody>
-        {% for pick in picks %}
+        {% for pick in media.picks %}
             <tr>
                 <td scope="row">{{ pick.user.alias }}</td>
                 <td>{{ moment(pick.pick_date).format('LLL') }}</td>
                 <td>{{ pick.pick_method }}</td>
-                <td><a onclick="deletePickModal({{pick.id}}, this)" class="btn btn-warning">Delete</a></td>
+                {% if current_user.admin %}
+                    <td><a onclick="deletePickModal({{pick.id}}, this)" class="btn btn-warning">Delete</a></td>
+                {% endif %}
             </tr>
         {% endfor %}
+        {% if current_user.admin %}
+            <tr>
+                <td colspan="4" scope="row"><a onclick="appendPickCurrentUser({{media.id}}, this)" class="btn btn-success">Add to my picks</a></td>
+            </tr>
+            <tr>
+                <td colspan="4" scope="row"><a onclick="appendPickPermanent({{media.id}}, this)" class="btn btn-info">Add to permanent collection</a></td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3" scope="row"><a onclick="appendPickCurrentUser({{media.id}}, this)" class="btn btn-success">Add to my picks</a></td>
+            </tr>
+        {% endif %}
     </tbody>
 </table>

@@ -10,8 +10,7 @@ from app.scripts.media import check_user_creation, check_movie_creation, check_t
 @login_required
 def picks_modal(media_id):
     media = Media.query.get_or_404(media_id)
-    picks = Pick.query.filter_by(media=media)
-    content = render_template("media/picks_modal.html", picks=picks)
+    content = render_template("media/picks_modal.html", media=media)
     return content
 
 @bp.route("/medias/<int:media_id>/delete", methods=['DELETE'])
@@ -123,7 +122,6 @@ def test_ombi_from_server():
     ombi_port = request.json['ombi_port']
     ombi_api_key = request.json['ombi_api_key']
     return test_ombi(ombi_host, ombi_port, ombi_api_key)
-    
 
 @bp.route('/settings/test_radarr_from_server', methods=['POST'])
 def test_radarr_from_server():

@@ -61,6 +61,16 @@ function fetchToastRemoveRowTable(url, obj, type) {
     })
 }
 
+function appendPickPermanent(media_id, obj) {
+    var fetchURL = BASE_URL+"/api/picks/"+media_id+"/add_permanent"
+    fetchToastRemoveRowTable(fetchURL, obj, 'PUT')
+}
+
+function appendPickCurrentUser(media_id, obj) {
+    var fetchURL = BASE_URL+"/api/picks/"+media_id+"/add_current_user"
+    fetchToastRemoveRowTable(fetchURL, obj, 'PUT')
+}
+
 function deletePickModal(pick_id, obj) {
     var fetchURL = BASE_URL+"/api/picks/"+pick_id+"/delete"
     fetchToastRemoveRowTable(fetchURL, obj, 'DELETE')

@@ -9,7 +9,9 @@
                 <th scope="col">Deletion Date</th>
                 <th scope="col">Size</th>
                 <th scope="col" class="nosort">Picks</th>
-                <th scope="col" class="nosort">Delete</th>
+                {% if current_user.admin %}
+                    <th scope="col" class="nosort">Delete</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -30,14 +32,10 @@
                         <td scope="row"></td>
                     {% endif %}
                     <td data-sort="{{ movie.total_size }}">{{ movie.total_size | filesizeformat  }}</td>
-                    {% if not movie.picks %}
-                        <td>Abandonned</td>
-                    {% else %}
-                        <td>
-                            <a onclick="modalPicks({{ movie.id }}, this)" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#picksModal">{{ movie.picks|length }}</a>
-                        </td>
+                    <td><a onclick="modalPicks({{ movie.id }}, this)" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#picksModal">{{ movie.picks|length }}</a></td>
+                    {% if current_user.admin %}
+                        <td><a onclick="deleteMedia({{ movie.id }}, this)" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
                     {% endif %}
-                    <td><a onclick="deleteMedia({{ movie.id }}, this)" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
                 </tr>
             {% endfor %}
         </tbody>

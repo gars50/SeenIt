@@ -33,16 +33,14 @@
                     <a {% if active_page == "permanentshows" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.permanent_shows') }}">Permanent Shows</a>
                 </li>
                 <li class="nav-link">
-                {% if current_user.admin %}
-                    <a>|</a>
-                    </li>
-                    <li class="nav-item">
-                        <a {% if active_page == "allmovies" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.all_movies') }}">All Movies</a>
-                    </li>
-                    <li class="nav-item">
-                        <a {% if active_page == "allshows" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.all_shows') }}">All Shows</a>
-                    </li>
-                {% endif %}
+                <a>|</a>
+                </li>
+                <li class="nav-item">
+                    <a {% if active_page == "allmovies" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.all_movies') }}">All Movies</a>
+                </li>
+                <li class="nav-item">
+                    <a {% if active_page == "allshows" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.all_shows') }}">All Shows</a>
+                </li>
             </ul>
             <ul class="navbar-nav mr-auto">
                 {% if current_user.admin %}

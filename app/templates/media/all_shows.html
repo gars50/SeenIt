@@ -9,7 +9,9 @@
                 <th scope="col">Deletion Date</th>
                 <th scope="col">Size</th>
                 <th scope="col" class="nosort">Picks</th>
-                <th scope="col" class="nosort">Delete</th>
+                {% if current_user.admin %}
+                    <th scope="col" class="nosort">Delete</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
@@ -37,7 +39,9 @@
                             <a onclick="modalPicks({{ tv_show.id }}, this)" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#picksModal">{{ tv_show.picks|length }}</a>
                         </td>
                     {% endif %}
-                    <td><a onclick="deleteMedia({{tv_show.id}}, this)" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
+                    {% if current_user.admin %}
+                        <td><a onclick="deleteMedia({{tv_show.id}}, this)" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
+                    {% endif %}
                 </tr>
             {% endfor %}
         </tbody>
