@@ -6,6 +6,7 @@
         <thead>
             <tr>
                 <th scope="col">Title</th>
+                <th scope="col">Abandonned by</th>
                 <th scope="col">Deletion Date</th>
                 <th scope="col">Size</th>
                 <th scope="col" class="nosort button">Pick up</th>
@@ -26,6 +27,7 @@
                             {% endif %}
                         </a>
                     </td>
+                    <td>{{ tv_show.last_user.alias }}</a></td>
                     <td data-sort="{{ tv_show.deletion_date }}">{{ moment(tv_show.deletion_date).format('LLL') }}</a></td>
                     <td data-sort="{{ tv_show.total_size }}">{{ tv_show.total_size | filesizeformat  }}</td>
                     {% if current_user.is_anonymous %}

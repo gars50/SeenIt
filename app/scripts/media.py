@@ -158,7 +158,6 @@ def test_radarr(radarr_host, radarr_port, radarr_api_key):
                 "error" : "Could not connect to Radarr"
             }, 500
 
-
 def test_sonarr(sonarr_host, sonarr_port, sonarr_api_key):
     sonarr_base_url = "http://"+sonarr_host+":"+f'{sonarr_port}'
     sonarr_headers = {'X-Api-Key' : sonarr_api_key, 'Cache-Control': 'no-cache'}
@@ -361,11 +360,13 @@ def modify_deletion_date(medias):
         db.session.commit()
         current_app.logger.debug("Deletion date of "+str(media)+" set to "+str(media.deletion_date))
 
-def check_if_abandonned(media):
+def check_if_abandonned(media, user=None):
     abandonned = (not media.picks)
     #If this was the last pick that was just deleted, we need to set the expiryDate and deletionDate
     if abandonned:
         media.abandonned_date = datetime.utcnow()
         modify_deletion_date([media])
         current_app.logger.info(str(media)+" has been abandonned.")
+        media.last_user = user
+        db.session.commit()
     return abandonned

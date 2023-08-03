@@ -32,13 +32,7 @@
                         <td scope="row"></td>
                     {% endif %}
                     <td data-sort="{{ tv_show.total_size }}">{{ tv_show.total_size | filesizeformat  }}</td>
-                    {% if not tv_show.picks %}
-                        <td>Abandonned</td>
-                    {% else %}
-                        <td>
-                            <a onclick="modalPicks({{ tv_show.id }}, this)" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#picksModal">{{ tv_show.picks|length }}</a>
-                        </td>
-                    {% endif %}
+                    <td><a onclick="modalPicks({{ tv_show.id }}, this)" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#picksModal">{{ tv_show.picks|length }}</a></td>
                     {% if current_user.admin %}
                         <td><a onclick="deleteMedia({{tv_show.id}}, this)" class="btn btn-danger"><i class="bi bi-trash"></i></a></td>
                     {% endif %}

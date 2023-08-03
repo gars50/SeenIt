@@ -21,6 +21,9 @@ class Media(db.Model):
 
     picks = db.relationship('Pick', back_populates='media', cascade='all, delete')
 
+    last_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    last_user = db.relationship('User')
+
     __mapper_args__ = {
         'polymorphic_identity': 'media',
         'polymorphic_on': type

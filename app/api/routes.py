@@ -76,13 +76,14 @@ def delete_pick(pick_id):
             "error" : "Not allowed!"
         }, 405
     media = pick.media
+    user = pick.user
     if pick.pick_method == "Ombi Request":
         #Should we delete the ombi request at this point and avoid double data in the db?
         current_app.logger.debug("Deleting Ombi Request for "+str(pick.media))
     db.session.delete(pick)
     db.session.commit()
     current_app.logger.info("User "+current_user.alias+" deleted "+str(pick))
-    abandonned = check_if_abandonned(media)
+    abandonned = check_if_abandonned(media, user)
     if abandonned:
         return{
             "message" : str(media)+" was let go. It has been abandonned as this was its last pick."
