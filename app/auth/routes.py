@@ -189,6 +189,6 @@ def plex_callback():
     if user is None or user.system_user:
             flash("You are not allowed to login.", "error")
             return redirect(url_for('auth.login'))
-    login_user(user)
+    login_user(user, remember=True)
     current_app.logger.info(str(user)+" logged in.")
     return redirect(url_for('main.index'))

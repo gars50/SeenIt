@@ -194,7 +194,7 @@ def import_requests_from_ombi():
     added_tv_show_picks = 0
 
     app_settings = AppSettings.query.first()
-
+    start_time = datetime.utcnow()
     ombi_base_url = "http://"+app_settings.ombi_host+":"+f'{app_settings.ombi_port}'
     ombi_headers = {'ApiKey' : app_settings.ombi_api_key}
 
@@ -256,7 +256,7 @@ def import_requests_from_ombi():
             if added_tv_show_pick:added_tv_show_picks+=1
 
     response = "Imported \n"+str(added_users)+" Users.\n"+str(added_movies)+" Movies.\n"+str(added_movie_picks)+" Movie Picks.\n"+str(added_tv_shows)+" TV Shows.\n"+str(added_tv_show_picks)+" TV Show Picks"
-    app_settings.last_media_import = datetime.utcnow()
+    app_settings.last_media_import = start_time
     db.session.commit()
     return response
 

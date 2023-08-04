@@ -3,6 +3,7 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 
 ## Planned
 ### Issues
+APScheduler only runs after a trigger, not after a restart of the application.
 
 ### Improvements
 - Website looks
