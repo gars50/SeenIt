@@ -7,6 +7,7 @@
             <tr>
                 <th scope="col">Title</th>
                 <th scope="col">Abandonned by</th>
+                <th scope="col">Abandonned Date</th>
                 <th scope="col">Deletion Date</th>
                 <th scope="col">Size</th>
                 <th scope="col" class="nosort button">Pick up</th>
@@ -28,6 +29,7 @@
                         </a>
                     </td>
                     <td>{{ movie.last_user.alias }}</a></td>
+                    <td>{{ movie.abandonned_date }}</a></td>
                     <td data-sort="{{ movie.deletionDate }}">{{ moment(movie.deletion_date).format('LLL') }}</a></td>
                     <td data-sort="{{ movie.total_size }}">{{ movie.total_size | filesizeformat  }}</td>
                     {% if current_user.is_anonymous %}
