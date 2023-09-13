@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, request, url_for, current_ap
 from app import db
 from app.settings import bp
 from app.scripts.media import modify_deletion_date
-from app.models import User, AppSettings, Media
+from app.models import User, AppSettings, Media, Pick, Movie, TVShow
 from app.settings.forms import EditUserForm, AddUserForm, EditAppSettings
 from flask_login import login_required, current_user
 
@@ -12,6 +12,9 @@ def application():
     if not current_user.admin:
         flash('You do not have access to this.', "error")
         return redirect(url_for('main.index'))
+    num_picks = Pick.query.count()
+    num_movies = Movie.query.count()
+    num_shows = TVShow.query.count()
     app_settings = AppSettings.query.first()
     form = EditAppSettings()
     if form.validate_on_submit():
@@ -64,7 +67,7 @@ def application():
         form.safe_mode.data = app_settings.safe_mode
     else :
         flash('Error saving settings. Check error messages', "error")
-    return render_template('settings/application.html', form=form)
+    return render_template('settings/application.html', form=form, num_picks=num_picks, num_movies=num_movies, num_shows=num_shows)
 
 @bp.route('/users')
 @login_required

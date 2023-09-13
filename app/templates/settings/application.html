@@ -17,9 +17,12 @@
                 </div>
             </div>
             <hr>
+            <h1>Media Management</h1>
+            There are {{ num_picks }} picks, {{ num_movies }} movies and {{ num_shows }} TV shows.<br>
+
             <div class="row row-cols-auto">
                 <div class="column">
-                    <h2>Media Expiry</h2>
+                    <h2>Expiry</h2>
                     {{ form.expiry_time_number.label }}<br>
                     {{ form.expiry_time_number }}  {{ form.expiry_time_unit }}<br>
                     {% for error in form.expiry_time_number.errors %}
@@ -27,7 +30,7 @@
                     {% endfor %}
                 </div>
                 <div class="column">
-                    <h2>Media Deletion</h2>
+                    <h2>Deletion</h2>
                     {{ form.next_delete.label }}<br>
                     {{ form.next_delete(type="hidden") }}
                     <input class="form-control" name="next_delete_local" required type="datetime-local" id="next_delete_local">
