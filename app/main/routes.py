@@ -7,15 +7,13 @@ from flask_login import current_user
 def index():
     app_settings = AppSettings.query.first()
     
-    total_movie_size = 0
-    total_tv_show_size = 0
-    total_used_space = 0
-    total_space_to_be_freed = 0
-    total_available_space = 17704100000000
+    total_available_space = 24804100000000
 
+    total_used_space = 0
     for media in Media.query.all():
         total_used_space += media.total_size
 
+    total_space_to_be_freed = 0
     for media in Media.query.filter_by(picks=None):
         total_space_to_be_freed += media.total_size
 
@@ -25,9 +23,11 @@ def index():
         movie_picks_count = movie_picks.count()
         tv_show_picks_count = tv_show_picks.count()
 
+        total_movie_size = 0
         for movie_pick in movie_picks:
             total_movie_size += movie_pick.media.total_size
 
+        total_tv_show_size = 0
         for tv_show_pick in tv_show_picks:
             total_tv_show_size += tv_show_pick.media.total_size
 
