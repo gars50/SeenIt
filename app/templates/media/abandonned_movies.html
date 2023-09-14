@@ -30,7 +30,7 @@
                     </td>
                     <td>{{ movie.last_user.alias }}</a></td>
                     <td data-sort="{{ movie.abandonned_date }}">{{ moment(movie.abandonned_date).format('LLL') }}</a></td>
-                    <td data-sort="{{ movie.deletionDate }}">{{ moment(movie.deletion_date).format('LLL') }}</a></td>
+                    <td data-sort="{{ movie.deletion_date }}">{{ moment(movie.deletion_date).format('LLL') }}</a></td>
                     <td data-sort="{{ movie.total_size }}">{{ movie.total_size | filesizeformat  }}</td>
                     {% if current_user.is_anonymous %}
                         <td></td>

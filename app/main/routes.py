@@ -11,7 +11,7 @@ def index():
     total_tv_show_size = 0
     total_used_space = 0
     total_space_to_be_freed = 0
-    total_available_space = 17504100000000
+    total_available_space = 17704100000000
 
     for media in Media.query.all():
         total_used_space += media.total_size

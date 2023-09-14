@@ -67,7 +67,7 @@ function appendPickPermanent(media_id, obj) {
 }
 
 function appendPickCurrentUser(media_id, obj) {
-    var fetchURL = BASE_URL+"/api/picks/"+media_id+"/add_current_user"
+    var fetchURL = BASE_URL+"/api/picks/"+media_id+"/add_to_current_user"
     fetchToastRemoveRowTable(fetchURL, obj, 'PUT')
 }
 
@@ -77,7 +77,7 @@ function deletePickModal(pick_id, obj) {
 }
 
 function addPickCurrentUser(media_id, obj) {
-    var fetchURL = BASE_URL+"/api/picks/"+media_id+"/add_current_user"
+    var fetchURL = BASE_URL+"/api/picks/"+media_id+"/add_to_current_user"
     fetchToastRemoveRowMediaTable(fetchURL, obj, 'PUT')
 }
 
