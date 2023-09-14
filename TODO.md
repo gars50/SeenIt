@@ -71,6 +71,8 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Application settings, Media Deletion. Date is UTC, not moment
 - Add poster picture on mouseover of the title
 - Add permanent collection
+- Import from Radarr/Sonarr
+    - Add them to the permanent collection
 
 ## Possible improvements
 - Add possibility to configure the notification agent in Tautulli from the app
