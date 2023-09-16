@@ -8,6 +8,7 @@ def index():
     app_settings = AppSettings.query.first()
     
     total_available_space = 24804100000000
+    delete_date = app_settings.next_delete
 
     total_used_space = 0
     for media in Media.query.all():
@@ -23,14 +24,14 @@ def index():
         movie_picks_count = movie_picks.count()
         tv_show_picks_count = tv_show_picks.count()
 
-        total_movie_size = 0
+        total_user_movie_size = 0
         for movie_pick in movie_picks:
-            total_movie_size += movie_pick.media.total_size
+            total_user_movie_size += movie_pick.media.total_size
 
-        total_tv_show_size = 0
+        total_user_tv_show_size = 0
         for tv_show_pick in tv_show_picks:
-            total_tv_show_size += tv_show_pick.media.total_size
+            total_user_tv_show_size += tv_show_pick.media.total_size
 
-        return render_template("index.html", movie_picks_count=movie_picks_count, tv_show_picks_count=tv_show_picks_count, total_movie_size=total_movie_size, total_tv_show_size=total_tv_show_size, total_used_space=total_used_space, total_available_space=total_available_space, total_space_to_be_freed=total_space_to_be_freed, app_name=app_settings.app_name)
+        return render_template("index.html", movie_picks_count=movie_picks_count, tv_show_picks_count=tv_show_picks_count, total_movie_size=total_user_tv_show_size, total_tv_show_size=total_user_tv_show_size, total_used_space=total_used_space, total_available_space=total_available_space, total_space_to_be_freed=total_space_to_be_freed, delete_date=delete_date, app_name=app_settings.app_name)
     else:
-        return render_template("index.html", total_movie_size=total_movie_size, total_tv_show_size=total_tv_show_size, total_used_space=total_used_space, total_available_space=total_available_space, total_space_to_be_freed=total_space_to_be_freed, app_name=app_settings.app_name)
+        return render_template("index.html", total_used_space=total_used_space, total_available_space=total_available_space, total_space_to_be_freed=total_space_to_be_freed, delete_date=delete_date, app_name=app_settings.app_name)

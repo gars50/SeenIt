@@ -24,13 +24,16 @@ def login():
             flash('Invalid username or password', 'warning')
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
+        current_app.logger.info(str(user)+" logged in through SeenIt.")
         return redirect(url_for('main.index'))
     return render_template('auth/login.html', title='Sign In', form=form)
 
 @bp.route('/logout')
 @login_required
 def logout():
+    user = User.query.filter_by(email=current_user.email).first()
     logout_user()
+    current_app.logger.info(str(user)+" logged out.")
     return redirect(url_for('auth.login_choice'))
 
 @bp.route('/register', methods=['GET', 'POST'])
@@ -189,6 +192,10 @@ def plex_callback():
     if user is None or user.system_user:
             flash("You are not allowed to login.", "error")
             return redirect(url_for('auth.login'))
+    
+    #Otherwise we log them in and clear the cookies used for the login.
     login_user(user, remember=True)
-    current_app.logger.info(str(user)+" logged in.")
+    session.pop('plex_oauth_code', None)
+    session.pop('plex_oauth_id', None)
+    current_app.logger.info(str(user)+" logged in through Plex.")
     return redirect(url_for('main.index'))

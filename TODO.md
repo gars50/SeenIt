@@ -5,6 +5,7 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 ### Issues
 - APScheduler only runs after a trigger, not after a restart of the application.
 - Add a better way to show storage
+- Login/logout does not always work in dev, but works in prod
 
 ### Improvements
 - Website looks
@@ -20,8 +21,6 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Plex login displays a warning about location of the application?
 - Add option to change the jobs' schedule
 - Change datatables to AJAX
-- Import from Radarr/Sonarr
-    - Add them to the permanent collection
 - Add storage used per user in users
 
 ## In Progress
@@ -81,3 +80,4 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Allow admins and users to add picks manually? Is it needed?
 - Logs for each day instead of lumped into one
 - Retrieve watchlist from plex?
+    - Could be done through Ombi
