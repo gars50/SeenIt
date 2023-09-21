@@ -74,6 +74,7 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Add permanent collection
 - Import from Radarr/Sonarr
     - Add them to the permanent collection
+- Change the updating of infos from Radarr/Sonarr by downloading the whole movie thing instead of constant API calls
 
 ## Possible improvements
 - Add possibility to configure the notification agents in Tautulli from the SeenIt

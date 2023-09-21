@@ -325,32 +325,33 @@ def delete_media_everywhere(media):
     return message
 
 def update_media_infos():
-    all_movies = Movie.query.all()
 
-    all_movies = Movie.query.all()
-    for movie in all_movies:
-        current_app.logger.debug("Updating "+str(movie))
-        radarr_response = api_radarr("GET", "/api/v3/movie?tmdbid="+str(movie.TMDB_id))
-        radarr_infos = radarr_response.json()
-        if radarr_infos:
-            movie.radarr_id = radarr_infos[0]["id"]
-            movie.total_size = radarr_infos[0]["sizeOnDisk"]
-            for image in radarr_infos[0]["images"]:
+    current_app.logger.debug("Updating movie infos from Radarr.")
+    radarr_response = api_radarr("GET", "/api/v3/movie")
+    radarr_infos = radarr_response.json()
+    for radarr_movie in radarr_infos:
+        seenit_movie = Movie.query.filter_by(TMDB_id=str(radarr_movie["tmdbId"])).one()
+        if seenit_movie:
+            current_app.logger.debug("Processing movie " + seenit_movie.title + " from Radarr.")
+            seenit_movie.radarr_id = radarr_movie["id"]
+            seenit_movie.total_size = radarr_movie["sizeOnDisk"]
+            for image in radarr_movie["images"]:
                 if image["coverType"] == "poster":
-                    movie.poster_url = image["remoteUrl"]
+                    seenit_movie.poster_url = image["remoteUrl"]
             db.session.commit()
 
-    all_shows = TVShow.query.all()
-    for show in all_shows:
-        current_app.logger.debug("Updating "+str(show))
-        sonarr_response = api_sonarr("GET", "/api/v3/series?tvdbId="+str(show.theTVDB_id))
-        sonarr_infos = sonarr_response.json()
-        if sonarr_infos:
-            show.sonarr_id = sonarr_infos[0]["id"]
-            show.total_size = sonarr_infos[0]["statistics"]["sizeOnDisk"]
-            for image in sonarr_infos[0]["images"]:
+    current_app.logger.debug("Updating show infos from Sonarr.")
+    sonarr_response = api_sonarr("GET", "/api/v3/series")
+    sonarr_infos = sonarr_response.json()
+    for sonarr_show in sonarr_infos:        
+        seenit_show = TVShow.query.filter_by(theTVDB_id=sonarr_show["tvdbId"]).one()
+        if seenit_show:
+            current_app.logger.debug("Processing show " + seenit_show.title + " from Sonarr.")
+            seenit_show.radarr_id = sonarr_show["id"]
+            seenit_show.total_size = sonarr_show["statistics"]["sizeOnDisk"]
+            for image in sonarr_show["images"]:
                 if image["coverType"] == "poster":
-                    show.poster_url = image["remoteUrl"]
+                    seenit_show.poster_url = image["remoteUrl"]
             db.session.commit()
 
 def modify_deletion_date(medias):
@@ -383,3 +384,21 @@ def check_if_abandonned(media, user=None):
         media.last_user = user
         db.session.commit()
     return abandonned
+
+def update_free_space_info():
+    #Get disk space remaining from Radarr with a movie
+    #Need to change this for deployment, but it will do for now.
+    app_settings = AppSettings.query.first()
+    
+    radarr_response = api_radarr("GET", "/api/v3/movie")
+    radarr_infos = radarr_response.json()
+    root_drive = radarr_infos[0]["rootFolderPath"][0:3]
+    
+    radarr_response = api_radarr("GET", "/api/v3/diskspace")
+    radarr_infos = radarr_response.json()
+    for drive in radarr_infos:
+        if (drive["path"]==root_drive):
+            fixed_free_space = drive["freeSpace"]/1024**3*1000**3
+            app_settings.free_space = fixed_free_space
+            db.session.commit()
+            current_app.logger.debug("Free space is now "+ str(app_settings.free_space))
