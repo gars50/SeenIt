@@ -1,5 +1,5 @@
 from app import scheduler
-from app.scripts.media import import_requests_from_ombi, import_movies_from_radarr, import_shows_from_sonarr, update_media_infos, update_free_space_info
+from app.scripts.media import import_requests_from_ombi, import_movies_from_radarr, import_shows_from_sonarr, update_media_infos, update_free_space_info, delete_expired_medias
 
 def update_medias_and_requests():
     with scheduler.app.app_context():
@@ -13,4 +13,8 @@ def update_medias_and_requests():
         update_media_infos()
         scheduler.app.logger.info("Updating free space available.")
         update_free_space_info()
-        scheduler.app.logger.info("Updating media info completed.")
+
+def delete_all_expired_medias():
+    with scheduler.app.app_context():
+        scheduler.app.logger.info("Deleting all expired medias.")
+        delete_expired_medias()

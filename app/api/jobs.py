@@ -12,3 +12,12 @@ def trigger_update_medias_and_requests_job():
     return {
         'message' : "Job triggered"
     }
+
+@bp.route("/jobs/trigger_delete_expired_medias_job", methods=['POST'])
+@login_required
+def trigger_delete_expired_medias_job():
+    current_app.logger.info("Forcing a trigger of the delete of expired medias job")
+    scheduler.modify_job("delete_expired_medias-job", next_run_time=datetime.utcnow())
+    return {
+        'message' : "Job triggered"
+    }

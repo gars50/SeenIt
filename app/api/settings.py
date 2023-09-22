@@ -1,8 +1,10 @@
 from app.api import bp
 from flask import request
+from flask_login import login_required
 from app.scripts.media import test_ombi, test_radarr, test_sonarr
 
 @bp.route('/settings/test_ombi_from_server', methods=['POST'])
+@login_required
 def test_ombi_from_server():
     data = request.get_json()
     ombi_host = data['ombi_host']
@@ -11,6 +13,7 @@ def test_ombi_from_server():
     return test_ombi(ombi_host, ombi_port, ombi_api_key)
 
 @bp.route('/settings/test_radarr_from_server', methods=['POST'])
+@login_required
 def test_radarr_from_server():
     data = request.get_json()
     radarr_host = data['radarr_host']
@@ -19,6 +22,7 @@ def test_radarr_from_server():
     return test_radarr(radarr_host, radarr_port, radarr_api_key)
 
 @bp.route('/settings/test_sonarr_from_server', methods=['POST'])
+@login_required
 def test_sonarr_from_server():
     data = request.get_json()
     sonarr_host = data['sonarr_host']

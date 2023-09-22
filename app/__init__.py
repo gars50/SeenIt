@@ -18,7 +18,6 @@ def create_app(config_class=Config):
         scheduler.scheduler.configure(timezone='UTC')
         scheduler.start()
 
-
     @app.before_first_request
     def before_first_request():
         first_run_setup()

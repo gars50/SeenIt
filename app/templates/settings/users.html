@@ -31,7 +31,10 @@
     <script>
         function deleteUser(user_id, obj) {
             var fetchURL = BASE_URL+"api/users/"+user_id+"/delete"
-            fetchToastRemoveRowTable(fetchURL, obj, 'DELETE')
+            var result = confirm("Are you sure you want to delete this user : "+obj.parentNode.parentNode.firstChild.nextElementSibling.innerText)
+            if (result) {
+                fetchToastRemoveRowTable(fetchURL, obj, 'DELETE')
+            }
         }
     </script>
 {% endblock %}

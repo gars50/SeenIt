@@ -91,6 +91,7 @@
     <br><hr>
     <h2>Jobs</h2>
     <a onclick="update_medias_and_requests()" class="btn btn-success">Trigger Update Job</a>
+    <a onclick="delete_expired_medias()" class="btn btn-danger">Trigger Expired Media Deletion</a>
     <script>
         document.querySelector('#next_delete_local').addEventListener("change", (event) => {
             var datetimeLocal = document.querySelector('#next_delete_local').value;
@@ -206,6 +207,33 @@
         function update_medias_and_requests() {
             spinner.removeAttribute('hidden');
             fetch(BASE_URL+"api/jobs/trigger_update_medias_and_requests_job", {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                method : 'POST',
+            })
+            .then(function (response){
+                spinner.setAttribute('hidden', '');
+                if (response.ok) {
+                    response.json()
+                    .then(function(response) {
+                        toastr.success(response.message)
+                    })
+                } else {
+                    response.json()
+                    .then(function(response) {
+                        toastr.error(response.error)
+                    })
+                }
+            })
+            .catch(function(error) {
+                console.log(error)
+            })
+        }
+
+        function delete_expired_medias() {
+            spinner.removeAttribute('hidden');
+            fetch(BASE_URL+"api/jobs/trigger_delete_expired_medias_job", {
                 headers: {
                     'Content-Type': 'application/json'
                 },

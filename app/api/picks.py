@@ -4,7 +4,7 @@ from flask import json, request, current_app
 from flask_login import login_required, current_user
 from app.models import Media, User, Pick
 from datetime import datetime
-from app.scripts.media import check_user_creation, check_movie_creation, check_tv_show_creation, check_pick_creation, check_if_abandonned
+from app.scripts.media import check_user_creation, check_movie_creation, check_tv_show_creation, check_pick_creation, delete_pick_and_check_abandonned
 
 @bp.route("/picks/<int:media_id>/add_to_current_user", methods=['PUT'])
 @login_required
@@ -50,20 +50,13 @@ def add_pick_watching():
 @login_required
 def delete_pick(pick_id):
     pick = Pick.query.get_or_404(pick_id)
+    media = pick.media
     current_app.logger.debug("User "+current_user.alias+" is trying to delete pick "+str(pick))
     if (not current_user.admin) and (not current_user==pick.user):
         return {
             "error" : "Not allowed!"
         }, 405
-    media = pick.media
-    user = pick.user
-    if pick.pick_method == "Ombi Request":
-        #Should we delete the ombi request at this point and avoid double data in the db?
-        current_app.logger.debug("Deleting Ombi Request for "+str(pick.media))
-    db.session.delete(pick)
-    db.session.commit()
-    current_app.logger.info("User "+current_user.alias+" deleted "+str(pick))
-    abandonned = check_if_abandonned(media, user)
+    abandonned = delete_pick_and_check_abandonned(pick)
     if abandonned:
         return{
             "message" : str(media)+" was let go. It has been abandonned as this was its last pick."

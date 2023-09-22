@@ -2,7 +2,7 @@ import requests
 from flask import current_app
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
-from app.models import User, Movie, TVShow, AppSettings, Pick
+from app.models import User, Movie, TVShow, AppSettings, Pick, Media
 from app.extensions import cache_session
 from app import db
 
@@ -357,6 +357,7 @@ def update_media_infos():
 def modify_deletion_date(medias):
     app_settings = AppSettings.query.first()
     for media in medias:
+        current_app.logger.debug("Changing "+str(media))
         media.expiry_date = media.abandonned_date + relativedelta(**{app_settings.expiry_time_unit: app_settings.expiry_time_number})
         current_app.logger.debug("Expiry date of "+str(media)+" set to "+str(media.expiry_date))
         delete_time = app_settings.next_delete
@@ -402,3 +403,19 @@ def update_free_space_info():
             app_settings.free_space = fixed_free_space
             db.session.commit()
             current_app.logger.debug("Free space is now "+ str(app_settings.free_space))
+
+def delete_expired_medias():
+    medias_to_delete = Media.query.filter(Media.deletion_date < datetime.utcnow()).all()
+    for media in medias_to_delete:
+        delete_media_everywhere(media)
+
+def delete_pick_and_check_abandonned(pick):
+    media = pick.media
+    user = pick.user
+    if pick.pick_method == "Ombi Request":
+        #Should we delete the ombi request at this point and avoid double data in the db?
+        current_app.logger.debug("Deleting Ombi Request for "+str(pick.media))
+    db.session.delete(pick)
+    db.session.commit()
+    abandonned = check_if_abandonned(media, user)
+    return abandonned
