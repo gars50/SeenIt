@@ -404,6 +404,23 @@ def update_free_space_info():
             db.session.commit()
             current_app.logger.debug("Free space is now "+ str(app_settings.free_space))
 
+def update_user_storage_usage():
+    for user in User.query.all():
+        current_app.logger.debug("Updating storage for "+ str(user))
+
+        total_user_movie_size = 0
+        movie_picks = Pick.query.filter_by(user=user, media_type="movie")
+        for movie_pick in movie_picks:
+            total_user_movie_size += movie_pick.media.total_size
+        user.movie_storage_usage = total_user_movie_size
+
+        total_user_tv_show_size = 0
+        tv_show_picks = Pick.query.filter_by(user=user, media_type="tv_show")
+        for tv_show_pick in tv_show_picks:
+            total_user_tv_show_size += tv_show_pick.media.total_size
+        user.show_storage_usage = total_user_tv_show_size
+        db.session.commit()
+
 def delete_expired_medias():
     medias_to_delete = Media.query.filter(Media.deletion_date < datetime.utcnow()).all()
     for media in medias_to_delete:

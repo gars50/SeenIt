@@ -25,19 +25,11 @@ def index():
         movie_picks_count = movie_picks.count()
         tv_show_picks_count = tv_show_picks.count()
 
-        total_user_movie_size = 0
-        for movie_pick in movie_picks:
-            total_user_movie_size += movie_pick.media.total_size
-
-        total_user_tv_show_size = 0
-        for tv_show_pick in tv_show_picks:
-            total_user_tv_show_size += tv_show_pick.media.total_size
-
         return render_template("index.html", 
                                movie_picks_count=movie_picks_count,
                                tv_show_picks_count=tv_show_picks_count,
-                               total_movie_size=total_user_movie_size,
-                               total_tv_show_size=total_user_tv_show_size,
+                               total_movie_size=current_user.movie_storage_usage,
+                               total_tv_show_size=current_user.show_storage_usage,
                                total_used_space=total_used_space,
                                free_space=app_settings.free_space,
                                total_space_to_be_freed=total_space_to_be_freed,

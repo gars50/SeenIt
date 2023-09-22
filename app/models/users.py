@@ -16,6 +16,8 @@ class User(UserMixin, db.Model):
     admin = db.Column(db.Boolean, default=False)
     superuser = db.Column(db.Boolean, default=False)
     system_user = db.Column(db.Boolean, default=False)
+    movie_storage_usage = db.Column(db.BigInteger, default=0)
+    show_storage_usage = db.Column(db.BigInteger, default=0)
 
     picks = db.relationship('Pick', back_populates='user', cascade='all, delete')
 

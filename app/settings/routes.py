@@ -75,7 +75,7 @@ def users():
     if not current_user.admin:
         flash('You do not have access to this.', "error")
         return redirect(url_for('main.index'))
-    users = User.query.filter_by(system_user=False)
+    users = User.query.all()
     return render_template('settings/users.html', users=users)
 
 @bp.route('/user/<int:user_id>', methods=['GET', 'POST'])

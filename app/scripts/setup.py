@@ -16,8 +16,8 @@ def first_run_setup():
         scheduler.add_job(id='update_medias_and_requests-job', func=update_medias_and_requests, next_run_time=datetime.utcnow() + timedelta(weeks=104), trigger='interval', minutes=10)
         scheduler.add_job(id='delete_expired_medias-job', func=delete_all_expired_medias, next_run_time=datetime.utcnow() + timedelta(weeks=104), trigger='interval', days=1)
 
-    permanent_user = User.query.filter_by(email="permanent").first()
+    permanent_user = User.query.filter_by(email="Permanent").first()
     if not permanent_user:
-        permanent_user = User(alias="Permanent Collection", email="permanent", system_user=True)
+        permanent_user = User(alias="Permanent Collection", email="Permanent", system_user=True)
         db.session.add(permanent_user)
         db.session.commit()

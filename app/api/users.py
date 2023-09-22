@@ -14,6 +14,10 @@ def delete_user(user_id):
         return {
             "error" : user.email+" is an admin and cannot be deleted"
         }, 400
+    elif user.system_user:
+        return {
+            "error" : "Cannot delete a system user"
+        }, 400
     for pick in user.picks:
         delete_pick_and_check_abandonned(pick)
     db.session.delete(user)

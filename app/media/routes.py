@@ -25,15 +25,29 @@ def my_shows():
     tv_show_picks = Pick.query.filter_by(user=current_user, media_type="tv_show")
     return render_template("media/my_shows.html", tv_show_picks=tv_show_picks)
 
+@bp.route("/user/<int:user_id>/movies/")
+@login_required
+def user_movies(user_id):
+    user = User.query.get_or_404(user_id)
+    movie_picks = Pick.query.filter_by(user=user, media_type="movie")
+    return render_template("media/user_movies.html", movie_picks=movie_picks, user=user)
+
+@bp.route("/user/<int:user_id>/shows/")
+@login_required
+def user_shows(user_id):
+    user = User.query.get_or_404(user_id)
+    tv_show_picks = Pick.query.filter_by(user=user, media_type="tv_show")
+    return render_template("media/user_shows.html", tv_show_picks=tv_show_picks, user=user)
+
 @bp.route("/permanent_movies")
 def permanent_movies():
-    permanent_user = User.query.filter_by(email="permanent").first()
+    permanent_user = User.query.filter_by(email="Permanent").first()
     movie_picks = Pick.query.filter_by(user=permanent_user, media_type="movie")
     return render_template("media/permanent_movies.html", movie_picks=movie_picks)
 
 @bp.route("/permanent_shows")
 def permanent_shows():
-    permanent_user = User.query.filter_by(email="permanent").first()
+    permanent_user = User.query.filter_by(email="Permanent").first()
     tv_show_picks = Pick.query.filter_by(user=permanent_user, media_type="tv_show")
     return render_template("media/permanent_shows.html", tv_show_picks=tv_show_picks)
 
