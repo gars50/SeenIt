@@ -2,14 +2,12 @@
 {% set active_page = "settings" %}
 
 {% block content %}
+    <span hidden class="title">{% block title %} Live logs {% endblock %}</span>
+    <input type="radio" class="btn-check" name="options-base" id="option1" autocomplete="off">
+    <label class="btn" for="option1" onclick="openLog(event, 'app')" style="background-color: rgb(65, 65, 65);">Application Log</label>
 
-    <div class="btn-group" role="group">
-        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off">
-        <label class="btn btn-secondary" for="btnradio1" onclick="openLog(event, 'app')">Application Log</label>
-
-        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
-        <label class="btn btn-secondary" for="btnradio2" onclick="openLog(event, 'www')">Web Log</label>
-    </div>
+    <input type="radio" class="btn-check" name="options-base" id="option2" autocomplete="off">
+    <label class="btn" for="option2" onclick="openLog(event, 'www')" style="background-color: rgb(65, 65, 65);">Web Log</label>
 
     <br>
     <div class="logging_window">

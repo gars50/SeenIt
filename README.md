@@ -127,6 +127,7 @@ server {
         include proxy_params;
         proxy_pass http://unix:/home/YOURUSER/SeenIt/SeenIt.sock;
         proxy_set_header SCRIPT_NAME /seenit;
+        proxy_buffering off;
     }
 }
 ```
