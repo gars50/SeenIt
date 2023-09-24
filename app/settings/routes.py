@@ -116,3 +116,8 @@ def add_user():
         flash('User has been added.', "success")
         return redirect(url_for('settings.users'))
     return render_template('settings/add_user.html', form=form)
+
+@bp.route('/logs')
+@login_required
+def logs():
+    return render_template('settings/logs.html')

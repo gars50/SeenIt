@@ -19,7 +19,7 @@
     {% endif %}
             Medias are using {{ total_used_space | filesizeformat }} out of the ~{{ total_space | filesizeformat }} available. <br>
             {{ (total_used_space / total_space * 100) | round(1) }}% of the storage is used. About {{ free_space | filesizeformat }} remaining.<br>
-            {{ total_space_to_be_freed | filesizeformat }} is scheduled to be deleted.<br>
+            {{ total_space_to_be_freed | filesizeformat }} of medias is scheduled to be deleted.<br>
         </div>
 
     <br>

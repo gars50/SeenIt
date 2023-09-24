@@ -4,7 +4,6 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 ## Planned
 ### Issues
 - APScheduler only runs after a trigger, not after a restart of the application.
-- Add a better way to show storage
 - Login/logout does not always work in dev, but works fine in prod
     - Seems to be a cookie issue
 
@@ -14,7 +13,6 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
         - Tabbed settings
         - Better settings selection for updating the db (schedule)
     - Figure out a better way to mass delete
-- Add option to view the logs within the application
 - Add option to send email for errors
     - Add option to save email settings inside the app instead of configuration file
 - Change user config so that a user is either a Plex user or a SeenIt user.
@@ -23,7 +21,6 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Plex login displays a warning about location of the application?
 - Add option to change the jobs' schedule
 - Change datatables to AJAX
-- Add storage used per user in users
 
 ## In Progress
 
@@ -75,6 +72,9 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Import from Radarr/Sonarr
     - Add them to the permanent collection
 - Change the updating of infos from Radarr/Sonarr by downloading the whole movie thing instead of constant API calls
+- Add a better way to show storage
+- Add storage used per user in users
+- Add option to view the logs within the application
 
 ## Possible improvements
 - Add possibility to configure the notification agents in Tautulli from the SeenIt

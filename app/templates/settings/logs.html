@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% set active_page = "settings" %}
+
+{% block content %}
+
+    <div class="btn-group" role="group">
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off">
+        <label class="btn btn-secondary" for="btnradio1" onclick="openLog(event, 'app')">Application Log</label>
+
+        <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+        <label class="btn btn-secondary" for="btnradio2" onclick="openLog(event, 'www')">Web Log</label>
+    </div>
+
+    <br>
+    <div class="logging_window">
+        <div class="logging_content">
+            <pre class="log_text" id="output"></pre>
+        </div>
+    </div>
+
+    <script>
+        //This is to avoid lingering requests if the user selects multiple tabs on one visit.
+        var loopID = 0;
+        var xhr = new XMLHttpRequest();
+        function openLog(evt, logName) {
+            clearInterval(loopID)
+            xhr.abort();
+            if (logName=="app") {
+                var fetch_url = "{{ url_for('api.stream_applog') }}"
+            } else if (logName=="www") {
+                var fetch_url = "{{ url_for('api.stream_wwwlog') }}"
+            }
+
+            var output = document.getElementById('output');
+            
+            xhr.open('GET', fetch_url);
+            xhr.send();
+            loopID = setInterval(function() {
+                output.textContent = xhr.responseText;
+            }, 1000);
+        }
+    </script>
+{% endblock %}

@@ -7,13 +7,6 @@
 }
 /* ============ desktop view .end// ============ */
 
-.test{
-	display: block;
-	width: 300px;
-	height: 300px;
-	background:purple;
-}
-
 .table{
 	vertical-align: middle;
 }
@@ -76,4 +69,26 @@
 .wrapper a:hover span{
 	display: block;
 	transform: translate(225%, -50%) scale(1.5);
+}
+
+.logging_window{
+	height: 80vh;
+    padding: 9.5px;
+    font-size: 14px;
+    background-color: #00000077;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: auto;
+	overflow: auto;
+	display: flex;
+	flex-direction: column-reverse;
+}
+
+.logging_content{
+  	transform: translateZ(0); 
+}
+
+.log_text{
+	margin:0px;
+	text-wrap: balance;
 }
