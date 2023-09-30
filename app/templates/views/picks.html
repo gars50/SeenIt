@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% set active_page = "mymovies" %}
+{% set active_page = page %}
 {% block content %}
     <h1>{% block title %} {{ page_title }} {% endblock %}</h1>
     <table id="picksTable" class="table table-hover table-dark">
@@ -18,7 +18,15 @@
     <script>
         $(document).ready(function () {
             $('#picksTable').DataTable({
-                ajax: '/api/picks',
+                ajax: {
+                    url: '/api/picks',
+                    data: function (d) {
+                        selected_media_types = [];
+                        selected_media_types[0] = 'movie'
+                        selected_media_types[1] = 'tv_show'
+                        d.media_types = selected_media_types.join(',');
+                    }
+                },
                 serverSide: true,
                 columns: [
                     {data: 'media_title', 
@@ -28,7 +36,15 @@
                             } else {
                                 var poster_url = BASE_URL + "{{ url_for('static', filename='no_picture.png') }}"
                             }
-                            return '<a href="'+row.media_db_url+'" target="_blank">'+data+'<span><img src='+poster_url+' loading="lazy" height="150"></span>'
+                            if (row.media_type == "movie") {
+                                var icon = "bi-film"
+                                var icon_title = "Movie"
+                            } else if (row.media_type == "tv_show") {
+                                var icon = "bi bi-tv"
+                                var icon_title = "TV Show"
+                            }
+                            var media_type = '<span title="' + icon_title + '"><i class="' + icon + '"></i></span>';
+                            return media_type + '&nbsp;<a href="'+row.media_db_url+'" target="_blank">'+data+'<span><img src='+poster_url+' loading="lazy" height="150"></span>'
                         },
                         className: "wrapper"
                     },

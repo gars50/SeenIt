@@ -65,3 +65,66 @@ def delete_pick(pick_id):
         return{
             "message" : str(media)+" was let go. Others have picked this media, and it has not been abandonned yet."
         }
+
+@bp.route("/picks", methods=['GET'])
+def get_picks():
+    query = Pick.query.join(Media)
+
+    # Filtering for selected media types
+    media_type_search = request.args.get('media_types').split(',')
+    query = query.filter(
+        Media.type.in_(media_type_search)
+    )
+    total = query.count()
+
+    # Search filter
+    search = request.args.get('search[value]')
+    if search:
+        query = query.filter(db.or_(
+            Pick.pick_method.like(f'%{search}%'),
+            Media.title.like(f'%{search}%')
+        ))
+    total_filtered = query.count()
+
+    # Sorting
+    order = []
+    i = 0
+    while True:
+        col_index = request.args.get(f'order[{i}][column]')
+        if col_index is None:
+            break
+        col_name = request.args.get(f'columns[{col_index}][data]')
+        if col_name in ['pick_date', 'pick_method']:  # Sorting by pick_date or pick_method column
+            descending = request.args.get(f'order[{i}][dir]') == 'desc'
+            col = Pick.pick_date
+            if descending:
+                col = col.desc()
+            order.append(col)
+        if col_name == 'media_title':  # Sorting by Title column
+            descending = request.args.get(f'order[{i}][dir]') == 'desc'
+            col = Media.title
+            if descending:
+                col = col.desc()
+            order.append(col)
+        if col_name == 'media_size':  # Sorting by Size column
+            descending = request.args.get(f'order[{i}][dir]') == 'desc'
+            col = Media.total_size
+            if descending:
+                col = col.desc()
+            order.append(col)
+        i += 1
+    if order:
+        query = query.order_by(*order)
+
+    # Pagination
+    start = request.args.get('start', type=int)
+    length = request.args.get('length', type=int)
+    query = query.offset(start).limit(length)
+
+    # Response
+    return {
+        'data': [pick.to_dict() for pick in query],
+        'recordsFiltered': total_filtered,
+        'recordsTotal': total,
+        'draw': request.args.get('draw', type=int),
+    }

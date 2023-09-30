@@ -232,30 +232,33 @@
         }
 
         function delete_expired_medias() {
-            spinner.removeAttribute('hidden');
-            fetch(BASE_URL+"api/jobs/trigger_delete_expired_medias_job", {
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                method : 'POST',
-            })
-            .then(function (response){
-                spinner.setAttribute('hidden', '');
-                if (response.ok) {
-                    response.json()
-                    .then(function(response) {
-                        toastr.success(response.message)
-                    })
-                } else {
-                    response.json()
-                    .then(function(response) {
-                        toastr.error(response.error)
-                    })
-                }
-            })
-            .catch(function(error) {
-                console.log(error)
-            })
+            var result = confirm("Are you sure you want to delete expired medias")
+            if (result) {
+                spinner.removeAttribute('hidden');
+                fetch(BASE_URL+"api/jobs/trigger_delete_expired_medias_job", {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    method : 'POST',
+                })
+                .then(function (response){
+                    spinner.setAttribute('hidden', '');
+                    if (response.ok) {
+                        response.json()
+                        .then(function(response) {
+                            toastr.success(response.message)
+                        })
+                    } else {
+                        response.json()
+                        .then(function(response) {
+                            toastr.error(response.error)
+                        })
+                    }
+                })
+                .catch(function(error) {
+                    console.log(error)
+                })
+            }
         }
     </script>
 {% endblock %}

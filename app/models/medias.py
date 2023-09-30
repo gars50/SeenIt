@@ -29,6 +29,23 @@ class Media(db.Model):
         'polymorphic_on': type
     }
 
+    def to_dict(self) :
+        if self.type == "movie":
+            media_db_url = self.TMDB_url
+        else:
+            media_db_url = self.theTVDB_url
+        num_picks = len(self.picks)
+        return {
+                'title': self.title,
+                'media_db_url': media_db_url,
+                'poster_url': self.poster_url,
+                'media_size': self.total_size,
+                'deletion_date': self.deletion_date,
+                'num_picks': num_picks,
+                'media_id': self.id,
+                'media_type': self.type
+            }
+
 class Movie(Media):
     id = db.Column(db.Integer, db.ForeignKey('media.id'), primary_key=True)
     year = db.Column(db.Integer, nullable=False)

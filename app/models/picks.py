@@ -23,3 +23,19 @@ class Pick(db.Model):
 
     def __repr__(self) -> str:
         return f'Pick: {self.media} assigned to {self.user} on {self.pick_date} through {self.pick_method}'
+    
+    def to_dict(self) :
+        if self.media.type == "movie":
+            media_db_url = self.media.TMDB_url
+        else:
+            media_db_url = self.media.theTVDB_url
+        return {
+            'media_title': self.media.title,
+            'media_db_url': media_db_url,
+            'poster_url': self.media.poster_url,
+            'pick_method': self.pick_method,
+            'pick_date': self.pick_date,
+            'media_size': self.media.total_size,
+            'pick_id': self.id,
+            'media_type': self.media.type
+        }

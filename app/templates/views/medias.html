@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
-{% set active_page = "allmovies" %}
+{% set active_page = page %}
 {% block content %}
-    <h1>{% block title %} All Movies {% endblock %}</h1>
+    <h1>{% block title %} {{ page_title }} {% endblock %}</h1>
     <table id="mediasTable" class="table table-hover table-dark">
         <thead>
             <tr>
@@ -38,7 +38,15 @@
     <script>
         $(document).ready(function () {
             $('#mediasTable').DataTable({
-                ajax: '/api/medias',
+                ajax: {
+                    url: '/api/medias',
+                    data: function (d) {
+                        selected_media_types = [];
+                        selected_media_types[0] = 'movie'
+                        selected_media_types[1] = 'tv_show'
+                        d.media_types = selected_media_types.join(',');
+                    }
+                },
                 serverSide: true,
                 columns: [
                     {data: 'title', 
@@ -48,7 +56,15 @@
                             } else {
                                 var poster_url = BASE_URL + "{{ url_for('static', filename='no_picture.png') }}"
                             }
-                            return '<a href="'+row.media_db_url+'" target="_blank">'+data+'<span><img src='+poster_url+' loading="lazy" height="150"></span>'
+                            if (row.media_type == "movie") {
+                                var icon = "bi-film"
+                                var icon_title = "Movie"
+                            } else if (row.media_type == "tv_show") {
+                                var icon = "bi bi-tv"
+                                var icon_title = "TV Show"
+                            }
+                            var media_type = '<span class="media-type-tooltip" data-toggle="tooltip" title="' + icon_title + '"><i class="fa ' + icon + ' fa-fw"></i></span>';
+                            return media_type + '&nbsp;<a href="'+row.media_db_url+'" target="_blank">'+data+'<span><img src='+poster_url+' loading="lazy" height="150"></span>'
                         },
                         className: "wrapper"
                     },
