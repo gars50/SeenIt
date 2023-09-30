@@ -2,6 +2,13 @@
 {% set active_page = page %}
 {% block content %}
     <h1>{% block title %} {{ page_title }} {% endblock %}</h1>
+    <div id="medias-btns" class="medias-buttons" role="group" aria-label="Media types button group">
+        <input type="checkbox" class="btn-check" id="btnmovies" autocomplete="off">
+        <label class="btn btn-outline-secondary" for="btnmovies">Movies</label>
+
+        <input type="checkbox" class="btn-check" id="btntvshows" autocomplete="off">
+        <label class="btn btn-outline-secondary" for="btntvshows">TV Shows</label>
+    </div>
     <table id="picksTable" class="table table-hover table-dark">
         <thead>
             <tr>
@@ -17,13 +24,34 @@
     </table>
     <script>
         $(document).ready(function () {
-            $('#picksTable').DataTable({
+            //If a media type is specified, we check it, otherwise we check both
+            var urlParams = new URLSearchParams(window.location.search);
+            var media_type = urlParams.get('media_type');
+            switch(media_type) {
+                case "movies":
+                    console.log("Movies")
+                    $('#btnmovies').prop( "checked", true );
+                    break;
+                case "tv_shows":
+                    console.log("TV Shows")
+                    $('#btntvshows').prop( "checked", true );
+                    break;
+                default:
+                    console.log("Default")
+                    $('#btnmovies').prop( "checked", true );
+                    $('#btntvshows').prop( "checked", true );
+            }
+            var table = $('#picksTable').DataTable({
                 ajax: {
                     url: '/api/picks',
                     data: function (d) {
                         selected_media_types = [];
-                        selected_media_types[0] = 'movie'
-                        selected_media_types[1] = 'tv_show'
+                        if ($('#btnmovies').is(':checked')) {
+                            selected_media_types[0] = 'movie'
+                        }
+                        if ($('#btntvshows').is(':checked')) {
+                            selected_media_types[1] = 'tv_show'
+                        }
                         d.media_types = selected_media_types.join(',');
                     }
                 },
@@ -67,6 +95,12 @@
                     }
                 ],
             });
+
+            $('#medias-btns').on("click", function() {
+                table.draw();
+            });
         });
+
+
     </script>
 {% endblock %}

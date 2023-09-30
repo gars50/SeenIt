@@ -2,6 +2,13 @@
 {% set active_page = page %}
 {% block content %}
     <h1>{% block title %} {{ page_title }} {% endblock %}</h1>
+    <div id="medias-btns" class="medias-buttons" role="group" aria-label="Media types button group">
+        <input type="checkbox" class="btn-check" id="btnmovies" checked autocomplete="off">
+        <label class="btn btn-outline-secondary" for="btnmovies">Movies</label>
+
+        <input type="checkbox" class="btn-check" id="btntvshows" checked autocomplete="off">
+        <label class="btn btn-outline-secondary" for="btntvshows">TV Shows</label>
+    </div>
     <table id="mediasTable" class="table table-hover table-dark">
         <thead>
             <tr>
@@ -37,13 +44,17 @@
     </div>
     <script>
         $(document).ready(function () {
-            $('#mediasTable').DataTable({
+            var table = $('#mediasTable').DataTable({
                 ajax: {
                     url: '/api/medias',
                     data: function (d) {
                         selected_media_types = [];
-                        selected_media_types[0] = 'movie'
-                        selected_media_types[1] = 'tv_show'
+                        if ($('#btnmovies').is(':checked')) {
+                            selected_media_types[0] = 'movie'
+                        }
+                        if ($('#btntvshows').is(':checked')) {
+                            selected_media_types[1] = 'tv_show'
+                        }
                         d.media_types = selected_media_types.join(',');
                     }
                 },
@@ -93,6 +104,10 @@
                         }
                     }
                 ],
+            });
+
+            $('#medias-btns').on("click", function() {
+                table.draw();
             });
         });
     </script>

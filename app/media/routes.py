@@ -23,7 +23,7 @@ def permanent_picks():
 def all_medias():
     return render_template("views/medias.html", page_title="All Medias", page="all_medias")
 
-@bp.route("/user/<int:user_id>/medias/")
+@bp.route("/user/<int:user_id>/picks")
 @login_required
-def user_medias(user_id):
-    return render_template("views/picks.html")
+def user_picks(user_id):
+    return render_template("views/picks.html", page_title="Picks for user X")
