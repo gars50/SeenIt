@@ -2,14 +2,14 @@ from app.api import bp
 from app.extensions import db
 from flask import current_app, render_template, json, request
 from flask_login import login_required, current_user
-from app.models import Media
+from app.models import Media, User
 from app.scripts.media import delete_media_everywhere
 
 @bp.route("/medias/<int:media_id>/picks_modal", methods=['GET'])
 @login_required
 def picks_modal(media_id):
     media = Media.query.get_or_404(media_id)
-    content = render_template("views/picks_modal.html", media=media)
+    content = render_template("table_views/picks_modal.html", media=media)
     return content
 
 @bp.route("/medias/<int:media_id>/delete", methods=['DELETE'])
@@ -28,7 +28,7 @@ def delete_media(media_id):
 
 @bp.route("/medias", methods=['GET'])
 def get_medias():
-    query = Media.query
+    query = Media.query.join(User)
     total = query.count()
 
     # Filtering for the scope of the request (Abandonned vs All)
@@ -67,15 +67,27 @@ def get_medias():
             if descending:
                 col = col.desc()
             order.append(col)
-        if col_name == 'media_size':  # Sorting by Size column
+        elif col_name == 'media_size':  # Sorting by Size column
             descending = request.args.get(f'order[{i}][dir]') == 'desc'
             col = Media.total_size
             if descending:
                 col = col.desc()
             order.append(col)
-        if col_name == 'deletion_date':  # Sorting by Deletion Date column
+        elif col_name == 'deletion_date':  # Sorting by Deletion Date column
             descending = request.args.get(f'order[{i}][dir]') == 'desc'
             col = Media.deletion_date
+            if descending:
+                col = col.desc()
+            order.append(col)
+        elif col_name == 'abandonned_date':  # Sorting by Deletion Date column
+            descending = request.args.get(f'order[{i}][dir]') == 'desc'
+            col = Media.abandonned_date
+            if descending:
+                col = col.desc()
+            order.append(col)
+        elif col_name == 'abandonned_by':  # Sorting by Deletion Date column
+            descending = request.args.get(f'order[{i}][dir]') == 'desc'
+            col = User.alias
             if descending:
                 col = col.desc()
             order.append(col)

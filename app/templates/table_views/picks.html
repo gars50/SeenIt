@@ -32,7 +32,7 @@
                     $('#btntvshows').prop( "checked", true );
             }
 
-            {% if user_id %}
+            {% if user_id is defined %}
                 // Look up the specified user
                 var lookup_user = {{ user_id }}
                 var other_user = true
@@ -98,14 +98,16 @@
                         }
 
                     },
-                    {
-                        title: 'Let go',
-                        data: 'pick_id',
-                        orderable: false,
-                        render: function(data, table) {
-                            return '<a onclick="deletePick('+data+', this)" class="btn btn-warning"><i class="bi bi-dash-circle"></i></a>'
+                    {% if not current_user.is_anonymous and ((user_id is defined and current_user.admin) or (user_id is not defined)) %}
+                        {
+                            title: 'Let go',
+                            data: 'pick_id',
+                            orderable: false,
+                            render: function(data, table) {
+                                return '<a onclick="deletePick('+data+', this)" class="btn btn-warning"><i class="bi bi-dash-circle"></i></a>'
+                            }
                         }
-                    }
+                    {% endif %}
                 ],
             });
 

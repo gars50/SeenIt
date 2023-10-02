@@ -40,6 +40,8 @@ class Media(db.Model):
                 'media_db_url': media_db_url,
                 'poster_url': self.poster_url,
                 'media_size': self.total_size,
+                'abandonned_date': self.abandonned_date,
+                'abandonned_by': self.last_user.alias,
                 'deletion_date': self.deletion_date,
                 'num_picks': num_picks,
                 'media_id': self.id,

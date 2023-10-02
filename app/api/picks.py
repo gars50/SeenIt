@@ -105,21 +105,27 @@ def get_picks():
         if col_index is None:
             break
         col_name = request.args.get(f'columns[{col_index}][data]')
-        if col_name in ['pick_date', 'pick_method']:  # Sorting by pick_date or pick_method column
+        if col_name == 'pick_date':  # Sorting by pick_date or pick_method column
             descending = request.args.get(f'order[{i}][dir]') == 'desc'
             col = Pick.pick_date
             if descending:
                 col = col.desc()
             order.append(col)
-        if col_name == 'media_title':  # Sorting by Title column
+        elif col_name == 'media_title':  # Sorting by Title column
             descending = request.args.get(f'order[{i}][dir]') == 'desc'
             col = Media.title
             if descending:
                 col = col.desc()
             order.append(col)
-        if col_name == 'media_size':  # Sorting by Size column
+        elif col_name == 'media_size':  # Sorting by Size column
             descending = request.args.get(f'order[{i}][dir]') == 'desc'
             col = Media.total_size
+            if descending:
+                col = col.desc()
+            order.append(col)
+        elif col_name == 'pick_method':  # Sorting by Size column
+            descending = request.args.get(f'order[{i}][dir]') == 'desc'
+            col = Pick.pick_method
             if descending:
                 col = col.desc()
             order.append(col)

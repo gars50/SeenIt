@@ -76,12 +76,27 @@
                         },
                         className: "wrapper"
                     },
+                    {% if abandonned_page and not current_user.is_anonymous %}
+                        {
+                            title: 'Abandonned by',
+                            data: 'abandonned_by',
+                        },
+                    {% endif %}
+                    {% if abandonned_page %}
+                        {
+                            title: 'Abandonned Date',
+                            data: 'abandonned_date',
+                            render: function(data) {
+                            return moment(data).format('LLL')
+                            }
+                        },
+                    {% endif %}
                     {
                         title: 'Deletion Date',
                         data: 'deletion_date',
                         render: function (data) {
                             if (data) {
-                                return moment(data).format('LLL')
+                                return moment(data).format('LL')
                             } else {
                                 return null
                             }
@@ -94,7 +109,7 @@
                             return formatBytes(data)
                         }
                     },
-                    {% if abandonned_page %}
+                    {% if abandonned_page and not current_user.is_anonymous %}
                         {
                             title: 'Pick up',
                             data: 'media_id',
