@@ -33,9 +33,10 @@
             </div>
         </div>
     </div>
+{% endblock %}
+{% block javascript %}
     <script>
         $(document).ready(function () {
-
             var table = $('#mediasTable').DataTable({
                 ajax: {
                     url: '/api/medias',
@@ -76,13 +77,11 @@
                         },
                         className: "wrapper"
                     },
-                    {% if abandonned_page and not current_user.is_anonymous %}
+                    {% if abandonned_page %}
                         {
                             title: 'Abandonned by',
                             data: 'abandonned_by',
                         },
-                    {% endif %}
-                    {% if abandonned_page %}
                         {
                             title: 'Abandonned Date',
                             data: 'abandonned_date',
@@ -109,7 +108,7 @@
                             return formatBytes(data)
                         }
                     },
-                    {% if abandonned_page and not current_user.is_anonymous %}
+                    {% if abandonned_page %}
                         {
                             title: 'Pick up',
                             data: 'media_id',
@@ -128,7 +127,7 @@
                                 }
                             },
                         {% endif %}
-                    {% elif not abandonned_page %}
+                    {% else %}
                         {
                             title: 'Picks',
                             data: 'num_picks',

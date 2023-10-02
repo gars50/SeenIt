@@ -4,6 +4,7 @@ from flask import render_template
 from app.models import Movie, TVShow, Pick, User
 
 @bp.route("/abandonned_medias")
+@login_required
 def abandonned_medias():
     return render_template("table_views/medias.html", page_title="Abandonned Medias", page="abandonned_medias", abandonned_page=True)
 
@@ -18,6 +19,7 @@ def my_picks():
     return render_template("table_views/picks.html", page_title="My Picks", page="my_picks")
 
 @bp.route("/permanent_picks")
+@login_required
 def permanent_picks():
     permanent_user = User.query.filter_by(email="Permanent").first()
     return render_template("table_views/picks.html", page_title="Permanent Collection", page="permanent_picks", user_id=permanent_user.id)

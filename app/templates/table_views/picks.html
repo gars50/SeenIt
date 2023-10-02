@@ -15,6 +15,8 @@
         <tbody>
         </tbody>
     </table>
+{% endblock %}
+{% block javascript %}
     <script>
         $(document).ready(function () {
             //If a media type is specified, we check it, otherwise we check both
@@ -33,12 +35,9 @@
             }
 
             {% if user_id is defined %}
-                // Look up the specified user
                 var lookup_user = {{ user_id }}
-                var other_user = true
             {% else %}
                 var lookup_user = "self"
-                var other_user = false
             {% endif %}
 
             var table = $('#picksTable').DataTable({
@@ -96,9 +95,8 @@
                         render: function(data) {
                             return formatBytes(data)
                         }
-
                     },
-                    {% if not current_user.is_anonymous and ((user_id is defined and current_user.admin) or (user_id is not defined)) %}
+                    {% if (user_id is defined and current_user.admin) or (user_id is not defined) %}
                         {
                             title: 'Let go',
                             data: 'pick_id',

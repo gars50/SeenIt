@@ -1,6 +1,6 @@
 from app.api import bp
 from app.extensions import db
-from flask import current_app, render_template, json, request
+from flask import current_app, render_template, request
 from flask_login import login_required, current_user
 from app.models import Media, User
 from app.scripts.media import delete_media_everywhere
@@ -28,7 +28,7 @@ def delete_media(media_id):
 
 @bp.route("/medias", methods=['GET'])
 def get_medias():
-    query = Media.query.join(User)
+    query = Media.query.outerjoin(User)
     total = query.count()
 
     # Filtering for the scope of the request (Abandonned vs All)

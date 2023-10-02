@@ -34,6 +34,10 @@ class Media(db.Model):
             media_db_url = self.TMDB_url
         else:
             media_db_url = self.theTVDB_url
+        if self.last_user:
+            last_user_alias = self.last_user.alias
+        else:
+            last_user_alias = ""
         num_picks = len(self.picks)
         return {
                 'title': self.title,
@@ -41,7 +45,7 @@ class Media(db.Model):
                 'poster_url': self.poster_url,
                 'media_size': self.total_size,
                 'abandonned_date': self.abandonned_date,
-                'abandonned_by': self.last_user.alias,
+                'abandonned_by': last_user_alias,
                 'deletion_date': self.deletion_date,
                 'num_picks': num_picks,
                 'media_id': self.id,

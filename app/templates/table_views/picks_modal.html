@@ -20,16 +20,12 @@
                 {% endif %}
             </tr>
         {% endfor %}
+        <tr>
+            <td colspan="4" scope="row"><a onclick="appendPickCurrentUser({{media.id}}, this)" class="btn btn-success">Add to my picks</a></td>
+        </tr>
         {% if current_user.admin %}
             <tr>
-                <td colspan="4" scope="row"><a onclick="appendPickCurrentUser({{media.id}}, this)" class="btn btn-success">Add to my picks</a></td>
-            </tr>
-            <tr>
                 <td colspan="4" scope="row"><a onclick="appendPickPermanent({{media.id}}, this)" class="btn btn-info">Add to permanent collection</a></td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3" scope="row"><a onclick="appendPickCurrentUser({{media.id}}, this)" class="btn btn-success">Add to my picks</a></td>
             </tr>
         {% endif %}
     </tbody>
