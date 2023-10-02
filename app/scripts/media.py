@@ -71,7 +71,7 @@ def check_movie_creation(TMDB_id, ombi_id=0, title=""):
                 poster_url = None
                 for image in radarr_infos["images"]:
                     if image["coverType"] == "poster":
-                        poster_url = image["url"]
+                        poster_url = image["remoteUrl"]
 
         new_movie = Movie(title=title, TMDB_id=TMDB_id, year=year, ombi_id=ombi_id, total_size=total_size, radarr_id=radarr_id, poster_url=poster_url)
         db.session.add(new_movie)
@@ -128,6 +128,7 @@ def check_pick_creation(media, user, pick_date, pick_method):
         media.deletion_date = None
         media.expiry_date = None
         media.abandonned_date = None
+        media.last_user = None
         db.session.commit()
         current_app.logger.info("Created "+str(new_pick))
         added_to_db = True
@@ -325,7 +326,6 @@ def delete_media_everywhere(media):
     return message
 
 def update_media_infos():
-
     current_app.logger.debug("Updating movie infos from Radarr.")
     radarr_response = api_radarr("GET", "/api/v3/movie")
     radarr_infos = radarr_response.json()

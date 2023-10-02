@@ -6,13 +6,14 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - APScheduler only runs after a trigger, not after a restart of the application.
 - Login/logout does not always work in dev, but works fine in prod
     - Seems to be a cookie issue
+- Logs stop after 30 seconds with gunicorn with gevent
+    - It just timeouts with no logs without gevent
 
 ### Improvements
 - Website looks
     - Settings
         - Tabbed settings
         - Better settings selection for updating the db (schedule)
-    - Figure out a better way to mass delete
 - Add option to send email for errors
     - Add option to save email settings inside the app instead of configuration file
 - Change user config so that a user is either a Plex user or a SeenIt user.
@@ -20,10 +21,12 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
     - Add Plex Auth Key to profile
 - Plex login displays a warning about location of the application?
 - Add option to change the jobs' schedule
-- Change datatables to AJAX
+- Automate mass delete
+- Limit to one line for all text per row
+    - Use ellipsis?
 
 ## In Progress
-
+    
 
 ## Completed
 - Add a search option in medias
@@ -75,6 +78,8 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Add a better way to show storage
 - Add storage used per user in users
 - Add option to view the logs within the application
+- Figure out a better way to mass delete
+- Change datatables to AJAX
 
 ## Possible improvements
 - Add possibility to configure the notification agents in Tautulli from the SeenIt

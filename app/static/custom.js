@@ -1,6 +1,6 @@
-function fetchToastRemoveRowMediaTable(url, obj, type) {
+function fetchToastRemoveRowDataTable(url, obj, type) {
     var row = obj.parentNode.parentNode
-    var table = $('#mediaTable').DataTable();
+    var table = $(obj.closest('.table')).DataTable();
     spinner.removeAttribute('hidden');
     fetch(url, {
         headers: {
@@ -78,24 +78,24 @@ function deletePickModal(pick_id, obj) {
 
 function addPickCurrentUser(media_id, obj) {
     var fetchURL = BASE_URL+"/api/picks/"+media_id+"/add_to_current_user"
-    fetchToastRemoveRowMediaTable(fetchURL, obj, 'PUT')
+    fetchToastRemoveRowDataTable(fetchURL, obj, 'PUT')
 }
 
 function addPickPermanent(media_id, obj) {
     var fetchURL = BASE_URL+"/api/picks/"+media_id+"/add_permanent"
-    fetchToastRemoveRowMediaTable(fetchURL, obj, 'PUT')
+    fetchToastRemoveRowDataTable(fetchURL, obj, 'PUT')
 }
 
 function deletePick(pick_id, obj) {
     var fetchURL = BASE_URL+"/api/picks/"+pick_id+"/delete"
-    fetchToastRemoveRowMediaTable(fetchURL, obj, 'DELETE')
+    fetchToastRemoveRowDataTable(fetchURL, obj, 'DELETE')
 }
 
 function deleteMedia(media_id, obj) {
     var fetchURL = BASE_URL+"/api/medias/"+media_id+"/delete"
     var result = confirm("Are you sure you want to delete this media : "+obj.parentNode.parentNode.firstChild.nextElementSibling.innerText)
     if (result) {
-        fetchToastRemoveRowMediaTable(fetchURL, obj, 'DELETE')
+        fetchToastRemoveRowDataTable(fetchURL, obj, 'DELETE')
     }
 }
 
@@ -113,24 +113,19 @@ function modalPicks(media_id, obj) {
     });
 }
 
-$(document).ready(function () {
-    $('#mediaTable').DataTable({
-        "lengthMenu": [ [10, 25, 50, -1], [10, 25, 50, "All"] ],
-        "columnDefs": [
-            {
-                "targets": 'nosort',
-                "orderable": false
-            },
-            {
-                "targets": 'button',
-                "width": "7%",
-                "className": "dt-center"
-            }
-        ]
-    });
-  });
-
 toastr.options = {
     closeButton: true,
     progressBar: true
+}
+
+function formatBytes(bytes, decimals = 2) {
+    if (!+bytes) return '0 Bytes'
+
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB']
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
 }

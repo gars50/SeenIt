@@ -21,8 +21,8 @@
                 <tr>
                     <th scope="row">{{user.email}}</th>
                     <td>{{user.alias}}</td>
-                    <td><a href="{{ url_for('media.user_movies', user_id=user.id) }}">{{user.movie_storage_usage | filesizeformat}}</a></td>
-                    <td><a href="{{ url_for('media.user_shows', user_id=user.id) }}">{{user.show_storage_usage | filesizeformat}}</a></td>
+                    <td><a href="{{ url_for('media.user_picks', user_id=user.id, media_type='movies') }}">{{user.movie_storage_usage | filesizeformat}}</a></td>
+                    <td><a href="{{ url_for('media.user_picks', user_id=user.id, media_type='tv_shows') }}">{{user.show_storage_usage | filesizeformat}}</a></td>
                     <td>{{user.admin}}</td>
                     <td><a class="btn btn-outline-light" type="button" href="{{ url_for('settings.user', user_id=user.id) }}">Edit</a></td>
                     <td><a onclick="deleteUser({{user.id}}, this)" class="btn btn-danger">Delete</a></td>

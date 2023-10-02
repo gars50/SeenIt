@@ -15,13 +15,17 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 pip install gunicorn
+mkdir logs
 ```
 
 2. Configure necessary variables
 
 Create you secret key :
 ```
+python
+import os
 os.urandom(24).hex()
+exit()
 ```
 Export secrets. You can leave out DATABASE_URI if you want to use a local database
 ```
@@ -47,7 +51,17 @@ MAIL_USE_TLS
 flask db upgrade
 ```
 
-4. Start the service and confirm it works
+4. Configure wsgi for gunicorn
+
+```
+nano wsgi.py
+```
+```
+from app import create_app
+
+app = create_app()
+```
+5. Start the service and confirm it works
 
 ```
 gunicorn --bind 0.0.0.0:5000 wsgi:app

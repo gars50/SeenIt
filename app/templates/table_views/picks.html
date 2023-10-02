@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% set active_page = page %}
+{% block content %}
+    <h1>{% block title %} {{ page_title }} {% endblock %}</h1>
+    <div id="medias-btns" class="medias-buttons" role="group" aria-label="Media types button group">
+        <input type="checkbox" class="btn-check" id="btnmovies" autocomplete="off">
+        <label class="btn btn-outline-secondary" for="btnmovies">Movies</label>
+
+        <input type="checkbox" class="btn-check" id="btntvshows" autocomplete="off">
+        <label class="btn btn-outline-secondary" for="btntvshows">TV Shows</label>
+    </div>
+    <table id="picksTable" class="table table-hover table-dark">
+        <thead>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+{% endblock %}
+{% block javascript %}
+    <script>
+        $(document).ready(function () {
+            //If a media type is specified, we check it, otherwise we check both
+            var urlParams = new URLSearchParams(window.location.search);
+            var media_type = urlParams.get('media_type');
+            switch(media_type) {
+                case "movies":
+                    $('#btnmovies').prop( "checked", true );
+                    break;
+                case "tv_shows":
+                    $('#btntvshows').prop( "checked", true );
+                    break;
+                default:
+                    $('#btnmovies').prop( "checked", true );
+                    $('#btntvshows').prop( "checked", true );
+            }
+
+            {% if user_id is defined %}
+                var lookup_user = {{ user_id }}
+            {% else %}
+                var lookup_user = "self"
+            {% endif %}
+
+            var table = $('#picksTable').DataTable({
+                ajax: {
+                    url: BASE_URL+'/api/picks',
+                    data: function (d) {
+                        selected_media_types = [];
+                        if ($('#btnmovies').is(':checked')) {
+                            selected_media_types[0] = 'movie'
+                        }
+                        if ($('#btntvshows').is(':checked')) {
+                            selected_media_types[1] = 'tv_show'
+                        }
+                        d.media_types = selected_media_types.join(',');
+                        d.user = lookup_user;
+                    }
+                },
+                serverSide: true,
+                columns: [
+                    {
+                        title: 'Title',
+                        data: 'media_title',
+                        className: "wrapper",
+                        render: function (data, type, row, meta) {
+                            if (row.poster_url) {
+                                var poster_url = row.poster_url
+                            } else {
+                                var poster_url = BASE_URL + "{{ url_for('static', filename='no_picture.png') }}"
+                            }
+                            if (row.media_type == "movie") {
+                                var icon = "bi-film"
+                                var icon_title = "Movie"
+                            } else if (row.media_type == "tv_show") {
+                                var icon = "bi bi-tv"
+                                var icon_title = "TV Show"
+                            }
+                            var media_type = '<span title="' + icon_title + '"><i class="' + icon + '"></i></span>';
+                            return media_type + '&nbsp;<a href="'+row.media_db_url+'" target="_blank">'+data+'<span><img src='+poster_url+' loading="lazy" height="150"></span>'
+                        }
+                    },
+                    {
+                        title: 'Pick date',
+                        data: 'pick_date', 
+                        render: function (data) {
+                            return moment(data).format('LLL')
+                        }
+                    },
+                    {
+                        title: 'Pick Method',
+                        data: 'pick_method'
+                    },
+                    {
+                        title: 'Size',
+                        data: 'media_size', 
+                        render: function(data) {
+                            return formatBytes(data)
+                        }
+                    },
+                    {% if (user_id is defined and current_user.admin) or (user_id is not defined) %}
+                        {
+                            title: 'Let go',
+                            data: 'pick_id',
+                            orderable: false,
+                            render: function(data, table) {
+                                return '<a onclick="deletePick('+data+', this)" class="btn btn-warning"><i class="bi bi-dash-circle"></i></a>'
+                            }
+                        }
+                    {% endif %}
+                ],
+            });
+
+            $('#medias-btns').on("click", function() {
+                table.draw();
+            });
+        });
+    </script>
+{% endblock %}
