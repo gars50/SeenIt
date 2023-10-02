@@ -39,7 +39,7 @@
         $(document).ready(function () {
             var table = $('#mediasTable').DataTable({
                 ajax: {
-                    url: '/api/medias',
+                    url: BASE_URL+'/api/medias',
                     data: function (d) {
                         selected_media_types = [];
                         if ($('#btnmovies').is(':checked')) {

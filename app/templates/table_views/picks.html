@@ -42,7 +42,7 @@
 
             var table = $('#picksTable').DataTable({
                 ajax: {
-                    url: '/api/picks',
+                    url: BASE_URL+'/api/picks',
                     data: function (d) {
                         selected_media_types = [];
                         if ($('#btnmovies').is(':checked')) {
