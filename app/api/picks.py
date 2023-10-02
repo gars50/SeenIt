@@ -68,17 +68,17 @@ def delete_pick(pick_id):
 
 @bp.route("/picks", methods=['GET'])
 def get_picks():
-    query = Pick.query.join(Media)
+    query = Pick.query.outerjoin(Media)
 
     # Filtering for the specified user
     lookup_user = request.args.get('user')
     if lookup_user == "self":
         query = query.filter(
-            Pick.user_id.is_(current_user.id)
+            Pick.user_id.like(current_user.id)
         )
     else:
         query = query.filter(
-             Pick.user_id.is_(lookup_user)
+             Pick.user_id.like(lookup_user)
         )
 
     # Filtering for selected media types
