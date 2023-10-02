@@ -63,7 +63,7 @@
                             if (row.poster_url) {
                                 var poster_url = row.poster_url
                             } else {
-                                var poster_url = BASE_URL + "{{ url_for('static', filename='no_picture.png') }}"
+                                var poster_url = "{{ url_for('static', filename='no_picture.png') }}"
                             }
                             if (row.media_type == "movie") {
                                 var icon = "bi-film"
