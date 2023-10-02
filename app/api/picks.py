@@ -19,7 +19,7 @@ def add_pick_to_current_user(media_id):
 @login_required
 def add_pick_permanent_collection(media_id):
     media = Media.query.get(media_id)
-    permanent_user = User.query.filter_by(email="permanent").first()
+    permanent_user = User.query.filter_by(email="Permanent").first()
     check_pick_creation(media, permanent_user, datetime.utcnow(), "Assigned")
     return{
         "message" : str(media)+" added to the permanent collection"

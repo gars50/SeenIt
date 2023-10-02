@@ -272,19 +272,19 @@ def import_requests_from_ombi():
 def import_movies_from_radarr():
     radarr_response = api_radarr("GET", "/api/v3/movie")
     radarr_infos = radarr_response.json()
+    permanent_user = User.query.filter_by(email="Permanent").first()
     for movie in radarr_infos:
         movie, added_to_db = check_movie_creation(movie["tmdbId"])
         if (added_to_db):
-            permanent_user = User.query.get_or_404(1)
             check_pick_creation(movie, permanent_user, datetime.utcnow(), "Added from Radarr")
 
 def import_shows_from_sonarr():
     sonarr_response = api_sonarr("GET", "/api/v3/series")
     sonarr_infos = sonarr_response.json()
+    permanent_user = User.query.filter_by(email="Permanent").first()
     for show in sonarr_infos:
         tv_show, added_to_db = check_tv_show_creation(show["tvdbId"])
         if (added_to_db):
-            permanent_user = User.query.filter_by(email="permanent").first()
             check_pick_creation(tv_show, permanent_user, datetime.utcnow(), "Added from Sonarr")
 
 def delete_media_from_ombi(media):
