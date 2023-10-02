@@ -22,12 +22,11 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Plex login displays a warning about location of the application?
 - Add option to change the jobs' schedule
 - Automate mass delete
+- Limit to one line for all text per row
+    - Use ellipsis?
 
 ## In Progress
-- Change datatables to AJAX
-    - Limit to one line for all text per row
-        - Use ellipsis?
-    - Fix remove row
+    
 
 ## Completed
 - Add a search option in medias
@@ -80,6 +79,7 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Add storage used per user in users
 - Add option to view the logs within the application
 - Figure out a better way to mass delete
+- Change datatables to AJAX
 
 ## Possible improvements
 - Add possibility to configure the notification agents in Tautulli from the SeenIt

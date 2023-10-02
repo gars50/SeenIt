@@ -1,6 +1,6 @@
-function fetchToastRemoveRowMediaTable(url, obj, type) {
+function fetchToastRemoveRowDataTable(url, obj, type) {
     var row = obj.parentNode.parentNode
-    var table = $('#mediaTable').DataTable();
+    var table = $(obj.closest('.table')).DataTable();
     spinner.removeAttribute('hidden');
     fetch(url, {
         headers: {
@@ -78,24 +78,24 @@ function deletePickModal(pick_id, obj) {
 
 function addPickCurrentUser(media_id, obj) {
     var fetchURL = BASE_URL+"/api/picks/"+media_id+"/add_to_current_user"
-    fetchToastRemoveRowMediaTable(fetchURL, obj, 'PUT')
+    fetchToastRemoveRowDataTable(fetchURL, obj, 'PUT')
 }
 
 function addPickPermanent(media_id, obj) {
     var fetchURL = BASE_URL+"/api/picks/"+media_id+"/add_permanent"
-    fetchToastRemoveRowMediaTable(fetchURL, obj, 'PUT')
+    fetchToastRemoveRowDataTable(fetchURL, obj, 'PUT')
 }
 
 function deletePick(pick_id, obj) {
     var fetchURL = BASE_URL+"/api/picks/"+pick_id+"/delete"
-    fetchToastRemoveRowMediaTable(fetchURL, obj, 'DELETE')
+    fetchToastRemoveRowDataTable(fetchURL, obj, 'DELETE')
 }
 
 function deleteMedia(media_id, obj) {
     var fetchURL = BASE_URL+"/api/medias/"+media_id+"/delete"
     var result = confirm("Are you sure you want to delete this media : "+obj.parentNode.parentNode.firstChild.nextElementSibling.innerText)
     if (result) {
-        fetchToastRemoveRowMediaTable(fetchURL, obj, 'DELETE')
+        fetchToastRemoveRowDataTable(fetchURL, obj, 'DELETE')
     }
 }
 
