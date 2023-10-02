@@ -113,6 +113,7 @@
                             title: 'Pick up',
                             data: 'media_id',
                             orderable: false,
+                            width: "7%",
                             render: function(data, type, row, meta) {
                                 return '<a onclick="addPickCurrentUser('+data+', this)" class="btn btn-success"><i class="bi bi-plus-circle"></i></a>'
                             }
@@ -122,6 +123,7 @@
                                 title: 'Make permanent',
                                 data: 'media_id',
                                 orderable: false,
+                                width: 1,
                                 render: function(data, table) {
                                     return '<td><a onclick="addPickPermanent('+data+', this)" class="btn btn-info"><i class="bi bi-arrow-right-circle"></i></a></td>'
                                 }
@@ -131,6 +133,7 @@
                         {
                             title: 'Picks',
                             data: 'num_picks',
+                            width: 1,
                             render: function(data, type, row, meta) {
                                 return '<a onclick="modalPicks('+row.media_id+', this)" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#picksModal">'+data+'</a>'
                             }
@@ -140,6 +143,7 @@
                                 title: 'Delete',
                                 data: 'media_id',
                                 orderable: false,
+                                width: 1,
                                 render: function(data, table) {
                                     return '<a onclick="deleteMedia('+data+', this)" class="btn btn-danger"><i class="bi bi-trash"></i></a>'
                                 }
