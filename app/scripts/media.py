@@ -71,7 +71,7 @@ def check_movie_creation(TMDB_id, ombi_id=0, title=""):
                 poster_url = None
                 for image in radarr_infos["images"]:
                     if image["coverType"] == "poster":
-                        poster_url = image["url"]
+                        poster_url = image["remoteUrl"]
 
         new_movie = Movie(title=title, TMDB_id=TMDB_id, year=year, ombi_id=ombi_id, total_size=total_size, radarr_id=radarr_id, poster_url=poster_url)
         db.session.add(new_movie)
@@ -273,19 +273,19 @@ def import_requests_from_ombi():
 def import_movies_from_radarr():
     radarr_response = api_radarr("GET", "/api/v3/movie")
     radarr_infos = radarr_response.json()
+    permanent_user = User.query.filter_by(email="Permanent").first()
     for movie in radarr_infos:
         movie, added_to_db = check_movie_creation(movie["tmdbId"])
         if (added_to_db):
-            permanent_user = User.query.filter_by(email="Permanent").first()
             check_pick_creation(movie, permanent_user, datetime.utcnow(), "Added from Radarr")
 
 def import_shows_from_sonarr():
     sonarr_response = api_sonarr("GET", "/api/v3/series")
     sonarr_infos = sonarr_response.json()
+    permanent_user = User.query.filter_by(email="Permanent").first()
     for show in sonarr_infos:
         tv_show, added_to_db = check_tv_show_creation(show["tvdbId"])
         if (added_to_db):
-            permanent_user = User.query.filter_by(email="Permanent").first()
             check_pick_creation(tv_show, permanent_user, datetime.utcnow(), "Added from Sonarr")
 
 def delete_media_from_ombi(media):
