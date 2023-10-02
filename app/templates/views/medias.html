@@ -11,15 +11,6 @@
     </div>
     <table id="mediasTable" class="table table-hover table-dark">
         <thead>
-            <tr>
-                <th scope="col">Title</th>
-                <th scope="col">Deletion Date</th>
-                <th scope="col">Size</th>
-                <th scope="col" class="button">Picks</th>
-                {% if current_user.admin %}
-                    <th scope="col" class="nosort button">Delete</th>
-                {% endif %}
-            </tr>
         </thead>
         <tbody>
         </tbody>
@@ -44,6 +35,13 @@
     </div>
     <script>
         $(document).ready(function () {
+
+            {% if abandonned %}
+                var abandonned_page = true
+            {% else %}
+                var abandonned_page = false
+            {% endif %}
+
             var table = $('#mediasTable').DataTable({
                 ajax: {
                     url: '/api/medias',
@@ -56,11 +54,14 @@
                             selected_media_types[1] = 'tv_show'
                         }
                         d.media_types = selected_media_types.join(',');
+                        d.scope = abandonned_page
                     }
                 },
                 serverSide: true,
                 columns: [
-                    {data: 'title', 
+                    {
+                        title: 'Title',
+                        data: 'title', 
                         render: function (data, type, row, meta) {
                             if (row.poster_url) {
                                 var poster_url = row.poster_url
@@ -79,7 +80,9 @@
                         },
                         className: "wrapper"
                     },
-                    {data: 'deletion_date', 
+                    {
+                        title: 'Deletion Date',
+                        data: 'deletion_date',
                         render: function (data) {
                             if (data) {
                                 return moment(data).format('LLL')
@@ -88,17 +91,35 @@
                             }
                         }
                     },
-                    {data: 'media_size', 
+                    {
+                        title: 'Size',
+                        data: 'media_size', 
                         render: function(data) {
                             return formatBytes(data)
                         }
                     },
-                    {data: 'num_picks',
+                    {
+                        title: 'Pick up',
+                        data: 'media_id',
+                        visible: abandonned_page,
+                        orderable: false,
+                        render: function(data, type, row, meta) {
+                            return '<a onclick="addPickCurrentUser('+data+', this)" class="btn btn-success"><i class="bi bi-plus-circle"></i></a>'
+                        }
+                    },
+                    {
+                        title: 'Picks',
+                        data: 'num_picks',
+                        visible: !abandonned_page,
                         render: function(data, type, row, meta) {
                             return '<a onclick="modalPicks('+row.media_id+', this)" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#picksModal">'+data+'</a>'
                         }
                     },
-                    {data: 'media_id',
+                    {
+                        title: 'Delete',
+                        data: 'media_id',
+                        orderable: false,
+                        visible: !abandonned_page,
                         render: function(data, table) {
                             return '<a onclick="deleteMedia('+data+', this)" class="btn btn-danger"><i class="bi bi-trash"></i></a>'
                         }

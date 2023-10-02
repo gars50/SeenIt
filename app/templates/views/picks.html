@@ -11,13 +11,6 @@
     </div>
     <table id="picksTable" class="table table-hover table-dark">
         <thead>
-            <tr>
-                <th scope="col">Title</th>
-                <th>Pick date</th>
-                <th>Pick method</th>
-                <th>Size</th>
-                <th class="nosort button" scope="col">Let go</th>
-            </tr>
         </thead>
         <tbody>
         </tbody>
@@ -29,18 +22,25 @@
             var media_type = urlParams.get('media_type');
             switch(media_type) {
                 case "movies":
-                    console.log("Movies")
                     $('#btnmovies').prop( "checked", true );
                     break;
                 case "tv_shows":
-                    console.log("TV Shows")
                     $('#btntvshows').prop( "checked", true );
                     break;
                 default:
-                    console.log("Default")
                     $('#btnmovies').prop( "checked", true );
                     $('#btntvshows').prop( "checked", true );
             }
+
+            {% if user_id %}
+                // Look up the specified user
+                var lookup_user = {{ user_id }}
+                var other_user = true
+            {% else %}
+                var lookup_user = "self"
+                var other_user = false
+            {% endif %}
+
             var table = $('#picksTable').DataTable({
                 ajax: {
                     url: '/api/picks',
@@ -53,11 +53,15 @@
                             selected_media_types[1] = 'tv_show'
                         }
                         d.media_types = selected_media_types.join(',');
+                        d.user = lookup_user;
                     }
                 },
                 serverSide: true,
                 columns: [
-                    {data: 'media_title', 
+                    {
+                        title: 'Title',
+                        data: 'media_title',
+                        className: "wrapper",
                         render: function (data, type, row, meta) {
                             if (row.poster_url) {
                                 var poster_url = row.poster_url
@@ -73,22 +77,31 @@
                             }
                             var media_type = '<span title="' + icon_title + '"><i class="' + icon + '"></i></span>';
                             return media_type + '&nbsp;<a href="'+row.media_db_url+'" target="_blank">'+data+'<span><img src='+poster_url+' loading="lazy" height="150"></span>'
-                        },
-                        className: "wrapper"
+                        }
                     },
-                    {data: 'pick_date', 
+                    {
+                        title: 'Pick date',
+                        data: 'pick_date', 
                         render: function (data) {
                             return moment(data).format('LLL')
                         }
                     },
-                    {data: 'pick_method'},
-                    {data: 'media_size', 
+                    {
+                        title: 'Pick Method',
+                        data: 'pick_method'
+                    },
+                    {
+                        title: 'Size',
+                        data: 'media_size', 
                         render: function(data) {
                             return formatBytes(data)
                         }
 
                     },
-                    {data: 'pick_id',
+                    {
+                        title: 'Let go',
+                        data: 'pick_id',
+                        orderable: false,
                         render: function(data, table) {
                             return '<a onclick="deletePick('+data+', this)" class="btn btn-warning"><i class="bi bi-dash-circle"></i></a>'
                         }
@@ -100,7 +113,5 @@
                 table.draw();
             });
         });
-
-
     </script>
 {% endblock %}

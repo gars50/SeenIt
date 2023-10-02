@@ -70,6 +70,17 @@ def delete_pick(pick_id):
 def get_picks():
     query = Pick.query.join(Media)
 
+    # Filtering for the specified user
+    lookup_user = request.args.get('user')
+    if lookup_user == "self":
+        query = query.filter(
+            Pick.user_id.is_(current_user.id)
+        )
+    else:
+        query = query.filter(
+             Pick.user_id.is_(lookup_user)
+        )
+
     # Filtering for selected media types
     media_type_search = request.args.get('media_types').split(',')
     query = query.filter(

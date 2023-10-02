@@ -128,6 +128,7 @@ def check_pick_creation(media, user, pick_date, pick_method):
         media.deletion_date = None
         media.expiry_date = None
         media.abandonned_date = None
+        media.last_user = None
         db.session.commit()
         current_app.logger.info("Created "+str(new_pick))
         added_to_db = True
@@ -275,7 +276,7 @@ def import_movies_from_radarr():
     for movie in radarr_infos:
         movie, added_to_db = check_movie_creation(movie["tmdbId"])
         if (added_to_db):
-            permanent_user = User.query.get_or_404(1)
+            permanent_user = User.query.filter_by(email="Permanent").first()
             check_pick_creation(movie, permanent_user, datetime.utcnow(), "Added from Radarr")
 
 def import_shows_from_sonarr():
@@ -284,7 +285,7 @@ def import_shows_from_sonarr():
     for show in sonarr_infos:
         tv_show, added_to_db = check_tv_show_creation(show["tvdbId"])
         if (added_to_db):
-            permanent_user = User.query.filter_by(email="permanent").first()
+            permanent_user = User.query.filter_by(email="Permanent").first()
             check_pick_creation(tv_show, permanent_user, datetime.utcnow(), "Added from Sonarr")
 
 def delete_media_from_ombi(media):
@@ -325,7 +326,6 @@ def delete_media_everywhere(media):
     return message
 
 def update_media_infos():
-
     current_app.logger.debug("Updating movie infos from Radarr.")
     radarr_response = api_radarr("GET", "/api/v3/movie")
     radarr_infos = radarr_response.json()

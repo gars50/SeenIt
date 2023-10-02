@@ -31,6 +31,13 @@ def get_medias():
     query = Media.query
     total = query.count()
 
+    # Filtering for the scope of the request (Abandonned vs All)
+    abandonned = request.args.get('scope')
+    if (abandonned == "true"):
+        query = query.filter(
+            Media.abandonned_date.is_not(None)
+        )
+
     # Filtering for selected media types
     media_type_search = request.args.get('media_types').split(',')
     query = query.filter(
