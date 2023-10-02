@@ -1,17 +1,18 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, BooleanField, SubmitField, validators, ValidationError, SelectField, DateTimeLocalField
+from wtforms.validators import DataRequired
 from app.models import User
 
 
 class EditUserForm(FlaskForm):
     email = StringField('Email Address')
-    alias = StringField('Alias')
+    alias = StringField('Alias', validators=[DataRequired()])
     admin = BooleanField('Admin')
     submit = SubmitField('Save')
 
 class AddUserForm(FlaskForm):
-    email = StringField('Email Address')
-    alias = StringField('Alias')
+    email = StringField('Email Address', validators=[DataRequired()])
+    alias = StringField('Alias', validators=[DataRequired()])
     admin = BooleanField('Admin')
     submit = SubmitField('Save')
 

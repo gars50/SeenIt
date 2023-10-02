@@ -36,12 +36,6 @@
     <script>
         $(document).ready(function () {
 
-            {% if abandonned %}
-                var abandonned_page = true
-            {% else %}
-                var abandonned_page = false
-            {% endif %}
-
             var table = $('#mediasTable').DataTable({
                 ajax: {
                     url: '/api/medias',
@@ -54,7 +48,9 @@
                             selected_media_types[1] = 'tv_show'
                         }
                         d.media_types = selected_media_types.join(',');
-                        d.scope = abandonned_page
+                        {% if abandonned_page %}
+                            d.abandonned_page = true
+                        {% endif %}
                     }
                 },
                 serverSide: true,
@@ -98,32 +94,44 @@
                             return formatBytes(data)
                         }
                     },
-                    {
-                        title: 'Pick up',
-                        data: 'media_id',
-                        visible: abandonned_page,
-                        orderable: false,
-                        render: function(data, type, row, meta) {
-                            return '<a onclick="addPickCurrentUser('+data+', this)" class="btn btn-success"><i class="bi bi-plus-circle"></i></a>'
-                        }
-                    },
-                    {
-                        title: 'Picks',
-                        data: 'num_picks',
-                        visible: !abandonned_page,
-                        render: function(data, type, row, meta) {
-                            return '<a onclick="modalPicks('+row.media_id+', this)" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#picksModal">'+data+'</a>'
-                        }
-                    },
-                    {
-                        title: 'Delete',
-                        data: 'media_id',
-                        orderable: false,
-                        visible: !abandonned_page,
-                        render: function(data, table) {
-                            return '<a onclick="deleteMedia('+data+', this)" class="btn btn-danger"><i class="bi bi-trash"></i></a>'
-                        }
-                    }
+                    {% if abandonned_page %}
+                        {
+                            title: 'Pick up',
+                            data: 'media_id',
+                            orderable: false,
+                            render: function(data, type, row, meta) {
+                                return '<a onclick="addPickCurrentUser('+data+', this)" class="btn btn-success"><i class="bi bi-plus-circle"></i></a>'
+                            }
+                        },
+                        {% if current_user.admin %}
+                            {
+                                title: 'Make permanent',
+                                data: 'media_id',
+                                orderable: false,
+                                render: function(data, table) {
+                                    return '<td><a onclick="addPickPermanent('+data+', this)" class="btn btn-info"><i class="bi bi-arrow-right-circle"></i></a></td>'
+                                }
+                            },
+                        {% endif %}
+                    {% elif not abandonned_page %}
+                        {
+                            title: 'Picks',
+                            data: 'num_picks',
+                            render: function(data, type, row, meta) {
+                                return '<a onclick="modalPicks('+row.media_id+', this)" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#picksModal">'+data+'</a>'
+                            }
+                        },
+                        {% if current_user.admin %}
+                            {
+                                title: 'Delete',
+                                data: 'media_id',
+                                orderable: false,
+                                render: function(data, table) {
+                                    return '<a onclick="deleteMedia('+data+', this)" class="btn btn-danger"><i class="bi bi-trash"></i></a>'
+                                }
+                            },
+                        {% endif %}
+                    {% endif %}
                 ],
             });
 

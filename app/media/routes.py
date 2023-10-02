@@ -5,7 +5,7 @@ from app.models import Movie, TVShow, Pick, User
 
 @bp.route("/abandonned_medias")
 def abandonned_medias():
-    return render_template("views/medias.html", page_title="Abandonned Medias", page="abandonned_medias", abandonned=True)
+    return render_template("views/medias.html", page_title="Abandonned Medias", page="abandonned_medias", abandonned_page=True)
 
 @bp.route("/all_medias")
 @login_required

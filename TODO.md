@@ -21,11 +21,13 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
     - Add Plex Auth Key to profile
 - Plex login displays a warning about location of the application?
 - Add option to change the jobs' schedule
-
 - Automate mass delete
 
 ## In Progress
 - Change datatables to AJAX
+    - Limit to one line for all text per row
+        - Use ellipsis?
+    - Fix remove row
 
 ## Completed
 - Add a search option in medias
