@@ -32,15 +32,17 @@ class Media(db.Model):
     def to_dict(self) :
         if self.type == "movie":
             media_db_url = self.TMDB_url
+            full_title = self.title+" ("+str(self.year)+")"
         else:
             media_db_url = self.theTVDB_url
+            full_title = self.title
         if self.last_user:
             last_user_alias = self.last_user.alias
         else:
             last_user_alias = ""
         num_picks = len(self.picks)
         return {
-                'title': self.title,
+                'title': full_title,
                 'media_db_url': media_db_url,
                 'poster_url': self.poster_url,
                 'media_size': self.total_size,

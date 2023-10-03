@@ -27,10 +27,12 @@ class Pick(db.Model):
     def to_dict(self) :
         if self.media.type == "movie":
             media_db_url = self.media.TMDB_url
+            full_title = self.media.title+" ("+str(self.media.year)+")"
         else:
             media_db_url = self.media.theTVDB_url
+            full_title = self.media.title
         return {
-            'media_title': self.media.title,
+            'media_title': full_title,
             'media_db_url': media_db_url,
             'poster_url': self.media.poster_url,
             'pick_method': self.pick_method,
