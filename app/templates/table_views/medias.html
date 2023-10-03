@@ -86,7 +86,7 @@
                             title: 'Abandonned Date',
                             data: 'abandonned_date',
                             render: function(data) {
-                            return moment(data).format('LLL')
+                                return moment(data).format('LLL')
                             }
                         },
                     {% endif %}
@@ -156,6 +156,10 @@
             $('#medias-btns').on("click", function() {
                 table.draw();
             });
+        
+            {% if abandonned_page %}
+                table.column('2').order('desc').draw();
+            {% endif %}
         });
     </script>
 {% endblock %}
