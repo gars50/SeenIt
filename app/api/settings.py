@@ -3,33 +3,78 @@ from time import sleep
 from flask import request, current_app
 from flask_login import login_required
 from app.scripts.media import test_ombi, test_radarr, test_sonarr
+import jsonschema
+from jsonschema import validate
+
+valid_ip_address_regex = "^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+valid_hostname_regex = "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$"
+alphanumeric_regex = "^[a-zA-Z0-9]+$"
+
+
+api_schema= {
+    "type" : "object",
+    "properties" : {
+        "host" : { 
+            "type" : "string",
+            "anyOf" : [
+                {
+                    "pattern": valid_ip_address_regex
+                },
+                {
+                    "pattern": valid_hostname_regex
+                }
+            ]
+        },
+        "port" : {
+            "type" : "integer"
+        },
+        "api_key" : {
+            "type" : "string",
+            "pattern" : alphanumeric_regex
+        },
+    }
+}
+
+def validate_json(data):
+    try:
+        validate(data, schema=api_schema)
+    except jsonschema.exceptions.ValidationError as err:
+        return False
+    return True
+
 
 @bp.route('/settings/test_ombi_from_server', methods=['POST'])
-@login_required
+#@login_required
 def test_ombi_from_server():
     data = request.get_json()
-    ombi_host = data['ombi_host']
-    ombi_port = data['ombi_port']
-    ombi_api_key = data['ombi_api_key']
-    return test_ombi(ombi_host, ombi_port, ombi_api_key)
+    if validate_json(data):
+        return test_ombi(data['host'], data['port'], data['api_key'])
+    else:
+        return {
+            "error" : "Bad input"
+        }, 400
 
 @bp.route('/settings/test_radarr_from_server', methods=['POST'])
 @login_required
 def test_radarr_from_server():
     data = request.get_json()
-    radarr_host = data['radarr_host']
-    radarr_port = data['radarr_port']
-    radarr_api_key = data['radarr_api_key']
-    return test_radarr(radarr_host, radarr_port, radarr_api_key)
+    if validate_json(data):
+        return test_radarr(data['host'], data['port'], data['api_key'])
+    else:
+        return {
+            "error" : "Bad input"
+        }, 400
 
 @bp.route('/settings/test_sonarr_from_server', methods=['POST'])
 @login_required
 def test_sonarr_from_server():
     data = request.get_json()
-    sonarr_host = data['sonarr_host']
-    sonarr_port = data['sonarr_port']
-    sonarr_api_key = data['sonarr_api_key']
-    return test_sonarr(sonarr_host, sonarr_port, sonarr_api_key)
+    if validate_json(data):
+        return test_sonarr(data['host'], data['port'], data['api_key'])
+    else:
+        return {
+            "error" : "Bad input"
+        }, 400
 
 def stream_log(file):
     def generate():

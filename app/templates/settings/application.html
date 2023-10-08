@@ -108,9 +108,9 @@
         async function testRadarr() {
             spinner.removeAttribute('hidden');
             params ={
-                'radarr_host': document.getElementById('radarr_host').value,
-                'radarr_port': document.getElementById('radarr_port').value,
-                'radarr_api_key': document.getElementById('radarr_api_key').value
+                'host': document.getElementById('radarr_host').value,
+                'port': parseInt(document.getElementById('radarr_port').value),
+                'api_key': document.getElementById('radarr_api_key').value
             }
             fetch(BASE_URL+"api/settings/test_radarr_from_server", {
                 headers: {
@@ -141,9 +141,9 @@
         async function testSonarr() {
             spinner.removeAttribute('hidden');
             params ={
-                'sonarr_host': document.getElementById('sonarr_host').value,
-                'sonarr_port': document.getElementById('sonarr_port').value,
-                'sonarr_api_key': document.getElementById('sonarr_api_key').value
+                'host': document.getElementById('sonarr_host').value,
+                'port': parseInt(document.getElementById('sonarr_port').value),
+                'api_key': document.getElementById('sonarr_api_key').value
             }
             fetch(BASE_URL+"api/settings/test_sonarr_from_server", {
                 headers: {
@@ -174,9 +174,9 @@
         async function testOmbi() {
             spinner.removeAttribute('hidden');
             params ={
-                'ombi_host': document.getElementById('ombi_host').value,
-                'ombi_port': document.getElementById('ombi_port').value,
-                'ombi_api_key': document.getElementById('ombi_api_key').value
+                'host': document.getElementById('ombi_host').value,
+                'port': parseInt(document.getElementById('ombi_port').value),
+                'api_key': document.getElementById('ombi_api_key').value
             }
             fetch(BASE_URL+"api/settings/test_ombi_from_server", {
                 headers: {
