@@ -44,7 +44,7 @@ def validate_json(data):
 
 
 @bp.route('/settings/test_ombi_from_server', methods=['POST'])
-#@login_required
+@login_required
 def test_ombi_from_server():
     data = request.get_json()
     if validate_json(data):
