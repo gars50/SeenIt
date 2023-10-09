@@ -11,20 +11,11 @@
                 <li class="nav-item">
                     <a {% if active_page == "abandonned_medias" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.abandonned_medias') }}">Abandonned Medias</a>
                 </li>
-                <li class="nav-link">
-                <a>|</a>
-                </li>
                 <li class="nav-item">
                     <a {% if active_page == "my_picks" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.my_picks') }}">My Picks</a>
                 </li>
-                <li class="nav-link">
-                <a>|</a>
-                </li>
                 <li class="nav-item">
                     <a {% if active_page == "permanent_picks" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.permanent_picks') }}">Permanent Collection</a>
-                </li>
-                <li class="nav-link">
-                <a>|</a>
                 </li>
                 <li class="nav-item">
                     <a {% if active_page == "all_medias" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.all_medias') }}">All Medias</a>
