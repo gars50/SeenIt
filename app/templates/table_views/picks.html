@@ -75,8 +75,9 @@
                                 var icon = "bi bi-tv"
                                 var icon_title = "TV Show"
                             }
-                            var media_type = '<span title="' + icon_title + '"><i class="' + icon + '"></i></span>';
-                            return media_type + '&nbsp;<a href="'+row.media_db_url+'" target="_blank">'+data+'<span><img src='+poster_url+' loading="lazy" height="150"></span>'
+                            var media_type_icon = '<span class="media-type-tooltip" data-toggle="tooltip" title="' + icon_title + '"><i class="fa ' + icon + ' fa-fw"></i></span>';
+                            var media_poster_popover = '<span data-bs-toggle="popover" data-bs-img='+poster_url+'>'+data+'</span>'
+                            return (media_type_icon + '&nbsp;' + '<a href="'+row.media_db_url+'" target="_blank">' + media_poster_popover + '</a>')
                         }
                     },
                     {
@@ -114,6 +115,22 @@
             $('#medias-btns').on("click", function() {
                 table.draw();
             });
+
+            table.on( 'draw', function () {
+                document.querySelectorAll('[data-bs-toggle="popover"]').forEach(popover => {
+                    new bootstrap.Popover(popover, {
+                        html: true,
+                        sanitize: false,
+                        trigger: 'hover',
+                        placement: 'right',
+                        container: "body",
+                        template: '<div class="popover thumbnail-popover" role="tooltip"><div class="popover-body"></div></div>',
+                        content: function () {
+                            return '<div class="thumbnail" style="background-image: url('+popover.dataset.bsImg+');"></div>';
+                        }
+                    })
+                });
+            })
         });
     </script>
 {% endblock %}

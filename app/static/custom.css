@@ -57,20 +57,25 @@
 .toast {
 	opacity: 1 !important;
 }
-
-.wrapper a span{
-	position: absolute;
-	display: none;
-	z-index: 99;
-	transform: scale(0);
-	border: 2px solid rgb(0, 0, 0);
+.thumbnail-popover {
+	z-index: 2000;
+	padding: 0;
+	border: 0;
 }
 
-.wrapper a:hover span{
-	display: block;
-	transform: translate(225%, -50%) scale(1.5);
+.thumbnail-popover .popover-body {
+	color: #000;
+	padding: 0;
 }
 
+.thumbnail {
+	background-position: center;
+	background-size: cover;
+	width: 160px;
+	height: 240px;
+	border-radius: 3px;
+	box-shadow: 0 0 4px rgba(0,0,0,.3),inset 0 0 0 1px rgba(255,255,255,.1);
+}
 .logging_window{
 	height: 80vh;
     padding: 9.5px;
