@@ -116,6 +116,10 @@
                 table.draw();
             });
 
+            {% if page == "my_picks" %}
+                table.column('1').order('desc').draw();
+            {% endif %}
+
             table.on( 'draw', function () {
                 document.querySelectorAll('[data-bs-toggle="popover"]').forEach(popover => {
                     new bootstrap.Popover(popover, {

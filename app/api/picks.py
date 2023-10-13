@@ -67,6 +67,7 @@ def delete_pick(pick_id):
         }
 
 @bp.route("/picks", methods=['GET'])
+@login_required
 def get_picks():
     query = Pick.query.outerjoin(Media)
 

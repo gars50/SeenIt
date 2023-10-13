@@ -49,7 +49,7 @@
                             selected_media_types[1] = 'tv_show'
                         }
                         d.media_types = selected_media_types.join(',');
-                        {% if abandonned_page %}
+                        {% if page == "abandonned_medias" %}
                             d.abandonned_page = true
                         {% endif %}
                     }
@@ -78,7 +78,7 @@
                             return (media_type_icon + '&nbsp;' + '<a href="'+row.media_db_url+'" target="_blank">' + media_poster_popover + '</a>')
                         },
                     },
-                    {% if abandonned_page %}
+                    {% if page == "abandonned_medias" %}
                         {
                             title: 'Abandonned by',
                             data: 'abandonned_by',
@@ -109,7 +109,7 @@
                             return formatBytes(data)
                         }
                     },
-                    {% if abandonned_page %}
+                    {% if page == "abandonned_medias" %}
                         {
                             title: 'Pick up',
                             data: 'media_id',
@@ -174,7 +174,7 @@
                 });
             })
 
-            {% if abandonned_page %}
+            {% if page == "abandonned_medias" %}
                 table.column('2').order('desc').draw();
             {% endif %}
         });

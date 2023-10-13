@@ -27,6 +27,7 @@ def delete_media(media_id):
     }
 
 @bp.route("/medias", methods=['GET'])
+@login_required
 def get_medias():
     query = Media.query.outerjoin(User)
 
