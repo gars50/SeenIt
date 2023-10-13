@@ -9,16 +9,16 @@
         <div class="collapse navbar-collapse" id="main_nav">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a {% if active_page == "abandonned_medias" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.abandonned_medias') }}">Abandonned Medias</a>
+                    <a {% if page == "abandonned_medias" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.abandonned_medias') }}">Abandonned Medias</a>
                 </li>
                 <li class="nav-item">
-                    <a {% if active_page == "my_picks" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.my_picks') }}">My Picks</a>
+                    <a {% if page == "my_picks" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.my_picks') }}">My Picks</a>
                 </li>
                 <li class="nav-item">
-                    <a {% if active_page == "permanent_picks" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.permanent_picks') }}">Permanent Collection</a>
+                    <a {% if page == "permanent_picks" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.permanent_picks') }}">Permanent Collection</a>
                 </li>
                 <li class="nav-item">
-                    <a {% if active_page == "all_medias" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.all_medias') }}">All Medias</a>
+                    <a {% if page == "all_medias" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('media.all_medias') }}">All Medias</a>
                 </li>
             </ul>
             <ul class="navbar-nav mr-auto">
