@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>{% block title %} {{ page_title }} Mobile {% endblock %}</h1>
+
+    <div id="btn-toolbar" role="toolbar">
+        <div class="btn-group float-end" role="group">
+            <button type="button" class="btn btn-secondary bi bi-search"></button>
+            <div class="btn-group" role="group">
+                <button id="sortDropdown" type="button" class="btn btn-secondary dropdown-toggle bi-sort-alpha-down" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"></button>
+                <ul class="dropdown-menu">
+                    <li class="form-check mobile-dropdown-item">
+                        <input type="checkbox" class="checkbox" id="checkMovies">
+                        <label for="checkMovies" class="checkbox-label">Movies</label>
+                    </li>
+                    <li class="form-check mobile-dropdown-item">
+                        <input type="checkbox" class="checkbox" id="checkTVShows">
+                        <label for="checkTVShows" class="checkbox-label">TV Shows</label>
+                    </li>
+                </ul>
+            </div>
+            <div class="btn-group" role="group">
+                <button id="filterDropdown" type="button" class="btn btn-secondary dropdown-toggle bi bi-funnel-fill" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"></button>
+                <ul class="dropdown-menu">
+                    <li class="form-check mobile-dropdown-item">
+                        <input type="checkbox" class="checkbox" id="checkMovies">
+                        <label for="checkMovies" class="checkbox-label">Movies</label>
+                    </li>
+                    <li class="form-check mobile-dropdown-item">
+                        <input type="checkbox" class="checkbox" id="checkTVShows">
+                        <label for="checkTVShows" class="checkbox-label">TV Shows</label>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+<table id="table"></table>
+{% endblock %}
+{% block javascript %}
+<script>
+    $('#table').bootstrapTable({
+        classes: ["table-borderless", "table"],
+        //showHeader: false,
+        sortable: true,
+        columns: [
+            {
+                field: 'id',
+                title: 'Item ID'
+            }, {
+                field: 'name',
+                title: 'Item Name'
+            }, {
+                field: 'price',
+                title: 'Item Price'
+            }
+        ],
+        data: [{
+            id: 1,
+            name: 'Item 1',
+            price: '$1'
+        }, {
+            id: 2,
+            name: 'Item 2',
+            price: '$2'
+        }]
+    })
+</script>
+{% endblock %}

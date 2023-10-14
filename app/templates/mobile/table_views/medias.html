@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>{% block title %} {{ page_title }} Mobile {% endblock %}</h1>
+    <div id="medias-btns" class="medias-buttons" role="group" aria-label="Media types button group">
+        <input type="checkbox" class="btn-check" id="btnmovies" checked autocomplete="off">
+        <label class="btn btn-outline-secondary" for="btnmovies">Movies</label>
+
+        <input type="checkbox" class="btn-check" id="btntvshows" checked autocomplete="off">
+        <label class="btn btn-outline-secondary" for="btntvshows">TV Shows</label>
+    </div>
+    <table id="mediasTable" class="table table-dark" style="width: 100%">
+        <thead style="display: none;">
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $(document).ready(function () {
+            var table = $('#mediasTable').DataTable({
+                ajax: {
+                    url: BASE_URL+'/api/medias',
+                    data: function (d) {
+                        selected_media_types = [];
+                        if ($('#btnmovies').is(':checked')) {
+                            selected_media_types[0] = 'movie'
+                        }
+                        if ($('#btntvshows').is(':checked')) {
+                            selected_media_types[1] = 'tv_show'
+                        }
+                        d.media_types = selected_media_types.join(',');
+                        {% if page == "abandonned_medias" %}
+                            d.abandonned_page = true
+                        {% endif %}
+                    }
+                },
+                serverSide: true,
+                scrollY: '70vh',
+                deferRender: true,
+                scroller: {
+                    displayBuffer: 10, 
+                },
+                columns: [
+                    {
+                        title: 'Image',
+                        data: 'media_db_url',
+                        render: function (data, type, row, meta) {
+                            if (row.poster_url) {
+                                var poster_url = row.poster_url
+                            } else {
+                                var poster_url = "{{ url_for('static', filename='no_picture.png') }}"
+                            }
+                            if (row.media_type == "movie") {
+                                var icon = "bi-film"
+                                var icon_title = "Movie"
+                            } else if (row.media_type == "tv_show") {
+                                var icon = "bi bi-tv"
+                                var icon_title = "TV Show"
+                            }
+                            
+                            return '<img src="'+poster_url+'" alt="'+row.title+'" width="75" height="110">'
+                        },
+                    },
+                    {
+                        title: 'Infos',
+                        data: 'title',
+                        render: function (data, type, row, meta) {
+                            if (row.poster_url) {
+                                var poster_url = row.poster_url
+                            } else {
+                                var poster_url = "{{ url_for('static', filename='no_picture.png') }}"
+                            }
+                            if (row.media_type == "movie") {
+                                var icon = "bi-film"
+                                var icon_title = "Movie"
+                            } else if (row.media_type == "tv_show") {
+                                var icon = "bi bi-tv"
+                                var icon_title = "TV Show"
+                            }
+                            var media_type_icon = '<span class="media-type-tooltip" data-toggle="tooltip" title="' + icon_title + '"><i class="fa ' + icon + ' fa-fw"></i></span>';
+                            var media_poster_popover = '<span data-bs-toggle="popover" data-bs-img='+poster_url+'>'+data+'</span>'
+                            return (media_type_icon + '&nbsp;' + '<a href="'+row.media_db_url+'" target="_blank">' + media_poster_popover + '</a>')
+                        },
+                    },
+                    {% if page == "abandonned_medias" %}
+                        {
+                            title: 'Buttons',
+                            data: 'media_id',
+                            orderable: false,
+                            render: function(data, type, row, meta) {
+                                pick_button = '<a onclick="addPickCurrentUser('+data+', this)" class="btn btn-success"><i class="bi bi-plus-circle"></i></a>'
+                                permanent_button = ''
+                                {% if current_user.admin %}
+                                    permanent_button=' <td><a onclick="addPickPermanent('+data+', this)" class="btn btn-info"><i class="bi bi-arrow-right-circle"></i></a></td>'
+                                {% endif %}
+
+                                return pick_button+permanent_button
+                            }
+                        },
+                    {% else %}
+                        {
+                            title: 'Buttons',
+                            data: 'num_picks',
+                            width: 1,
+                            render: function(data, type, row, meta) {
+                                num_picks_button = '<a onclick="modalPicks('+row.media_id+', this)" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#picksModal">'+data+'</a>'
+                                delete_button = ''
+                                {% if current_user.admin %}
+                                    delete_button = ' <a onclick="deleteMedia('+data+', this)" class="btn btn-danger"><i class="bi bi-trash"></i></a>'
+                                {% endif %}
+                                return num_picks_button + delete_button
+                            }
+                        },
+                    {% endif %}
+                ],
+            });
+
+            $('#medias-btns').on("click", function() {
+                table.draw();
+            });
+        });
+    </script>
+{% endblock %}

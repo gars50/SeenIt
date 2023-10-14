@@ -101,3 +101,22 @@
 .medias-buttons{
 	text-align: center;
 }
+
+.mobile-dropdown-item{
+	height: 50px;
+	display:flex;
+	padding-left: 1em;
+	align-items: center;
+}
+
+.mobile-dropdown-item .checkbox{
+	height: 100%;
+}
+
+.mobile-dropdown-item .checkbox-label{
+	padding-left: .5em;
+	height: 100%;
+	width: 80%;
+	display: flex;
+	align-items: center;
+}
