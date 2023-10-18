@@ -122,6 +122,14 @@
 	align-items: center;
 }
 
+label.sorted-ascending::after {
+  content: '\00a0↑';
+}
+
+label.sorted-descending::after {
+  content: '\00a0↓';
+}
+
 .vertical-align-cell {
 	vertical-align: middle;
 }
