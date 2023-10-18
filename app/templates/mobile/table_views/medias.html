@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% block content %}
-    <h1>{% block title %} {{ page_title }} Mobile {% endblock %}</h1>
-    <div class="btn-toolbar" id="btn-toolbar" role="toolbar">
+    <h1>{% block title %} {{ page_title }} {% endblock %}</h1>
+
+    <div class="btn-toolbar justify-content-end" role="toolbar">
         <div class="btn-group" role="group">
             <div class="input-group">
                 <input type="search" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search-bar" id="media-search">
