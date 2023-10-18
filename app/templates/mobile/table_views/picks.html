@@ -2,66 +2,570 @@
 {% block content %}
     <h1>{% block title %} {{ page_title }} Mobile {% endblock %}</h1>
 
-    <div id="btn-toolbar" role="toolbar">
-        <div class="btn-group float-end" role="group">
-            <button type="button" class="btn btn-secondary bi bi-search"></button>
+            
+    <div class="btn-toolbar float-end" id="btn-toolbar" role="toolbar">
+        <div class="input-group">
+            <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search-bar">
+            <span class="input-group-text bi bi-search" id="search-bar"></span>
+        </div>
+        &nbsp;
+        <div class="btn-group" role="group">
             <div class="btn-group" role="group">
-                <button id="sortDropdown" type="button" class="btn btn-secondary dropdown-toggle bi-sort-alpha-down" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"></button>
-                <ul class="dropdown-menu">
-                    <li class="form-check mobile-dropdown-item">
-                        <input type="checkbox" class="checkbox" id="checkMovies">
-                        <label for="checkMovies" class="checkbox-label">Movies</label>
+                <button id="sortDropdown" type="button" class="btn btn-secondary mobile-dropdown dropdown-toggle bi-sort-alpha-down" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"></button>
+                <ul class="dropdown-menu">                    
+                    <li class="mobile-dropdown-item">
+                        <input type="checkbox" class="checkbox" id="checkTitle">
+                        <label for="checkTitle" class="checkbox-label">Title</label>
                     </li>
-                    <li class="form-check mobile-dropdown-item">
-                        <input type="checkbox" class="checkbox" id="checkTVShows">
-                        <label for="checkTVShows" class="checkbox-label">TV Shows</label>
+                    <li class="mobile-dropdown-item">
+                        <input type="checkbox" class="checkbox" id="checkPickUpDate">
+                        <label for="checkPickUpDate" class="checkbox-label">Pick up date</label>
                     </li>
                 </ul>
             </div>
             <div class="btn-group" role="group">
-                <button id="filterDropdown" type="button" class="btn btn-secondary dropdown-toggle bi bi-funnel-fill" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"></button>
+                <button id="filterDropdown" type="button" class="btn btn-secondary mobile-dropdown dropdown-toggle bi-funnel-fill" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"></button>
                 <ul class="dropdown-menu">
                     <li class="form-check mobile-dropdown-item">
-                        <input type="checkbox" class="checkbox" id="checkMovies">
+                        <input type="checkbox" class="checkbox" id="checkMovies" checked>
                         <label for="checkMovies" class="checkbox-label">Movies</label>
                     </li>
                     <li class="form-check mobile-dropdown-item">
-                        <input type="checkbox" class="checkbox" id="checkTVShows">
+                        <input type="checkbox" class="checkbox" id="checkTVShows" checked>
                         <label for="checkTVShows" class="checkbox-label">TV Shows</label>
                     </li>
                 </ul>
             </div>
         </div>
     </div>
-<table id="table"></table>
+
+<div>
+    <table id="table"></table>
+</div>
 {% endblock %}
 {% block javascript %}
 <script>
+var tableData = [
+	{
+		"name": "Carlos Joseph",
+		"phone": "(496) 268-5561",
+		"country": "Turkey"
+	},
+	{
+		"name": "Kennedy Mayo",
+		"phone": "1-523-787-5356",
+		"country": "Nigeria"
+	},
+	{
+		"name": "Chester Molina",
+		"phone": "(172) 353-2137",
+		"country": "China"
+	},
+	{
+		"name": "Debra Wall",
+		"phone": "1-415-837-1241",
+		"country": "China"
+	},
+	{
+		"name": "Wang French",
+		"phone": "1-873-272-0351",
+		"country": "Indonesia"
+	},
+	{
+		"name": "Kylynn Watson",
+		"phone": "1-438-946-5034",
+		"country": "Spain"
+	},
+	{
+		"name": "Lance Bates",
+		"phone": "1-247-646-7883",
+		"country": "Netherlands"
+	},
+	{
+		"name": "Reed Wilkinson",
+		"phone": "(334) 569-4178",
+		"country": "Norway"
+	},
+	{
+		"name": "Melissa Bray",
+		"phone": "1-352-328-5219",
+		"country": "Norway"
+	},
+	{
+		"name": "Giselle Young",
+		"phone": "1-286-727-3305",
+		"country": "Brazil"
+	},
+	{
+		"name": "Palmer Mcdaniel",
+		"phone": "(811) 671-8844",
+		"country": "Russian Federation"
+	},
+	{
+		"name": "Mannix Head",
+		"phone": "1-830-648-5491",
+		"country": "Canada"
+	},
+	{
+		"name": "Joseph Estrada",
+		"phone": "(680) 395-6178",
+		"country": "Spain"
+	},
+	{
+		"name": "Dexter Howard",
+		"phone": "(168) 572-3477",
+		"country": "Russian Federation"
+	},
+	{
+		"name": "Jocelyn Kline",
+		"phone": "(226) 614-3467",
+		"country": "Austria"
+	},
+	{
+		"name": "Sade Sexton",
+		"phone": "1-522-455-6156",
+		"country": "Poland"
+	},
+	{
+		"name": "Kai Faulkner",
+		"phone": "(264) 332-4116",
+		"country": "Philippines"
+	},
+	{
+		"name": "Gannon Burns",
+		"phone": "(358) 348-5744",
+		"country": "Netherlands"
+	},
+	{
+		"name": "Lance Clayton",
+		"phone": "1-273-851-4421",
+		"country": "Poland"
+	},
+	{
+		"name": "Leo Mullins",
+		"phone": "(861) 209-8504",
+		"country": "Peru"
+	},
+	{
+		"name": "Kenyon Nguyen",
+		"phone": "1-447-677-2586",
+		"country": "Germany"
+	},
+	{
+		"name": "Reuben Beard",
+		"phone": "(806) 762-8938",
+		"country": "Ukraine"
+	},
+	{
+		"name": "Ashton Barry",
+		"phone": "1-872-973-9468",
+		"country": "Netherlands"
+	},
+	{
+		"name": "Xander Hudson",
+		"phone": "1-981-830-5151",
+		"country": "Turkey"
+	},
+	{
+		"name": "Carlos Eaton",
+		"phone": "1-151-156-0385",
+		"country": "Nigeria"
+	},
+	{
+		"name": "Maisie Weber",
+		"phone": "(679) 527-7272",
+		"country": "Poland"
+	},
+	{
+		"name": "Lewis Heath",
+		"phone": "1-731-254-2808",
+		"country": "South Korea"
+	},
+	{
+		"name": "Carissa Huff",
+		"phone": "(949) 201-4383",
+		"country": "South Africa"
+	},
+	{
+		"name": "Hedy Livingston",
+		"phone": "(803) 399-7827",
+		"country": "Ireland"
+	},
+	{
+		"name": "Thomas Lynn",
+		"phone": "1-168-143-7782",
+		"country": "Chile"
+	},
+	{
+		"name": "Richard Hampton",
+		"phone": "1-774-249-1548",
+		"country": "Mexico"
+	},
+	{
+		"name": "Preston Moon",
+		"phone": "(132) 184-5758",
+		"country": "South Korea"
+	},
+	{
+		"name": "Allistair Best",
+		"phone": "1-585-435-4183",
+		"country": "Ireland"
+	},
+	{
+		"name": "Aileen Gordon",
+		"phone": "1-731-645-1452",
+		"country": "New Zealand"
+	},
+	{
+		"name": "Quentin Ware",
+		"phone": "(155) 632-4861",
+		"country": "France"
+	},
+	{
+		"name": "Sean Herrera",
+		"phone": "1-605-815-4587",
+		"country": "China"
+	},
+	{
+		"name": "Jamalia Stark",
+		"phone": "(642) 535-8269",
+		"country": "Costa Rica"
+	},
+	{
+		"name": "Tallulah Burns",
+		"phone": "1-506-704-5634",
+		"country": "Sweden"
+	},
+	{
+		"name": "Lilah Butler",
+		"phone": "(742) 355-8552",
+		"country": "France"
+	},
+	{
+		"name": "Xaviera Roman",
+		"phone": "(296) 677-1180",
+		"country": "India"
+	},
+	{
+		"name": "Joy Merrill",
+		"phone": "(417) 292-0677",
+		"country": "Ireland"
+	},
+	{
+		"name": "Hayley Conner",
+		"phone": "1-933-187-6271",
+		"country": "Germany"
+	},
+	{
+		"name": "Lawrence Pacheco",
+		"phone": "1-580-958-3945",
+		"country": "South Korea"
+	},
+	{
+		"name": "Lionel Maldonado",
+		"phone": "(535) 882-4381",
+		"country": "Russian Federation"
+	},
+	{
+		"name": "Virginia Ochoa",
+		"phone": "1-888-232-5597",
+		"country": "Spain"
+	},
+	{
+		"name": "Arthur Hardin",
+		"phone": "1-369-184-2161",
+		"country": "Vietnam"
+	},
+	{
+		"name": "Kylee Boyd",
+		"phone": "1-185-134-2299",
+		"country": "Poland"
+	},
+	{
+		"name": "Blaze Green",
+		"phone": "(673) 488-5038",
+		"country": "Germany"
+	},
+	{
+		"name": "Irma Martin",
+		"phone": "1-639-289-2618",
+		"country": "Ukraine"
+	},
+	{
+		"name": "Melodie Mccarty",
+		"phone": "(424) 728-7622",
+		"country": "United Kingdom"
+	},
+	{
+		"name": "Nathaniel Waters",
+		"phone": "1-544-817-5377",
+		"country": "South Africa"
+	},
+	{
+		"name": "Allegra Lyons",
+		"phone": "(783) 584-4995",
+		"country": "Belgium"
+	},
+	{
+		"name": "Cedric Hewitt",
+		"phone": "1-584-676-0937",
+		"country": "Spain"
+	},
+	{
+		"name": "Joan Golden",
+		"phone": "1-833-221-9884",
+		"country": "France"
+	},
+	{
+		"name": "Chiquita Lynch",
+		"phone": "1-384-524-5784",
+		"country": "India"
+	},
+	{
+		"name": "Trevor Villarreal",
+		"phone": "1-109-582-1212",
+		"country": "Peru"
+	},
+	{
+		"name": "Hannah Gregory",
+		"phone": "(437) 347-7053",
+		"country": "Norway"
+	},
+	{
+		"name": "Arthur Cooley",
+		"phone": "(457) 882-1822",
+		"country": "Poland"
+	},
+	{
+		"name": "Dora Pickett",
+		"phone": "1-479-462-6527",
+		"country": "Chile"
+	},
+	{
+		"name": "Desiree Poole",
+		"phone": "(103) 742-4404",
+		"country": "Sweden"
+	},
+	{
+		"name": "Madeline Sears",
+		"phone": "(512) 587-4505",
+		"country": "Brazil"
+	},
+	{
+		"name": "Gail Horton",
+		"phone": "1-405-547-8583",
+		"country": "France"
+	},
+	{
+		"name": "Paki Burch",
+		"phone": "(336) 731-1279",
+		"country": "Pakistan"
+	},
+	{
+		"name": "Vernon Duke",
+		"phone": "1-582-585-1645",
+		"country": "Spain"
+	},
+	{
+		"name": "Uriel Greer",
+		"phone": "(652) 726-3331",
+		"country": "China"
+	},
+	{
+		"name": "Buckminster Hoover",
+		"phone": "(484) 959-2381",
+		"country": "South Africa"
+	},
+	{
+		"name": "Vance Brock",
+		"phone": "(966) 987-2419",
+		"country": "United States"
+	},
+	{
+		"name": "Shoshana Burgess",
+		"phone": "1-423-308-5567",
+		"country": "United Kingdom"
+	},
+	{
+		"name": "Bell Atkinson",
+		"phone": "1-374-566-2314",
+		"country": "Chile"
+	},
+	{
+		"name": "Dara Dotson",
+		"phone": "1-419-907-8679",
+		"country": "Costa Rica"
+	},
+	{
+		"name": "Aaron Dillon",
+		"phone": "(727) 533-7744",
+		"country": "Poland"
+	},
+	{
+		"name": "Lamar O'brien",
+		"phone": "(395) 460-8231",
+		"country": "Belgium"
+	},
+	{
+		"name": "Bertha Finch",
+		"phone": "1-646-471-2766",
+		"country": "Russian Federation"
+	},
+	{
+		"name": "Brenden Cobb",
+		"phone": "(756) 534-5247",
+		"country": "Austria"
+	},
+	{
+		"name": "Odysseus Gilmore",
+		"phone": "1-537-797-2387",
+		"country": "Costa Rica"
+	},
+	{
+		"name": "Hanae Stark",
+		"phone": "1-223-307-0878",
+		"country": "Australia"
+	},
+	{
+		"name": "Jasmine Hoover",
+		"phone": "(154) 648-2482",
+		"country": "Peru"
+	},
+	{
+		"name": "Vera Herman",
+		"phone": "1-387-491-0336",
+		"country": "Vietnam"
+	},
+	{
+		"name": "Jolene Kinney",
+		"phone": "1-565-264-3954",
+		"country": "France"
+	},
+	{
+		"name": "Rae Henderson",
+		"phone": "1-394-841-3430",
+		"country": "Germany"
+	},
+	{
+		"name": "Emmanuel Mcintosh",
+		"phone": "1-754-913-1838",
+		"country": "Ukraine"
+	},
+	{
+		"name": "Lamar Erickson",
+		"phone": "(537) 153-1660",
+		"country": "South Korea"
+	},
+	{
+		"name": "Brett Oneil",
+		"phone": "1-644-333-6812",
+		"country": "Canada"
+	},
+	{
+		"name": "Damon Odom",
+		"phone": "(887) 198-3314",
+		"country": "Netherlands"
+	},
+	{
+		"name": "Jarrod Acosta",
+		"phone": "(572) 203-5072",
+		"country": "Sweden"
+	},
+	{
+		"name": "Illana Frye",
+		"phone": "1-682-578-6831",
+		"country": "Ukraine"
+	},
+	{
+		"name": "Quail Stevenson",
+		"phone": "(212) 867-1491",
+		"country": "Poland"
+	},
+	{
+		"name": "Abra Lester",
+		"phone": "1-912-615-4573",
+		"country": "Philippines"
+	},
+	{
+		"name": "Fulton Pearson",
+		"phone": "(385) 721-3259",
+		"country": "Nigeria"
+	},
+	{
+		"name": "Eleanor Rodriquez",
+		"phone": "(415) 107-2538",
+		"country": "Russian Federation"
+	},
+	{
+		"name": "Nicholas Farley",
+		"phone": "1-317-837-8137",
+		"country": "Chile"
+	},
+	{
+		"name": "Whilemina Salinas",
+		"phone": "1-288-715-2716",
+		"country": "Russian Federation"
+	},
+	{
+		"name": "Venus Kerr",
+		"phone": "1-462-344-5928",
+		"country": "Austria"
+	},
+	{
+		"name": "Linus Sears",
+		"phone": "1-768-427-7114",
+		"country": "Philippines"
+	},
+	{
+		"name": "Kermit Colon",
+		"phone": "(755) 467-8188",
+		"country": "Peru"
+	},
+	{
+		"name": "Libby Giles",
+		"phone": "1-233-218-4565",
+		"country": "Germany"
+	},
+	{
+		"name": "Chloe Sutton",
+		"phone": "(306) 677-6402",
+		"country": "China"
+	},
+	{
+		"name": "Kareem Ferguson",
+		"phone": "1-293-546-7041",
+		"country": "Germany"
+	},
+	{
+		"name": "Savannah Pitts",
+		"phone": "1-152-151-3353",
+		"country": "Philippines"
+	},
+	{
+		"name": "Cally Callahan",
+		"phone": "(751) 582-3486",
+		"country": "Colombia"
+	}
+];
+
+
+
     $('#table').bootstrapTable({
         classes: ["table-borderless", "table"],
-        //showHeader: false,
+        showHeader: false,
         sortable: true,
+		pagination: true,
         columns: [
             {
-                field: 'id',
-                title: 'Item ID'
-            }, {
                 field: 'name',
-                title: 'Item Name'
-            }, {
-                field: 'price',
-                title: 'Item Price'
-            }
+                title: 'Name'
+            },
+            {
+                field: 'phone',
+                title: 'Phone'
+            },
         ],
-        data: [{
-            id: 1,
-            name: 'Item 1',
-            price: '$1'
-        }, {
-            id: 2,
-            name: 'Item 2',
-            price: '$2'
-        }]
+        data: tableData
     })
 </script>
 {% endblock %}
