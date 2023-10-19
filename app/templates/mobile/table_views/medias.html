@@ -15,11 +15,11 @@
                     <ul class="dropdown-menu">                    
                         <li class="mobile-dropdown-item">
                             <input type="radio" name="sortMedias" id="sortByTitle">
-                            <label for="sortByTitle" class="checkbox-label sorted-descending">Title</label>
+                            <label for="sortByTitle" class="checkbox-label">Title</label>
                         </li>
                         <li class="mobile-dropdown-item">
-                            <input type="radio" name="sortMedias" id="sortByPickUpDate">
-                            <label for="sortByPickUpDate" class="checkbox-label">Pick up date</label>
+                            <input type="radio" name="sortMedias" id="sortByAbandonedDate" checked>
+                            <label for="sortByAbandonedDate" class="checkbox-label sorted-descending">Pick up date</label>
                         </li>
                     </ul>
                 </div>
@@ -214,6 +214,23 @@
             $('#media-search').on("input", function() {
                 table.search($(this).val()).draw();
             })
+
         });
+        $('[name="sortMedias"]').on('click', function() {
+            console.log('Click happened')
+            var current_sort_li = $('[class*="sorted-"]').parent().get()[0]
+            if (this.parentElement == current_sort_li) {
+                //Clicked on the current sort, have to invert
+                if ($(this.nextElementSibling).hasClass("sorted-descending")) {
+                    $(this.nextElementSibling).removeClass("sorted-descending").addClass("sorted-ascending")
+                } else {
+                    $(this.nextElementSibling).removeClass("sorted-ascending").addClass("sorted-descending")
+                }
+            } else {
+                //Clicked on the other sort
+                $(current_sort_li.childNodes[3]).removeClass("sorted-ascending sorted-descending")
+                $(this.nextElementSibling).addClass("sorted-descending")
+            }
+        })
     </script>
 {% endblock %}
