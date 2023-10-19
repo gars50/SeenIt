@@ -69,6 +69,8 @@
 
 {% block javascript %}
     <script>
+        var sortingOrder = "desc"
+        var sortingOption = "pickUpDate"
         $(document).ready(function () {
             var table = $('#mediasTable').DataTable({
                 ajax: {
@@ -223,13 +225,27 @@
                 //Clicked on the current sort, have to invert
                 if ($(this.nextElementSibling).hasClass("sorted-descending")) {
                     $(this.nextElementSibling).removeClass("sorted-descending").addClass("sorted-ascending")
+                    sortingOrder = "asc"
                 } else {
                     $(this.nextElementSibling).removeClass("sorted-ascending").addClass("sorted-descending")
+                    sortingOrder = "desc"
                 }
             } else {
                 //Clicked on the other sort
                 $(current_sort_li.childNodes[3]).removeClass("sorted-ascending sorted-descending")
                 $(this.nextElementSibling).addClass("sorted-descending")
+                sortingOrder = "desc"
+            }
+            switch(this.id) {
+            case "sortByTitle":
+            	sortingOption="title"
+            	break
+            case "sortByAbandonedDate":
+            	sortingOption="abandonedDate"
+            	break
+            case "sortByPickUpDate":
+            	sortingOption="pickUpDate"
+            	break
             }
         })
     </script>
