@@ -12,16 +12,29 @@
             <div class="btn-group" role="group">
                 <div class="btn-group" role="group">
                     <button id="sortDropdown" type="button" class="btn btn-secondary mobile-dropdown dropdown-toggle bi-sort-alpha-down" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"></button>
-                    <ul class="dropdown-menu">                    
-                        <li class="mobile-dropdown-item">
-                            <input type="radio" name="sortMedias" id="sortByTitle">
-                            <label for="sortByTitle" class="checkbox-label">Title</label>
-                        </li>
-                        <li class="mobile-dropdown-item">
-                            <input type="radio" name="sortMedias" id="sortByAbandonedDate" checked>
-                            <label for="sortByAbandonedDate" class="checkbox-label sorted-descending">Pick up date</label>
-                        </li>
-                    </ul>
+                    {% if page == "abandonned_medias" %}
+                        <ul class="dropdown-menu" style="min-width:195px">
+                            <li class="mobile-dropdown-item">
+                                <input type="radio" name="sortMedias" id="sortByTitle">
+                                <label for="sortByTitle" class="checkbox-label">Title</label>
+                            </li>
+                            <li class="mobile-dropdown-item">
+                                <input type="radio" name="sortMedias" id="sortByAbandonedDate" checked>
+                                <label for="sortByAbandonedDate" class="checkbox-label sorted-descending">Abandoned date</label>
+                            </li>
+                        </ul>
+                    {% else %}
+                        <ul class="dropdown-menu" style="min-width:165px">
+                            <li class="mobile-dropdown-item">
+                                <input type="radio" name="sortMedias" id="sortByTitle">
+                                <label for="sortByTitle" class="checkbox-label">Title</label>
+                            </li>
+                            <li class="mobile-dropdown-item">
+                                <input type="radio" name="sortMedias" id="sortByDeletionDate" checked>
+                                <label for="sortByDeletionDate" class="checkbox-label sorted-descending">Deletion date</label>
+                            </li>
+                        </ul>
+                    {% endif %}
                 </div>
                 <div class="btn-group" role="group">
                     <button id="filterDropdown" type="button" class="btn btn-secondary mobile-dropdown dropdown-toggle bi-funnel-fill" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"></button>
@@ -69,8 +82,6 @@
 
 {% block javascript %}
     <script>
-        var sortingOrder = "desc"
-        var sortingOption = "pickUpDate"
         $(document).ready(function () {
             var table = $('#mediasTable').DataTable({
                 ajax: {
@@ -93,6 +104,7 @@
                 info: false,
                 lengthChange: false,
                 dom: 'lrtip',
+                order: [[4, 'desc']],
                 language: {
                     paginate: {
                         next: '›',
@@ -100,6 +112,11 @@
                     }
                 },
                 columns: [
+                    {
+                        title: 'Title',
+                        data: 'title',
+                        visible: false,
+                    },
                     {
                         title: 'Image',
                         data: 'media_db_url',
@@ -121,33 +138,34 @@
                         },
                     },
                     {% if page == "abandonned_medias" %}
-                                        {
-                        title: 'Infos',
-                        data: 'title',
-                        render: function (data, type, row, meta) {
-                            if (row.poster_url) {
-                                var poster_url = row.poster_url
-                            } else {
-                                var poster_url = "{{ url_for('static', filename='no_picture.png') }}"
-                            }
-                            if (row.media_type == "movie") {
-                                var icon = "bi-film"
-                                var icon_title = "Movie"
-                            } else if (row.media_type == "tv_show") {
-                                var icon = "bi bi-tv"
-                                var icon_title = "TV Show"
-                            }
-                            var media_type_icon = '<span class="media-type-tooltip" data-toggle="tooltip" title="' + icon_title + '"><i class="fa ' + icon + ' fa-fw"></i></span>';
-                            var media_poster_popover = '<span data-bs-toggle="popover" data-bs-img='+poster_url+'>'+data+'</span>'
-                            var first_line = media_type_icon + '&nbsp;' + '<a href="'+row.media_db_url+'" target="_blank">' + media_poster_popover + '</a>'
-                            var abandonned_date = '<i class="bi bi-clock-history"></i> '+moment(row.abandonned_date).format('LL')
-                            var deletion_date = '<i class="bi bi-trash"></i> '+moment(row.deletion_date).format('LL')
-                            return (
-                                first_line + '<br>' +
-                                abandonned_date + '<br>' +
-                                deletion_date)
+                        {
+                            title: 'Infos',
+                            data: 'title',
+                            render: function (data, type, row, meta) {
+                                if (row.poster_url) {
+                                    var poster_url = row.poster_url
+                                } else {
+                                    var poster_url = "{{ url_for('static', filename='no_picture.png') }}"
+                                }
+                                if (row.media_type == "movie") {
+                                    var icon = "bi-film"
+                                    var icon_title = "Movie"
+                                } else if (row.media_type == "tv_show") {
+                                    var icon = "bi bi-tv"
+                                    var icon_title = "TV Show"
+                                }
+                                var media_type_icon = '<span class="media-type-tooltip" data-toggle="tooltip" title="' + icon_title + '"><i class="fa ' + icon + ' fa-fw"></i></span>';
+                                var first_line = media_type_icon + '&nbsp;' + '<a href="'+row.media_db_url+'" target="_blank">'+data+'</a>'
+                                var abandonned_date = '<i class="bi bi-clock-history"></i> '+moment(row.abandonned_date).format('LL')
+                                var deletion_date = '<i class="bi bi-trash"></i> '+moment(row.deletion_date).format('LL')
+                                var media_size = '<i class="bi bi-hdd"></i> ' + formatBytes(row.media_size)
+                                return (
+                                    first_line + '<br>' +
+                                    abandonned_date + '<br>' +
+                                    deletion_date + '<br>' +
+                                    media_size)
+                            },
                         },
-                    },
                         {
                             title: 'Buttons',
                             data: 'media_id',
@@ -162,36 +180,45 @@
                                 return '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">'+pick_button+permanent_button+'</div>'
                             }
                         },
-                    {% else %}
-                                        {
-                        title: 'Infos',
-                        data: 'title',
-                        render: function (data, type, row, meta) {
-                            if (row.poster_url) {
-                                var poster_url = row.poster_url
-                            } else {
-                                var poster_url = "{{ url_for('static', filename='no_picture.png') }}"
+                        {
+                            title: 'Abandonned Date',
+                            data: 'abandonned_date',
+                            visible: false,
+                            searchable: false,
+                            render: function(data) {
+                                return moment(data).format('LLL')
                             }
-                            if (row.media_type == "movie") {
-                                var icon = "bi-film"
-                                var icon_title = "Movie"
-                            } else if (row.media_type == "tv_show") {
-                                var icon = "bi bi-tv"
-                                var icon_title = "TV Show"
-                            }
-                            var media_type_icon = '<span class="media-type-tooltip" data-toggle="tooltip" title="' + icon_title + '"><i class="fa ' + icon + ' fa-fw"></i></span>';
-                            var media_poster_popover = '<span data-bs-toggle="popover" data-bs-img='+poster_url+'>'+data+'</span>'
-                            var first_line = media_type_icon + '&nbsp;' + '<a href="'+row.media_db_url+'" target="_blank">' + media_poster_popover + '</a>'
-                            if (row.deletion_date) {
-                                var deletion_date = '<i class="bi bi-trash"></i> '+moment(row.deletion_date).format('LL')
-                            } else {
-                                var deletion_date = ""
-                            }
-                            return (
-                                first_line + '<br>' +
-                                deletion_date)
                         },
-                    },
+                    {% else %}
+                        {
+                            title: 'Infos',
+                            data: 'title',
+                            render: function (data, type, row, meta) {
+                                if (row.poster_url) {
+                                    var poster_url = row.poster_url
+                                } else {
+                                    var poster_url = "{{ url_for('static', filename='no_picture.png') }}"
+                                }
+                                if (row.media_type == "movie") {
+                                    var icon = "bi-film"
+                                    var icon_title = "Movie"
+                                } else if (row.media_type == "tv_show") {
+                                    var icon = "bi bi-tv"
+                                    var icon_title = "TV Show"
+                                }
+                                var media_type_icon = '<span class="media-type-tooltip" data-toggle="tooltip" title="' + icon_title + '"><i class="fa ' + icon + ' fa-fw"></i></span>';
+                                var media_poster_popover = '<span data-bs-toggle="popover" data-bs-img='+poster_url+'>'+data+'</span>'
+                                var first_line = media_type_icon + '&nbsp;' + '<a href="'+row.media_db_url+'" target="_blank">' + media_poster_popover + '</a>'
+                                if (row.deletion_date) {
+                                    var deletion_date = '<i class="bi bi-trash"></i> '+moment(row.deletion_date).format('LL')
+                                } else {
+                                    var deletion_date = ""
+                                }
+                                return (
+                                    first_line + '<br>' +
+                                    deletion_date)
+                            },
+                        },
                         {
                             title: 'Buttons',
                             data: 'num_picks',
@@ -203,6 +230,15 @@
                                     delete_button = ' <a onclick="deleteMedia('+data+', this)" class="btn btn-danger btn-lg"><i class="bi bi-trash"></i></a>'
                                 {% endif %}
                                 return '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">'+num_picks_button + delete_button+"</div>"
+                            }
+                        },
+                        {
+                            title: 'Deletion Date',
+                            data: 'deletion_date',
+                            visible: false,
+                            searchable: false,
+                            render: function(data) {
+                                return moment(data).format('LLL')
                             }
                         },
                     {% endif %}
@@ -217,36 +253,35 @@
                 table.search($(this).val()).draw();
             })
 
-        });
-        $('[name="sortMedias"]').on('click', function() {
-            console.log('Click happened')
-            var current_sort_li = $('[class*="sorted-"]').parent().get()[0]
-            if (this.parentElement == current_sort_li) {
-                //Clicked on the current sort, have to invert
-                if ($(this.nextElementSibling).hasClass("sorted-descending")) {
-                    $(this.nextElementSibling).removeClass("sorted-descending").addClass("sorted-ascending")
-                    sortingOrder = "asc"
+            $('[name="sortMedias"]').on('click', function() {
+                var current_sort_li = $('[class*="sorted-"]').parent().get()[0]
+                if (this.parentElement == current_sort_li) {
+                    //Clicked on the current sort, have to invert
+                    if ($(this.nextElementSibling).hasClass("sorted-descending")) {
+                        $(this.nextElementSibling).removeClass("sorted-descending").addClass("sorted-ascending")
+                        sortingOrder = "asc"
+                    } else {
+                        $(this.nextElementSibling).removeClass("sorted-ascending").addClass("sorted-descending")
+                        sortingOrder = "desc"
+                    }
                 } else {
-                    $(this.nextElementSibling).removeClass("sorted-ascending").addClass("sorted-descending")
-                    sortingOrder = "desc"
+                    //Clicked on the other sort
+                    $(current_sort_li.childNodes[3]).removeClass("sorted-ascending sorted-descending")
+                    $(this.nextElementSibling).addClass("sorted-ascending")
+                    sortingOrder = "asc"
                 }
-            } else {
-                //Clicked on the other sort
-                $(current_sort_li.childNodes[3]).removeClass("sorted-ascending sorted-descending")
-                $(this.nextElementSibling).addClass("sorted-descending")
-                sortingOrder = "desc"
-            }
-            switch(this.id) {
-            case "sortByTitle":
-            	sortingOption="title"
-            	break
-            case "sortByAbandonedDate":
-            	sortingOption="abandonedDate"
-            	break
-            case "sortByPickUpDate":
-            	sortingOption="pickUpDate"
-            	break
-            }
+                switch(this.id) {
+                case "sortByTitle":
+                    table.order([0, sortingOrder]).draw()
+                    break
+                case "sortByAbandonedDate":
+                    table.order([4, sortingOrder]).draw()
+                    break
+                case "sortByDeletionDate":
+                    table.order([4, sortingOrder]).draw()
+                    break
+                }
+            });
         })
     </script>
 {% endblock %}
