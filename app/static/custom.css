@@ -7,9 +7,6 @@
 }
 /* ============ desktop view .end// ============ */
 
-.table{
-	vertical-align: middle;
-}
 
 .btn-plex{
 	background-color: #282a2d;
@@ -76,7 +73,7 @@
 	border-radius: 3px;
 	box-shadow: 0 0 4px rgba(0,0,0,.3),inset 0 0 0 1px rgba(255,255,255,.1);
 }
-.logging_window{
+.logging_window {
 	height: 80vh;
     padding: 9.5px;
     font-size: 14px;
@@ -89,15 +86,50 @@
 	flex-direction: column-reverse;
 }
 
-.logging_content{
+.logging_content {
   	transform: translateZ(0); 
 }
 
-.log_text{
+.log_text {
 	margin:0px;
 	text-wrap: balance;
 }
 
-.medias-buttons{
+.medias-buttons {
 	text-align: center;
+}
+
+.mobile-dropdown::after {
+	display: none;
+}
+
+.mobile-dropdown-item {
+	height: 50px;
+	display:flex;
+	padding-left: 1em;
+	align-items: center;
+}
+
+.mobile-dropdown-item .checkbox {
+	height: 100%;
+}
+
+.mobile-dropdown-item .checkbox-label {
+	padding-left: .5em;
+	height: 100%;
+	width: 80%;
+	display: flex;
+	align-items: center;
+}
+
+label.sorted-ascending::after {
+  content: '\00a0↑';
+}
+
+label.sorted-descending::after {
+  content: '\00a0↓';
+}
+
+.vertical-align-cell {
+	vertical-align: middle;
 }

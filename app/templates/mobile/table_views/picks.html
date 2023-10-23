@@ -1,0 +1,245 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>{% block title %} {{ page_title }} {% endblock %}</h1>
+
+    <div class="btn-toolbar justify-content-end" role="toolbar">
+        <div class="btn-group" role="group">
+            <div class="input-group">
+                <input type="search" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search-bar" id="media-search">
+                <span class="input-group-text bi bi-search" id="search-bar"></span>
+            </div>
+            &nbsp;
+            <div class="btn-group" role="group">
+                <div class="btn-group" role="group">
+                    <button id="sortDropdown" type="button" class="btn btn-secondary mobile-dropdown dropdown-toggle bi-sort-alpha-down" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"></button>
+                    {% if page == "my_picks" %}
+                        <ul class="dropdown-menu" style="min-width:195px">
+                            <li class="mobile-dropdown-item">
+                                <input type="radio" name="sortMedias" id="sortByTitle">
+                                <label for="sortByTitle" class="checkbox-label">Title</label>
+                            </li>
+                            <li class="mobile-dropdown-item">
+                                <input type="radio" name="sortMedias" id="sortByPickDate" checked>
+                                <label for="sortByPickDate" class="checkbox-label sorted-descending">Pick date</label>
+                            </li>
+							<li class="mobile-dropdown-item">
+								<input type="radio" name="sortMedias" id="sortBySize">
+								<label for="sortBySize" class="checkbox-label">Size</label>
+							</li>
+                        </ul>
+                    {% else %}
+                        <ul class="dropdown-menu" style="min-width:165px">
+                            <li class="mobile-dropdown-item">
+                                <input type="radio" name="sortMedias" id="sortByTitle">
+                                <label for="sortByTitle" class="checkbox-label">Title</label>
+                            </li>
+                            <li class="mobile-dropdown-item">
+                                <input type="radio" name="sortMedias" id="sortByDeletionDate" checked>
+                                <label for="sortByDeletionDate" class="checkbox-label sorted-descending">Deletion date</label>
+                            </li>
+							<li class="mobile-dropdown-item">
+								<input type="radio" name="sortMedias" id="sortBySize">
+								<label for="sortBySize" class="checkbox-label">Size</label>
+							</li>
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="btn-group" role="group">
+                    <button id="filterDropdown" type="button" class="btn btn-secondary mobile-dropdown dropdown-toggle bi-funnel-fill" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"></button>
+                    <ul class="dropdown-menu">
+                        <li class="form-check mobile-dropdown-item mediasSelection">
+                            <input type="checkbox" class="checkbox" id="checkMovies">
+                            <label for="checkMovies" class="checkbox-label">Movies</label>
+                        </li>
+                        <li class="form-check mobile-dropdown-item mediasSelection">
+                            <input type="checkbox" class="checkbox medias-button" id="checkTVShows">
+                            <label for="checkTVShows" class="checkbox-label">TV Shows</label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mobile-table">
+        <table id="picksTable" class="table table-dark" style="width: 100%">
+            <thead style="display: none;">
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $(document).ready(function () {
+			//If a media type is specified, we check it, otherwise we check both
+			var urlParams = new URLSearchParams(window.location.search);
+            var media_type = urlParams.get('media_type');
+            switch(media_type) {
+                case "movies":
+                    $('#checkMovies').prop( "checked", true );
+                    break;
+                case "tv_shows":
+                    $('#checkTVShows').prop( "checked", true );
+                    break;
+                default:
+                    $('#checkMovies').prop( "checked", true );
+                    $('#checkTVShows').prop( "checked", true );
+            }
+
+			{% if user_id is defined %}
+                var lookup_user = {{ user_id }}
+            {% else %}
+                var lookup_user = "self"
+            {% endif %}
+
+            var table = $('#picksTable').DataTable({
+                ajax: {
+                    url: BASE_URL+'/api/picks',
+                    data: function (d) {
+                        selected_media_types = [];
+                        if ($('#checkMovies').is(':checked')) {
+                            selected_media_types[0] = 'movie'
+                        }
+                        if ($('#checkTVShows').is(':checked')) {
+                            selected_media_types[1] = 'tv_show'
+                        }
+                        d.media_types = selected_media_types.join(',');
+						d.user = lookup_user;
+                    }
+                },
+                serverSide: true,
+                info: false,
+                lengthChange: false,
+                dom: 'lrtip',
+                order: [[4, 'desc']],
+                language: {
+                    paginate: {
+                        next: '›',
+                        previous: '‹'
+                    }
+                },
+                columns: [
+                    {
+                        title: 'Title',
+                        data: 'media_title',
+                        visible: false,
+                    },
+					{
+						title: 'Pick Date',
+						data: 'pick_date',
+						visible: false,
+					},
+					{
+						title: 'Pick Method',
+						data: 'pick_method',
+						visible: false,
+					},
+					{
+						title: 'Size',
+						data: 'media_size',
+						visible: false,
+					},
+                    {
+                        title: 'Image',
+                        data: 'media_db_url',
+                        render: function (data, type, row, meta) {
+                            if (row.poster_url) {
+                                var poster_url = row.poster_url
+                            } else {
+                                var poster_url = "{{ url_for('static', filename='no_picture.png') }}"
+                            }
+                            if (row.media_type == "movie") {
+                                var icon = "bi-film"
+                                var icon_title = "Movie"
+                            } else if (row.media_type == "tv_show") {
+                                var icon = "bi bi-tv"
+                                var icon_title = "TV Show"
+                            }
+                            
+                            return '<img src="'+poster_url+'" alt="'+row.title+'" width="75" height="110">'
+                        },
+                    },
+					{
+						title: 'Infos',
+						data: 'media_title',
+						render: function (data, type, row, meta) {
+							if (row.poster_url) {
+								var poster_url = row.poster_url
+							} else {
+								var poster_url = "{{ url_for('static', filename='no_picture.png') }}"
+							}
+							if (row.media_type == "movie") {
+								var icon = "bi-film"
+								var icon_title = "Movie"
+							} else if (row.media_type == "tv_show") {
+								var icon = "bi bi-tv"
+								var icon_title = "TV Show"
+							}
+							var media_type_icon = '<span class="media-type-tooltip" data-toggle="tooltip" title="' + icon_title + '"><i class="fa ' + icon + ' fa-fw"></i></span>';
+							var first_line = media_type_icon + '&nbsp;' + '<a href="'+row.media_db_url+'" target="_blank">'+data+'</a>'
+							var pick_date = '<i class="bi bi-calendar2-plus"></i> '+moment(row.pick_date).format('LL')
+							var pick_method = '<i class="bi bi-bag-plus"></i> ' + row.pick_method
+							var media_size = '<i class="bi bi-hdd"></i> ' + formatBytes(row.media_size)
+							return (
+								first_line + '<br>' +
+								pick_date + '<br>' +
+								pick_method + '<br>' +
+								media_size)
+						},
+					},
+					{% if (user_id is defined and current_user.admin) or (user_id is not defined) %}
+					{
+						title: 'Buttons',
+						data: 'pick_id',
+						className: 'vertical-align-cell',
+						render: function(data, type, row, meta) {
+							let_go_button = '<a onclick="deletePick('+data+', this)" class="btn btn-warning btn-lg"><i class="bi bi-dash-circle"></i></a>'
+							return '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">'+let_go_button+'</div>'
+						}
+					},
+					{% endif %}
+                ],
+            });
+
+            $('.mediasSelection').on("click", function() {
+                table.draw();
+            });
+
+            $('#media-search').on("input", function() {
+                table.search($(this).val()).draw();
+            })
+
+            $('[name="sortMedias"]').on('click', function() {
+                var current_sort_li = $('[class*="sorted-"]').parent().get()[0]
+                if (this.parentElement == current_sort_li) {
+                    //Clicked on the current sort, have to invert
+                    if ($(this.nextElementSibling).hasClass("sorted-descending")) {
+                        $(this.nextElementSibling).removeClass("sorted-descending").addClass("sorted-ascending")
+                        sortingOrder = "asc"
+                    } else {
+                        $(this.nextElementSibling).removeClass("sorted-ascending").addClass("sorted-descending")
+                        sortingOrder = "desc"
+                    }
+                } else {
+                    //Clicked on the other sort
+                    $(current_sort_li.childNodes[3]).removeClass("sorted-ascending sorted-descending")
+                    $(this.nextElementSibling).addClass("sorted-ascending")
+                    sortingOrder = "asc"
+                }
+                switch(this.id) {
+                case "sortByTitle":
+                    table.order([0, sortingOrder]).draw()
+                    break
+                case "sortByPickDate":
+                    table.order([3, sortingOrder]).draw()
+                    break
+                case "sortBySize":
+                    table.order([5, sortingOrder]).draw()
+                    break
+                }
+            });
+        })
+    </script>
+{% endblock %}

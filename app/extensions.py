@@ -7,6 +7,7 @@ from flask_moment import Moment
 from flask_apscheduler import APScheduler
 from app.flask_logs import LogSetup
 from requests_cache import CachedSession
+from flask_mobility import Mobility
 
 metadata = MetaData(
     naming_convention={
@@ -25,6 +26,7 @@ moment = Moment()
 scheduler = APScheduler()
 logs = LogSetup()
 cache_session = CachedSession(expire_after=30)
+mobile = Mobility()
 
 login = LoginManager()
 login.login_view = 'auth.login_choice'

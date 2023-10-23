@@ -1,0 +1,300 @@
+{% extends 'base.html' %}
+{% block content %}
+    <h1>{% block title %} {{ page_title }} {% endblock %}</h1>
+
+    <div class="btn-toolbar justify-content-end" role="toolbar">
+        <div class="btn-group" role="group">
+            <div class="input-group">
+                <input type="search" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search-bar" id="media-search">
+                <span class="input-group-text bi bi-search" id="search-bar"></span>
+            </div>
+            &nbsp;
+            <div class="btn-group" role="group">
+                <div class="btn-group" role="group">
+                    <button id="sortDropdown" type="button" class="btn btn-secondary mobile-dropdown dropdown-toggle bi-sort-alpha-down" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"></button>
+                    {% if page == "abandonned_medias" %}
+                        <ul class="dropdown-menu" style="min-width:195px">
+                            <li class="mobile-dropdown-item">
+                                <input type="radio" name="sortMedias" id="sortByTitle">
+                                <label for="sortByTitle" class="checkbox-label">Title</label>
+                            </li>
+                            <li class="mobile-dropdown-item">
+                                <input type="radio" name="sortMedias" id="sortByAbandonedDate" checked>
+                                <label for="sortByAbandonedDate" class="checkbox-label sorted-descending">Abandoned date</label>
+                            </li>
+                            <li class="mobile-dropdown-item">
+								<input type="radio" name="sortMedias" id="sortBySize">
+								<label for="sortBySize" class="checkbox-label">Size</label>
+							</li>
+                        </ul>
+                    {% else %}
+                        <ul class="dropdown-menu" style="min-width:165px">
+                            <li class="mobile-dropdown-item">
+                                <input type="radio" name="sortMedias" id="sortByTitle">
+                                <label for="sortByTitle" class="checkbox-label">Title</label>
+                            </li>
+                            <li class="mobile-dropdown-item">
+                                <input type="radio" name="sortMedias" id="sortByDeletionDate" checked>
+                                <label for="sortByDeletionDate" class="checkbox-label sorted-descending">Deletion date</label>
+                            </li>
+                            <li class="mobile-dropdown-item">
+								<input type="radio" name="sortMedias" id="sortBySize">
+								<label for="sortBySize" class="checkbox-label">Size</label>
+							</li>
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class="btn-group" role="group">
+                    <button id="filterDropdown" type="button" class="btn btn-secondary mobile-dropdown dropdown-toggle bi-funnel-fill" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"></button>
+                    <ul class="dropdown-menu">
+                        <li class="form-check mobile-dropdown-item mediasSelection">
+                            <input type="checkbox" class="checkbox" id="checkMovies" checked>
+                            <label for="checkMovies" class="checkbox-label">Movies</label>
+                        </li>
+                        <li class="form-check mobile-dropdown-item mediasSelection">
+                            <input type="checkbox" class="checkbox medias-button" id="checkTVShows" checked>
+                            <label for="checkTVShows" class="checkbox-label">TV Shows</label>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="mobile-table">
+        <table id="mediasTable" class="table table-dark" style="width: 100%">
+            <thead style="display: none;">
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="picksModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="picksTitle">Picks</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="picksBody">
+                    Loading...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+    <script>
+        $(document).ready(function () {
+            var table = $('#mediasTable').DataTable({
+                ajax: {
+                    url: BASE_URL+'/api/medias',
+                    data: function (d) {
+                        selected_media_types = [];
+                        if ($('#checkMovies').is(':checked')) {
+                            selected_media_types[0] = 'movie'
+                        }
+                        if ($('#checkTVShows').is(':checked')) {
+                            selected_media_types[1] = 'tv_show'
+                        }
+                        d.media_types = selected_media_types.join(',');
+                        {% if page == "abandonned_medias" %}
+                            d.abandonned_page = true
+                        {% endif %}
+                    }
+                },
+                serverSide: true,
+                info: false,
+                lengthChange: false,
+                dom: 'lrtip',
+                order: [[4, 'desc']],
+                language: {
+                    paginate: {
+                        next: '›',
+                        previous: '‹'
+                    }
+                },
+                columns: [
+                    {
+                        title: 'Title',
+                        data: 'title',
+                        visible: false,
+                    },
+                    {
+                        title: 'Size',
+                        data: 'media_size',
+                        visible: false,
+                        searchable: false,
+                    },
+                    {
+                        title: 'Image',
+                        data: 'media_db_url',
+                        render: function (data, type, row, meta) {
+                            if (row.poster_url) {
+                                var poster_url = row.poster_url
+                            } else {
+                                var poster_url = "{{ url_for('static', filename='no_picture.png') }}"
+                            }
+                            if (row.media_type == "movie") {
+                                var icon = "bi-film"
+                                var icon_title = "Movie"
+                            } else if (row.media_type == "tv_show") {
+                                var icon = "bi bi-tv"
+                                var icon_title = "TV Show"
+                            }
+                            
+                            return '<img src="'+poster_url+'" alt="'+row.title+'" width="75" height="110">'
+                        },
+                    },
+                    {% if page == "abandonned_medias" %}
+                        {
+                            title: 'Infos',
+                            data: 'title',
+                            render: function (data, type, row, meta) {
+                                if (row.poster_url) {
+                                    var poster_url = row.poster_url
+                                } else {
+                                    var poster_url = "{{ url_for('static', filename='no_picture.png') }}"
+                                }
+                                if (row.media_type == "movie") {
+                                    var icon = "bi-film"
+                                    var icon_title = "Movie"
+                                } else if (row.media_type == "tv_show") {
+                                    var icon = "bi bi-tv"
+                                    var icon_title = "TV Show"
+                                }
+                                var media_type_icon = '<span class="media-type-tooltip" data-toggle="tooltip" title="' + icon_title + '"><i class="fa ' + icon + ' fa-fw"></i></span>';
+                                var first_line = media_type_icon + '&nbsp;' + '<a href="'+row.media_db_url+'" target="_blank">'+data+'</a>'
+                                var abandonned_date = '<i class="bi bi-clock-history"></i> '+moment(row.abandonned_date).format('LL')
+                                var deletion_date = '<i class="bi bi-trash"></i> '+moment(row.deletion_date).format('LL')
+                                var media_size = '<i class="bi bi-hdd"></i> ' + formatBytes(row.media_size)
+                                return (
+                                    first_line + '<br>' +
+                                    abandonned_date + '<br>' +
+                                    deletion_date + '<br>' +
+                                    media_size)
+                            },
+                        },
+                        {
+                            title: 'Buttons',
+                            data: 'media_id',
+                            className: 'vertical-align-cell',
+                            render: function(data, type, row, meta) {
+                                pick_button = '<a onclick="addPickCurrentUser('+data+', this)" class="btn btn-success btn-lg"><i class="bi bi-plus-circle"></i></a>'
+                                permanent_button = ''
+                                {% if current_user.admin %}
+                                    permanent_button=' <td><a onclick="addPickPermanent('+data+', this)" class="btn btn-info btn-lg"><i class="bi bi-arrow-right-circle"></i></a></td>'
+                                {% endif %}
+
+                                return '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">'+pick_button+permanent_button+'</div>'
+                            }
+                        },
+                        {
+                            title: 'Abandonned Date',
+                            data: 'abandonned_date',
+                            visible: false,
+                            searchable: false,
+                        },
+                    {% else %}
+                        {
+                            title: 'Infos',
+                            data: 'title',
+                            render: function (data, type, row, meta) {
+                                if (row.poster_url) {
+                                    var poster_url = row.poster_url
+                                } else {
+                                    var poster_url = "{{ url_for('static', filename='no_picture.png') }}"
+                                }
+                                if (row.media_type == "movie") {
+                                    var icon = "bi-film"
+                                    var icon_title = "Movie"
+                                } else if (row.media_type == "tv_show") {
+                                    var icon = "bi bi-tv"
+                                    var icon_title = "TV Show"
+                                }
+                                var media_type_icon = '<span class="media-type-tooltip" data-toggle="tooltip" title="' + icon_title + '"><i class="fa ' + icon + ' fa-fw"></i></span>';
+                                var media_poster_popover = '<span data-bs-toggle="popover" data-bs-img='+poster_url+'>'+data+'</span>'
+                                var first_line = media_type_icon + '&nbsp;' + '<a href="'+row.media_db_url+'" target="_blank">' + media_poster_popover + '</a>'
+                                var media_size = '<i class="bi bi-hdd"></i> ' + formatBytes(row.media_size)
+                                if (row.deletion_date) {
+                                    var deletion_date = '<i class="bi bi-trash"></i> '+moment(row.deletion_date).format('LL')
+                                } else {
+                                    var deletion_date = ""
+                                }
+                                return (
+                                    first_line + '<br>' +
+                                    media_size + '<br>' +
+                                    deletion_date)
+                            },
+                        },
+                        {
+                            title: 'Buttons',
+                            data: 'num_picks',
+                            className: 'vertical-align-cell',
+                            render: function(data, type, row, meta) {
+                                num_picks_button = '<a onclick="modalPicks('+row.media_id+', this)" class="btn btn-info btn-lg" data-bs-toggle="modal" data-bs-target="#picksModal">'+data+'</a>'
+                                delete_button = ''
+                                {% if current_user.admin %}
+                                    delete_button = ' <a onclick="deleteMedia('+data+', this)" class="btn btn-danger btn-lg"><i class="bi bi-trash"></i></a>'
+                                {% endif %}
+                                return '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">'+num_picks_button + delete_button+"</div>"
+                            }
+                        },
+                        {
+                            title: 'Deletion Date',
+                            data: 'deletion_date',
+                            visible: false,
+                            searchable: false,
+                        },
+                    {% endif %}
+                ],
+            });
+
+            $('.mediasSelection').on("click", function() {
+                table.draw();
+            });
+
+            $('#media-search').on("input", function() {
+                table.search($(this).val()).draw();
+            })
+
+            $('[name="sortMedias"]').on('click', function() {
+                var current_sort_li = $('[class*="sorted-"]').parent().get()[0]
+                if (this.parentElement == current_sort_li) {
+                    //Clicked on the current sort, have to invert
+                    if ($(this.nextElementSibling).hasClass("sorted-descending")) {
+                        $(this.nextElementSibling).removeClass("sorted-descending").addClass("sorted-ascending")
+                        sortingOrder = "asc"
+                    } else {
+                        $(this.nextElementSibling).removeClass("sorted-ascending").addClass("sorted-descending")
+                        sortingOrder = "desc"
+                    }
+                } else {
+                    //Clicked on the other sort
+                    $(current_sort_li.childNodes[3]).removeClass("sorted-ascending sorted-descending")
+                    $(this.nextElementSibling).addClass("sorted-ascending")
+                    sortingOrder = "asc"
+                }
+                switch(this.id) {
+                case "sortByTitle":
+                    table.order([0, sortingOrder]).draw()
+                    break
+                case "sortByAbandonedDate":
+                    table.order([5, sortingOrder]).draw()
+                    break
+                case "sortByDeletionDate":
+                    table.order([5, sortingOrder]).draw()
+                    break
+                case "sortBySize":
+                    table.order([1, sortingOrder]).draw()
+                    break
+                }
+            });
+        })
+    </script>
+{% endblock %}
