@@ -22,7 +22,7 @@ class AddUserForm(FlaskForm):
             raise ValidationError('An account with that email address is already present.')
         
 class EditAppSettings(FlaskForm):
-    expiry_time_number = IntegerField("After how much time should an abandonned media be marked expired", validators=[validators.NumberRange(min=0)])
+    expiry_time_number = IntegerField("After how much time should an abandoned media be marked expired", validators=[validators.NumberRange(min=0)])
     expiry_time_unit = SelectField('Unit', choices=[("minutes","minutes"), ("hours","hours"), ("days","days"), ("weeks","weeks"), ("months","months")])
     next_delete = DateTimeLocalField('When should the next check for deletion of expired media be', format='%Y-%m-%dT%H:%M')
     deletion_time_number = IntegerField('Reoccurs every', validators=[validators.NumberRange(min=0)])

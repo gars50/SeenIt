@@ -31,7 +31,7 @@ def delete_media(media_id):
 def get_medias():
     query = Media.query.outerjoin(User)
 
-    # Filtering for the scope of the request (Abandonned vs All)
+    # Filtering for the scope of the request (Abandoned vs All)
     abandonned_only = request.args.get('abandonned_page')
     if (abandonned_only == "true"):
         query = query.filter(

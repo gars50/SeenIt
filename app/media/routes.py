@@ -8,7 +8,7 @@ from flask_mobility.decorators import mobile_template
 @login_required
 @mobile_template("{mobile/}table_views/medias.html")
 def abandonned_medias(template):
-    return render_template(template, page_title="Abandonned Medias", page="abandonned_medias")
+    return render_template(template, page_title="Abandoned Medias", page="abandonned_medias")
 
 @bp.route("/all_medias")
 @login_required

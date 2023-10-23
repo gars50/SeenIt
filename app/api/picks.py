@@ -59,11 +59,11 @@ def delete_pick(pick_id):
     abandonned = delete_pick_and_check_abandonned(pick)
     if abandonned:
         return{
-            "message" : str(media)+" was let go. It has been abandonned as this was its last pick."
+            "message" : str(media)+" was let go. It has been abandoned as this was its last pick."
         }
     else:
         return{
-            "message" : str(media)+" was let go. Others have picked this media, and it has not been abandonned yet."
+            "message" : str(media)+" was let go. Others have picked this media, and it has not been abandoned yet."
         }
 
 @bp.route("/picks", methods=['GET'])

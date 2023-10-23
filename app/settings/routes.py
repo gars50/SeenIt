@@ -43,7 +43,7 @@ def application():
         app_settings.safe_mode = form.safe_mode.data
         db.session.commit()
         if deletion_settings_changed:
-            current_app.logger.info("Deletion settings have been changed. Updating deletion date of abandonned medias.")
+            current_app.logger.info("Deletion settings have been changed. Updating deletion date of abandoned medias.")
             abandonned_medias = Media.query.filter_by(picks=None)
             modify_deletion_date(abandonned_medias)
         flash('Your changes have been saved.', "success")

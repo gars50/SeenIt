@@ -381,7 +381,7 @@ def check_if_abandonned(media, user=None):
     if abandonned:
         media.abandonned_date = datetime.utcnow()
         modify_deletion_date([media])
-        current_app.logger.info(str(media)+" has been abandonned.")
+        current_app.logger.info(str(media)+" has been abandoned.")
         media.last_user = user
         db.session.commit()
     return abandonned
