@@ -113,7 +113,7 @@
                 info: false,
                 lengthChange: false,
                 dom: 'lrtip',
-                order: [[4, 'desc']],
+                order: [[1, 'desc']],
                 language: {
                     paginate: {
                         next: '›',
@@ -233,10 +233,10 @@
                     table.order([0, sortingOrder]).draw()
                     break
                 case "sortByPickDate":
-                    table.order([3, sortingOrder]).draw()
+                    table.order([1, sortingOrder]).draw()
                     break
                 case "sortBySize":
-                    table.order([5, sortingOrder]).draw()
+                    table.order([3, sortingOrder]).draw()
                     break
                 }
             });
