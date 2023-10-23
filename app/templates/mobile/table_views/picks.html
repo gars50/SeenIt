@@ -22,6 +22,10 @@
                                 <input type="radio" name="sortMedias" id="sortByPickDate" checked>
                                 <label for="sortByPickDate" class="checkbox-label sorted-descending">Pick date</label>
                             </li>
+							<li class="mobile-dropdown-item">
+								<input type="radio" name="sortMedias" id="sortBySize">
+								<label for="sortBySize" class="checkbox-label">Size</label>
+							</li>
                         </ul>
                     {% else %}
                         <ul class="dropdown-menu" style="min-width:165px">
@@ -33,6 +37,10 @@
                                 <input type="radio" name="sortMedias" id="sortByDeletionDate" checked>
                                 <label for="sortByDeletionDate" class="checkbox-label sorted-descending">Deletion date</label>
                             </li>
+							<li class="mobile-dropdown-item">
+								<input type="radio" name="sortMedias" id="sortBySize">
+								<label for="sortBySize" class="checkbox-label">Size</label>
+							</li>
                         </ul>
                     {% endif %}
                 </div>
@@ -118,6 +126,21 @@
                         data: 'media_title',
                         visible: false,
                     },
+					{
+						title: 'Pick Date',
+						data: 'pick_date',
+						visible: false,
+					},
+					{
+						title: 'Pick Method',
+						data: 'pick_method',
+						visible: false,
+					},
+					{
+						title: 'Size',
+						data: 'media_size',
+						visible: false,
+					},
                     {
                         title: 'Image',
                         data: 'media_db_url',
@@ -166,21 +189,6 @@
 								media_size)
 						},
 					},
-					{
-						title: 'Pick Date',
-						data: 'pick_date',
-						visible: false,
-					},
-					{
-						title: 'Pick Method',
-						data: 'pick_method',
-						visible: false,
-					},
-					{
-						title: 'Size',
-						data: 'media_size',
-						visible: false,
-					},
 					{% if (user_id is defined and current_user.admin) or (user_id is not defined) %}
 					{
 						title: 'Buttons',
@@ -227,7 +235,7 @@
                 case "sortByPickDate":
                     table.order([3, sortingOrder]).draw()
                     break
-                case "sortBSize":
+                case "sortBySize":
                     table.order([5, sortingOrder]).draw()
                     break
                 }

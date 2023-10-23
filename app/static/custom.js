@@ -113,7 +113,8 @@ function modalPicks(media_id, obj) {
 
 toastr.options = {
     closeButton: true,
-    progressBar: true
+    progressBar: true,
+    escapeHtml: true
 }
 
 function formatBytes(bytes, decimals = 2) {

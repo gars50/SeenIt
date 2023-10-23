@@ -22,6 +22,10 @@
                                 <input type="radio" name="sortMedias" id="sortByAbandonedDate" checked>
                                 <label for="sortByAbandonedDate" class="checkbox-label sorted-descending">Abandoned date</label>
                             </li>
+                            <li class="mobile-dropdown-item">
+								<input type="radio" name="sortMedias" id="sortBySize">
+								<label for="sortBySize" class="checkbox-label">Size</label>
+							</li>
                         </ul>
                     {% else %}
                         <ul class="dropdown-menu" style="min-width:165px">
@@ -33,6 +37,10 @@
                                 <input type="radio" name="sortMedias" id="sortByDeletionDate" checked>
                                 <label for="sortByDeletionDate" class="checkbox-label sorted-descending">Deletion date</label>
                             </li>
+                            <li class="mobile-dropdown-item">
+								<input type="radio" name="sortMedias" id="sortBySize">
+								<label for="sortBySize" class="checkbox-label">Size</label>
+							</li>
                         </ul>
                     {% endif %}
                 </div>
@@ -118,6 +126,12 @@
                         visible: false,
                     },
                     {
+                        title: 'Size',
+                        data: 'media_size',
+                        visible: false,
+                        searchable: false,
+                    },
+                    {
                         title: 'Image',
                         data: 'media_db_url',
                         render: function (data, type, row, meta) {
@@ -185,9 +199,6 @@
                             data: 'abandonned_date',
                             visible: false,
                             searchable: false,
-                            render: function(data) {
-                                return moment(data).format('LLL')
-                            }
                         },
                     {% else %}
                         {
@@ -209,6 +220,7 @@
                                 var media_type_icon = '<span class="media-type-tooltip" data-toggle="tooltip" title="' + icon_title + '"><i class="fa ' + icon + ' fa-fw"></i></span>';
                                 var media_poster_popover = '<span data-bs-toggle="popover" data-bs-img='+poster_url+'>'+data+'</span>'
                                 var first_line = media_type_icon + '&nbsp;' + '<a href="'+row.media_db_url+'" target="_blank">' + media_poster_popover + '</a>'
+                                var media_size = '<i class="bi bi-hdd"></i> ' + formatBytes(row.media_size)
                                 if (row.deletion_date) {
                                     var deletion_date = '<i class="bi bi-trash"></i> '+moment(row.deletion_date).format('LL')
                                 } else {
@@ -216,6 +228,7 @@
                                 }
                                 return (
                                     first_line + '<br>' +
+                                    media_size + '<br>' +
                                     deletion_date)
                             },
                         },
@@ -237,9 +250,6 @@
                             data: 'deletion_date',
                             visible: false,
                             searchable: false,
-                            render: function(data) {
-                                return moment(data).format('LLL')
-                            }
                         },
                     {% endif %}
                 ],
@@ -275,10 +285,13 @@
                     table.order([0, sortingOrder]).draw()
                     break
                 case "sortByAbandonedDate":
-                    table.order([4, sortingOrder]).draw()
+                    table.order([5, sortingOrder]).draw()
                     break
                 case "sortByDeletionDate":
-                    table.order([4, sortingOrder]).draw()
+                    table.order([5, sortingOrder]).draw()
+                    break
+                case "sortBySize":
+                    table.order([1, sortingOrder]).draw()
                     break
                 }
             });
