@@ -5,9 +5,10 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 ### Issues
 - APScheduler only runs after a trigger, not after a restart of the application.
 - Login/logout does not always work in dev, but works fine in prod
-    - Seems to be a cookie issue
+    - Seems to be a cookie issue, maybe related to gevent/gunicorn?
 - Logs stop after 30 seconds with gunicorn with gevent
     - It just timeouts with no logs without gevent
+- Fix "abandonned" type in backend
 
 ### Improvements
 - Website looks
@@ -22,8 +23,12 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Plex login displays a warning about location of the application?
 - Add option to change the jobs' schedule
 - Automate mass delete
+    - Tie the settings for mass delete with the actual APScheduler task
 - Limit to one line for all text per row
     - Use ellipsis?
+- Remove last user. It is not necessary with the date
+- Remove Pick Method when showing the Permanent Collection
+- Delete Ombi Requests when user delete Ombi Request pick
 
 ## In Progress
     
@@ -80,6 +85,7 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Add option to view the logs within the application
 - Figure out a better way to mass delete
 - Change datatables to AJAX
+- Rework the poster preview as it's not showing up dynamically
 
 ## Possible improvements
 - Add possibility to configure the notification agents in Tautulli from the SeenIt
@@ -87,6 +93,7 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Add Picks by seasons to allow deletion of a few season at a time.
 - Allow admins and users to add picks manually? Is it needed?
 - Logs for each day instead of lumped into one
+
+## Cancelled
 - Retrieve watchlist from plex?
-    - Could be done through Ombi
-- Rework the poster preview as it's not showing up dynamically
+    - Requests are done through Ombi, and requests will be deleted at the same time
