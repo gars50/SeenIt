@@ -4,7 +4,7 @@ from flask import json, request, current_app
 from flask_login import login_required, current_user
 from app.models import Media, User, Pick
 from datetime import datetime
-from app.scripts.media import check_user_creation, check_movie_creation, check_tv_show_creation, check_pick_creation, delete_pick_and_check_abandonned
+from app.scripts.media import check_user_creation, check_movie_creation, check_tv_show_creation, check_pick_creation, delete_pick_and_check_abandoned
 
 @bp.route("/picks/<int:media_id>/add_to_current_user", methods=['PUT'])
 @login_required
@@ -56,8 +56,8 @@ def delete_pick(pick_id):
         return {
             "error" : "Not allowed!"
         }, 405
-    abandonned = delete_pick_and_check_abandonned(pick)
-    if abandonned:
+    abandoned = delete_pick_and_check_abandoned(pick)
+    if abandoned:
         return{
             "message" : str(media)+" was let go. It has been abandoned as this was its last pick."
         }

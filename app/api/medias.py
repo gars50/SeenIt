@@ -32,10 +32,10 @@ def get_medias():
     query = Media.query.outerjoin(User)
 
     # Filtering for the scope of the request (Abandoned vs All)
-    abandonned_only = request.args.get('abandonned_page')
-    if (abandonned_only == "true"):
+    abandoned_only = request.args.get('abandoned_page')
+    if (abandoned_only == "true"):
         query = query.filter(
-            Media.abandonned_date.is_not(None)
+            Media.abandoned_date.is_not(None)
         )
 
     # Filtering for selected media types
@@ -79,13 +79,13 @@ def get_medias():
             if descending:
                 col = col.desc()
             order.append(col)
-        elif col_name == 'abandonned_date':  # Sorting by Deletion Date column
+        elif col_name == 'abandoned_date':  # Sorting by Deletion Date column
             descending = request.args.get(f'order[{i}][dir]') == 'desc'
-            col = Media.abandonned_date
+            col = Media.abandoned_date
             if descending:
                 col = col.desc()
             order.append(col)
-        elif col_name == 'abandonned_by':  # Sorting by Deletion Date column
+        elif col_name == 'abandoned_by':  # Sorting by Deletion Date column
             descending = request.args.get(f'order[{i}][dir]') == 'desc'
             col = User.alias
             if descending:
