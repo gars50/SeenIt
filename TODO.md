@@ -8,7 +8,6 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
     - Seems to be a cookie issue, maybe related to gevent/gunicorn?
 - Logs stop after 30 seconds with gunicorn with gevent
     - It just timeouts with no logs without gevent
-- Fix "abandonned" type in backend
 
 ### Improvements
 - Website looks
@@ -31,7 +30,8 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Delete Ombi Requests when user delete Ombi Request pick
 
 ## In Progress
-    
+- Fix "abandonned" type in backend
+
 
 ## Completed
 - Add a search option in medias
