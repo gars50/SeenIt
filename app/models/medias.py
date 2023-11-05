@@ -15,7 +15,7 @@ class Media(db.Model):
     total_size = db.Column(db.BigInteger)
     poster_url = db.Column(db.String(100))
 
-    abandonned_date = db.Column(db.DateTime)
+    abandoned_date = db.Column(db.DateTime)
     expiry_date = db.Column(db.DateTime)
     deletion_date = db.Column(db.DateTime)
 
@@ -46,8 +46,8 @@ class Media(db.Model):
                 'media_db_url': media_db_url,
                 'poster_url': self.poster_url,
                 'media_size': self.total_size,
-                'abandonned_date': self.abandonned_date,
-                'abandonned_by': last_user_alias,
+                'abandoned_date': self.abandoned_date,
+                'abandoned_by': last_user_alias,
                 'deletion_date': self.deletion_date,
                 'num_picks': num_picks,
                 'media_id': self.id,

@@ -12,7 +12,7 @@
             <div class="btn-group" role="group">
                 <div class="btn-group" role="group">
                     <button id="sortDropdown" type="button" class="btn btn-secondary mobile-dropdown dropdown-toggle bi-sort-alpha-down" data-bs-toggle="dropdown" aria-expanded="false" data-bs-auto-close="outside"></button>
-                    {% if page == "abandonned_medias" %}
+                    {% if page == "abandoned_medias" %}
                         <ul class="dropdown-menu" style="min-width:195px">
                             <li class="mobile-dropdown-item">
                                 <input type="radio" name="sortMedias" id="sortByTitle">
@@ -103,8 +103,8 @@
                             selected_media_types[1] = 'tv_show'
                         }
                         d.media_types = selected_media_types.join(',');
-                        {% if page == "abandonned_medias" %}
-                            d.abandonned_page = true
+                        {% if page == "abandoned_medias" %}
+                            d.abandoned_page = true
                         {% endif %}
                     }
                 },
@@ -151,7 +151,7 @@
                             return '<img src="'+poster_url+'" alt="'+row.title+'" width="75" height="110">'
                         },
                     },
-                    {% if page == "abandonned_medias" %}
+                    {% if page == "abandoned_medias" %}
                         {
                             title: 'Infos',
                             data: 'title',
@@ -170,12 +170,12 @@
                                 }
                                 var media_type_icon = '<span class="media-type-tooltip" data-toggle="tooltip" title="' + icon_title + '"><i class="fa ' + icon + ' fa-fw"></i></span>';
                                 var first_line = media_type_icon + '&nbsp;' + '<a href="'+row.media_db_url+'" target="_blank">'+data+'</a>'
-                                var abandonned_date = '<i class="bi bi-clock-history"></i> '+moment(row.abandonned_date).format('LL')
+                                var abandoned_date = '<i class="bi bi-clock-history"></i> '+moment(row.abandoned_date).format('LL')
                                 var deletion_date = '<i class="bi bi-trash"></i> '+moment(row.deletion_date).format('LL')
                                 var media_size = '<i class="bi bi-hdd"></i> ' + formatBytes(row.media_size)
                                 return (
                                     first_line + '<br>' +
-                                    abandonned_date + '<br>' +
+                                    abandoned_date + '<br>' +
                                     deletion_date + '<br>' +
                                     media_size)
                             },
@@ -196,7 +196,7 @@
                         },
                         {
                             title: 'Abandoned Date',
-                            data: 'abandonned_date',
+                            data: 'abandoned_date',
                             visible: false,
                             searchable: false,
                         },

@@ -127,7 +127,7 @@ def check_pick_creation(media, user, pick_date, pick_method):
         db.session.add(new_pick)
         media.deletion_date = None
         media.expiry_date = None
-        media.abandonned_date = None
+        media.abandoned_date = None
         media.last_user = None
         db.session.commit()
         current_app.logger.info("Created "+str(new_pick))
@@ -358,7 +358,7 @@ def modify_deletion_date(medias):
     app_settings = AppSettings.query.first()
     for media in medias:
         current_app.logger.debug("Changing "+str(media))
-        media.expiry_date = media.abandonned_date + relativedelta(**{app_settings.expiry_time_unit: app_settings.expiry_time_number})
+        media.expiry_date = media.abandoned_date + relativedelta(**{app_settings.expiry_time_unit: app_settings.expiry_time_number})
         current_app.logger.debug("Expiry date of "+str(media)+" set to "+str(media.expiry_date))
         delete_time = app_settings.next_delete
         if (delete_time < media.expiry_date):
@@ -375,16 +375,16 @@ def modify_deletion_date(medias):
         db.session.commit()
         current_app.logger.debug("Deletion date of "+str(media)+" set to "+str(media.deletion_date))
 
-def check_if_abandonned(media, user=None):
-    abandonned = (not media.picks)
+def check_if_abandoned(media, user=None):
+    abandoned = (not media.picks)
     #If this was the last pick that was just deleted, we need to set the expiryDate and deletionDate
-    if abandonned:
-        media.abandonned_date = datetime.utcnow()
+    if abandoned:
+        media.abandoned_date = datetime.utcnow()
         modify_deletion_date([media])
         current_app.logger.info(str(media)+" has been abandoned.")
         media.last_user = user
         db.session.commit()
-    return abandonned
+    return abandoned
 
 def update_free_space_info():
     #Get disk space remaining from Radarr with a movie
@@ -426,7 +426,7 @@ def delete_expired_medias():
     for media in medias_to_delete:
         delete_media_everywhere(media)
 
-def delete_pick_and_check_abandonned(pick):
+def delete_pick_and_check_abandoned(pick):
     media = pick.media
     user = pick.user
     if pick.pick_method == "Ombi Request":
@@ -434,5 +434,5 @@ def delete_pick_and_check_abandonned(pick):
         current_app.logger.debug("Deleting Ombi Request for "+str(pick.media))
     db.session.delete(pick)
     db.session.commit()
-    abandonned = check_if_abandonned(media, user)
-    return abandonned
+    abandoned = check_if_abandoned(media, user)
+    return abandoned

@@ -2,7 +2,7 @@ from app.api import bp
 from app.extensions import db
 from flask import current_app
 from flask_login import login_required
-from app.scripts.media import delete_pick_and_check_abandonned
+from app.scripts.media import delete_pick_and_check_abandoned
 from app.models import User
 
 @bp.route("/users/<int:user_id>/delete", methods=['DELETE'])
@@ -19,7 +19,7 @@ def delete_user(user_id):
             "error" : "Cannot delete a system user"
         }, 400
     for pick in user.picks:
-        delete_pick_and_check_abandonned(pick)
+        delete_pick_and_check_abandoned(pick)
     db.session.delete(user)
     db.session.commit()
     return {

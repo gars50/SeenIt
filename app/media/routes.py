@@ -4,11 +4,11 @@ from flask import render_template
 from app.models import User
 from flask_mobility.decorators import mobile_template
 
-@bp.route("/abandonned_medias")
+@bp.route("/abandoned_medias")
 @login_required
 @mobile_template("{mobile/}table_views/medias.html")
-def abandonned_medias(template):
-    return render_template(template, page_title="Abandoned Medias", page="abandonned_medias")
+def abandoned_medias(template):
+    return render_template(template, page_title="Abandoned Medias", page="abandoned_medias")
 
 @bp.route("/all_medias")
 @login_required
