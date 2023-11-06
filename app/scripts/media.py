@@ -128,7 +128,6 @@ def check_pick_creation(media, user, pick_date, pick_method):
         media.deletion_date = None
         media.expiry_date = None
         media.abandoned_date = None
-        media.last_user = None
         db.session.commit()
         current_app.logger.info("Created "+str(new_pick))
         added_to_db = True
@@ -382,7 +381,6 @@ def check_if_abandoned(media, user=None):
         media.abandoned_date = datetime.utcnow()
         modify_deletion_date([media])
         current_app.logger.info(str(media)+" has been abandoned.")
-        media.last_user = user
         db.session.commit()
     return abandoned
 
