@@ -21,9 +21,6 @@ class Media(db.Model):
 
     picks = db.relationship('Pick', back_populates='media', cascade='all, delete')
 
-    last_user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    last_user = db.relationship('User')
-
     __mapper_args__ = {
         'polymorphic_identity': 'media',
         'polymorphic_on': type
@@ -36,10 +33,6 @@ class Media(db.Model):
         else:
             media_db_url = self.theTVDB_url
             full_title = self.title
-        if self.last_user:
-            last_user_alias = self.last_user.alias
-        else:
-            last_user_alias = ""
         num_picks = len(self.picks)
         return {
                 'title': full_title,
@@ -47,7 +40,6 @@ class Media(db.Model):
                 'poster_url': self.poster_url,
                 'media_size': self.total_size,
                 'abandoned_date': self.abandoned_date,
-                'abandoned_by': last_user_alias,
                 'deletion_date': self.deletion_date,
                 'num_picks': num_picks,
                 'media_id': self.id,

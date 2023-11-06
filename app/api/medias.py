@@ -29,7 +29,7 @@ def delete_media(media_id):
 @bp.route("/medias", methods=['GET'])
 @login_required
 def get_medias():
-    query = Media.query.outerjoin(User)
+    query = Media.query
 
     # Filtering for the scope of the request (Abandoned vs All)
     abandoned_only = request.args.get('abandoned_page')
@@ -82,12 +82,6 @@ def get_medias():
         elif col_name == 'abandoned_date':  # Sorting by Deletion Date column
             descending = request.args.get(f'order[{i}][dir]') == 'desc'
             col = Media.abandoned_date
-            if descending:
-                col = col.desc()
-            order.append(col)
-        elif col_name == 'abandoned_by':  # Sorting by Deletion Date column
-            descending = request.args.get(f'order[{i}][dir]') == 'desc'
-            col = User.alias
             if descending:
                 col = col.desc()
             order.append(col)

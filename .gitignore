@@ -166,3 +166,4 @@ config.py
 populate_db.py
 http_cache.sqlite
 *.log
+.vscode/
