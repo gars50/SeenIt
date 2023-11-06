@@ -29,7 +29,6 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Delete Ombi Requests when user delete Ombi Request pick
 
 ## In Progress
-- Remove last user for media. It is not necessary now with the abandoned date.
 
 ## Completed
 - Add a search option in medias
@@ -85,6 +84,7 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Change datatables to AJAX
 - Rework the poster preview as it's not showing up dynamically
 - Fix "abandonned" typo in backend
+- Remove last user for media. It is not necessary now with the abandoned date.
 
 ## Possible improvements
 - Add possibility to configure the notification agents in Tautulli from the SeenIt
