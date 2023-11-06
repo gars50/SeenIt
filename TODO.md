@@ -25,10 +25,10 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
     - Tie the settings for mass delete with the actual APScheduler task
 - Limit to one line for all text per row
     - Use ellipsis?
-- Remove Pick Method when showing the Permanent Collection
 - Delete Ombi Requests when user delete Ombi Request pick
 
 ## In Progress
+- Remove Pick Method when showing the Permanent Collection
 
 ## Completed
 - Add a search option in medias
