@@ -25,12 +25,11 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
     - Tie the settings for mass delete with the actual APScheduler task
 - Limit to one line for all text per row
     - Use ellipsis?
-- Remove last user for media. It is not necessary now with the abandoned date.
 - Remove Pick Method when showing the Permanent Collection
 - Delete Ombi Requests when user delete Ombi Request pick
 
 ## In Progress
-
+- Remove last user for media. It is not necessary now with the abandoned date.
 
 ## Completed
 - Add a search option in medias
