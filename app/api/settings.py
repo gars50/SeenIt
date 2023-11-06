@@ -76,6 +76,7 @@ def test_sonarr_from_server():
             "error" : "Bad input"
         }, 400
 
+@login_required
 def stream_log(file):
     def generate():
         with open(file) as log_file:

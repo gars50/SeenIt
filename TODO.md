@@ -26,6 +26,11 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Limit to one line for all text per row
     - Use ellipsis?
 - Delete Ombi Requests when user deletes Ombi Request pick
+- API Authentication
+    - Add an API key in the settings for external use
+- Add pick_method table instead of string
+- Make Media agnostic, move mediaDB ids and urls, and media_manager ids
+    - Add media_type class to differentiate between the two.
 
 ## In Progress
 
