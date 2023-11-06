@@ -85,12 +85,6 @@ def get_medias():
             if descending:
                 col = col.desc()
             order.append(col)
-        elif col_name == 'abandoned_by':  # Sorting by Deletion Date column
-            descending = request.args.get(f'order[{i}][dir]') == 'desc'
-            col = User.alias
-            if descending:
-                col = col.desc()
-            order.append(col)
         i += 1
     if order:
         query = query.order_by(*order)
