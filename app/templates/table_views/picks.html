@@ -79,6 +79,11 @@
                             return (media_type_icon + '&nbsp;' + '<a href="'+row.media_db_url+'" target="_blank">' + media_poster_popover + '</a>')
                         }
                     },
+                    {% if page != "permanent_picks" %}
+                        {
+                            title: 'Pick Method',
+                            data: 'pick_method'
+                        },
                     {
                         title: 'Pick date',
                         data: 'pick_date', 
@@ -86,10 +91,15 @@
                             return moment(data).format('LLL')
                         }
                     },
-                    {
-                        title: 'Pick Method',
-                        data: 'pick_method'
-                    },
+                    {% else %}
+                        {
+                            title: 'Added',
+                            data: 'pick_date', 
+                            render: function (data) {
+                                return moment(data).format('LL')
+                            }
+                        },
+                    {% endif %}
                     {
                         title: 'Size',
                         data: 'media_size', 

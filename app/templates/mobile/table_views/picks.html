@@ -185,8 +185,10 @@
 							return (
 								first_line + '<br>' +
 								pick_date + '<br>' +
-								pick_method + '<br>' +
-								media_size)
+                                {% if page != "permanent_picks" %}
+								    pick_method + '<br>' +
+								{% endif %}
+                                media_size)
 						},
 					},
 					{% if (user_id is defined and current_user.admin) or (user_id is not defined) %}
