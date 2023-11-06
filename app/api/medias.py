@@ -29,7 +29,7 @@ def delete_media(media_id):
 @bp.route("/medias", methods=['GET'])
 @login_required
 def get_medias():
-    query = Media.query.outerjoin(User)
+    query = Media.query
 
     # Filtering for the scope of the request (Abandoned vs All)
     abandoned_only = request.args.get('abandoned_page')
