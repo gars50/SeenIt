@@ -22,10 +22,7 @@ mkdir logs
 
 Create you secret key :
 ```
-python
-import os
-os.urandom(24).hex()
-exit()
+python3 -c "import os; print(os.urandom(24).hex());"
 ```
 Export secrets. You can leave out DATABASE_URI if you want to use a local database
 ```
