@@ -33,6 +33,7 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
     - Add media_type class to differentiate between the two.
 
 ## In Progress
+- Rework Users and Roles to allow decorators
 
 ## Completed
 - Add a search option in medias
