@@ -1,19 +1,20 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, IntegerField, BooleanField, SubmitField, validators, ValidationError, SelectField, DateTimeLocalField
 from wtforms.validators import DataRequired
-from app.models import User
+from app.models import User, Role
 
 
 class EditUserForm(FlaskForm):
     email = StringField('Email Address')
     alias = StringField('Alias', validators=[DataRequired()])
-    admin = BooleanField('Admin')
+    #Need to make this better to go according to Role class
+    role = SelectField('Role', choices=["User", "Power User", "Administrator"])
     submit = SubmitField('Save')
 
 class AddUserForm(FlaskForm):
     email = StringField('Email Address', validators=[DataRequired()])
     alias = StringField('Alias', validators=[DataRequired()])
-    admin = BooleanField('Admin')
+    role = SelectField('Role', choices=["User", "Power User", "Administrator"])
     submit = SubmitField('Save')
 
     def validate_email(self, email):
@@ -23,10 +24,10 @@ class AddUserForm(FlaskForm):
         
 class EditAppSettings(FlaskForm):
     expiry_time_number = IntegerField("After how much time should an abandoned media be marked expired", validators=[validators.NumberRange(min=0)])
-    expiry_time_unit = SelectField('Unit', choices=[("minutes","minutes"), ("hours","hours"), ("days","days"), ("weeks","weeks"), ("months","months")])
+    expiry_time_unit = SelectField('Unit', choices=["minutes","hours","days","weeks","months"])
     next_delete = DateTimeLocalField('When should the next check for deletion of expired media be', format='%Y-%m-%dT%H:%M')
     deletion_time_number = IntegerField('Reoccurs every', validators=[validators.NumberRange(min=0)])
-    deletion_time_unit = SelectField('Unit', choices=[("hours","hours"), ("days","days"), ("weeks","weeks"), ("months","months")])
+    deletion_time_unit = SelectField('Unit', choices=["hours","days","weeks","months",])
     app_name = StringField('Application Name')
     radarr_host = StringField()
     radarr_port = IntegerField(validators=[validators.Optional()])

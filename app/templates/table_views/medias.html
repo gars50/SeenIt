@@ -114,7 +114,7 @@
                                 return '<a onclick="addPickCurrentUser('+data+', this)" class="btn btn-success"><i class="bi bi-plus-circle"></i></a>'
                             }
                         },
-                        {% if current_user.admin %}
+                        {% if current_user.is_super_user() %}
                             {
                                 title: 'Make permanent',
                                 data: 'media_id',
@@ -134,7 +134,7 @@
                                 return '<a onclick="modalPicks('+row.media_id+', this)" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#picksModal">'+data+'</a>'
                             }
                         },
-                        {% if current_user.admin %}
+                        {% if current_user.is_super_user() %}
                             {
                                 title: 'Delete',
                                 data: 'media_id',

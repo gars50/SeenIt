@@ -22,7 +22,7 @@
                 </li>
             </ul>
             <ul class="navbar-nav mr-auto">
-                {% if current_user.admin %}
+                {% if current_user.is_administrator() %}
                     <li class="nav-item dropdown">
                         <a {% if active_page == "settings" %} class="nav-link active dropdown-toggle" {% else %} class="nav-link dropdown-toggle" {% endif %} data-bs-toggle="dropdown" href="#">Settings</a>
                         <div class="dropdown-menu" style="right: 0; left: auto;">

@@ -187,7 +187,7 @@
                             render: function(data, type, row, meta) {
                                 pick_button = '<a onclick="addPickCurrentUser('+data+', this)" class="btn btn-success btn-lg"><i class="bi bi-plus-circle"></i></a>'
                                 permanent_button = ''
-                                {% if current_user.admin %}
+                                {% if current_user.is_super_user() %}
                                     permanent_button=' <td><a onclick="addPickPermanent('+data+', this)" class="btn btn-info btn-lg"><i class="bi bi-arrow-right-circle"></i></a></td>'
                                 {% endif %}
 
@@ -239,7 +239,7 @@
                             render: function(data, type, row, meta) {
                                 num_picks_button = '<a onclick="modalPicks('+row.media_id+', this)" class="btn btn-info btn-lg" data-bs-toggle="modal" data-bs-target="#picksModal">'+data+'</a>'
                                 delete_button = ''
-                                {% if current_user.admin %}
+                                {% if current_user.is_super_user() %}
                                     delete_button = ' <a onclick="deleteMedia('+data+', this)" class="btn btn-danger btn-lg"><i class="bi bi-trash"></i></a>'
                                 {% endif %}
                                 return '<div class="btn-group-vertical" role="group" aria-label="Vertical button group">'+num_picks_button + delete_button+"</div>"

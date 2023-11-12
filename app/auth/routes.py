@@ -43,10 +43,11 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         #If there are no admin users, we create one
-        if not User.query.filter_by(admin=True).first():
-            user = User(email=form.email.data, admin=True)
-            user.set_password(form.password.data)
+        if (User.admins_count() == 0):
+            user = User(email=form.email.data)
             db.session.add(user)
+            db.session.commit()
+            user.set_role("Administrator")
             current_app.logger.info("User with email "+user.email+" was created as an admin as it is the first user to log in.")
         else:
             #We verify the user is allowed to register
@@ -178,24 +179,25 @@ def plex_callback():
         "X-Plex-Token": plex_auth_token
     }
     response = requests.get(verify_user_url, headers=headers, data=data)
-    user_email = response.json().get('email')
+    plex_user_email = response.json().get('email')
     
-    user = User.query.filter_by(email=user_email).first()
-    current_app.logger.debug("User with email "+user_email+" is trying to login through Plex. Corresponding user: "+str(user))
+    user = User.query.filter_by(email=plex_user_email).first()
+    current_app.logger.debug(f"User with email {plex_user_email} is trying to login through Plex. Corresponding user: {user}")
     #If there are no admin users, we create one
-    if not User.query.filter_by(admin=True).first():
-        user = User(email=user_email, admin=True)  
+    if (User.admins_count() == 0):
+        user = User(email=plex_user_email)
         db.session.add(user)
         db.session.commit()
-        current_app.logger.info("User with email "+user.email+" was created as an admin as it is the first user to log in.")
+        user.set_role("Administrator")
+        current_app.logger.info(f"User with email {user.email} was created as an admin as it is the first user to log in.")
     #If the user is not in the list, we do not allow them to login
     if user is None or user.system_user:
             flash("You are not allowed to login.", "error")
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.login_choice'))
     
     #Otherwise we log them in and clear the cookies used for the login.
     login_user(user, remember=True)
     session.pop('plex_oauth_code', None)
     session.pop('plex_oauth_id', None)
-    current_app.logger.info(str(user)+" logged in through Plex.")
+    current_app.logger.info(f"{user} logged in through Plex.")
     return redirect(url_for('main.index'))

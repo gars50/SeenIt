@@ -4,7 +4,7 @@
             <th scope="col">User</th>
             <th>Pick date</th>
             <th>Pick method</th>
-            {% if current_user.admin %}
+            {% if current_user.is_super_user() %}
                 <th>Delete</th>
             {% endif %}
         </tr>
@@ -15,7 +15,7 @@
                 <td scope="row">{{ pick.user.alias }}</td>
                 <td>{{ moment(pick.pick_date).format('LLL') }}</td>
                 <td>{{ pick.pick_method }}</td>
-                {% if current_user.admin %}
+                {% if current_user.is_super_user() %}
                     <td><a onclick="deletePickModal({{pick.id}}, this)" class="btn btn-warning">Delete</a></td>
                 {% endif %}
             </tr>
@@ -23,7 +23,7 @@
         <tr>
             <td colspan="4" scope="row"><a onclick="appendPickCurrentUser({{media.id}}, this)" class="btn btn-success">Add to my picks</a></td>
         </tr>
-        {% if current_user.admin %}
+        {% if current_user.is_super_user() %}
             <tr>
                 <td colspan="4" scope="row"><a onclick="appendPickPermanent({{media.id}}, this)" class="btn btn-info">Add to permanent collection</a></td>
             </tr>

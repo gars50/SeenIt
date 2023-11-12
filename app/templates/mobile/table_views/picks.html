@@ -191,7 +191,7 @@
                                 media_size)
 						},
 					},
-					{% if (user_id is defined and current_user.admin) or (user_id is not defined) %}
+					{% if (user_id is defined and current_user.is_super_user()) or (user_id is not defined) %}
 					{
 						title: 'Buttons',
 						data: 'pick_id',

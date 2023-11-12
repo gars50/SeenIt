@@ -2,7 +2,8 @@ from app.api import bp
 from app.extensions import db
 from flask import current_app, render_template, request
 from flask_login import login_required, current_user
-from app.models import Media, User
+from app.decorators import admin_required
+from app.models import Media
 from app.scripts.media import delete_media_everywhere
 
 @bp.route("/medias/<int:media_id>/picks_modal", methods=['GET'])
@@ -14,11 +15,8 @@ def picks_modal(media_id):
 
 @bp.route("/medias/<int:media_id>/delete", methods=['DELETE'])
 @login_required
+@admin_required
 def delete_media(media_id):
-    if not current_user.admin:
-        return {
-            "error" : "Not allowed!"
-        }, 405
     media = Media.query.get_or_404(media_id)
     current_app.logger.debug(str(current_user)+" is trying to delete "+str(media))
     script_result = delete_media_everywhere(media)

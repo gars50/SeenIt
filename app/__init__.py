@@ -1,5 +1,6 @@
 import logging
 from flask import Flask, request
+from flask_login import current_user
 from datetime import datetime
 from config import Config
 from app.extensions import db, login, migrate, mail, moment, scheduler, logs, mobile
@@ -24,6 +25,10 @@ def create_app(config_class=Config):
 
     @app.after_request
     def after_request(response):
+        #Updating last_seen
+        if current_user.is_authenticated:
+                current_user.ping()
+        
         """ Logging after every request. """
         logger = logging.getLogger("app.access")
         logger.info(

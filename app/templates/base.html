@@ -21,7 +21,7 @@
         <script src="https://unpkg.com/bootstrap-table@1.22.1/dist/bootstrap-table.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
         <script src="{{ url_for('static', filename='custom.js') }}"></script>
-        <script>const BASE_URL = {{ request.script_root|tojson }}</script>
+        <script>const BASE_URL = "{{ url_for('main.index', _external=True) }}"</script>
 
         {{ moment.include_moment() }}
 
