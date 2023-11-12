@@ -85,8 +85,11 @@ def user(user_id):
         #If this user is the last admin and admin is removed, we deny it.
         if (user.is_administrator() and (User.admins_count() <= 1)) and (form.role.data != "Administrator"):
             flash('Cannot disable the last administrator', "error")
+        elif (user.is_system_user()):
+            flash('Cannot change a system user', "error")
         else:
             user.set_role(form.role.data)
+            user.set_alias(form.alias.data)
             flash('Your changes have been saved.', "success")
         return redirect(url_for('settings.users'))
     elif request.method == 'GET':

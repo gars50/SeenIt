@@ -16,7 +16,7 @@ def delete_user(user_id):
         return {
             "error" : user.email+" is an admin and cannot be deleted"
         }, 400
-    elif user.system_user:
+    elif user.is_system_user():
         return {
             "error" : "Cannot delete a system user"
         }, 400

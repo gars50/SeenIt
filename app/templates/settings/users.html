@@ -27,8 +27,13 @@
                     <td><a href="{{ url_for('media.user_picks', user_id=user.id, media_type='tv_shows') }}">{{user.show_storage_usage | filesizeformat}}</a></td>
                     <td>{{user.role.name}}</td>
                     {% if current_user.is_administrator() %}
-                        <td><a class="btn btn-outline-light" type="button" href="{{ url_for('settings.user', user_id=user.id) }}">Edit</a></td>
-                        <td><a onclick="deleteUser({{user.id}}, this)" class="btn btn-danger">Delete</a></td>
+                        {% if user.is_system_user() %}
+                            <td><a class="btn btn-outline-light disabled" type="button" href="{{ url_for('settings.user', user_id=user.id) }}">Edit</a></td>
+                            <td><a onclick="deleteUser({{user.id}}, this)" class="btn btn-danger disabled">Delete</a></td>
+                        {% else %}
+                            <td><a class="btn btn-outline-light" type="button" href="{{ url_for('settings.user', user_id=user.id) }}">Edit</a></td>
+                            <td><a onclick="deleteUser({{user.id}}, this)" class="btn btn-danger">Delete</a></td>
+                        {% endif %}
                     {% endif %}
                 </tr>
             </tbody>

@@ -20,7 +20,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user is None or user.system_user or not user.password_hash or not user.check_password(form.password.data):
+        if user is None or user.is_system_user() or not user.password_hash or not user.check_password(form.password.data):
             flash('Invalid username or password', 'warning')
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
@@ -52,7 +52,7 @@ def register():
         else:
             #We verify the user is allowed to register
             user = User.query.filter_by(email=form.email.data).first()
-            if not user or user.system_user:
+            if not user or user.is_system_user():
                 flash("You are not allowed to register.", "error")
                 return redirect(url_for('auth.login'))
             elif user.password_hash:
@@ -191,7 +191,7 @@ def plex_callback():
         user.set_role("Administrator")
         current_app.logger.info(f"User with email {user.email} was created as an admin as it is the first user to log in.")
     #If the user is not in the list, we do not allow them to login
-    if user is None or user.system_user:
+    if user is None or user.is_system_user():
             flash("You are not allowed to login.", "error")
             return redirect(url_for('auth.login_choice'))
     

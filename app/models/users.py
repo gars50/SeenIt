@@ -15,7 +15,6 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     alias = db.Column(db.String(100), default=default_alias)
     last_seen = db.Column(db.DateTime(), default=datetime.min)
-    system_user = db.Column(db.Boolean, default=False)
     movie_storage_usage = db.Column(db.BigInteger, default=0)
     show_storage_usage = db.Column(db.BigInteger, default=0)
 
@@ -43,10 +42,18 @@ class User(UserMixin, db.Model):
     
     def is_super_user(self):
         return self.can(Permission.SUPERUSER)
+    
+    def is_system_user(self):
+        return self.role.name == "System User"
 
     def set_role(self, role_name):
         role = Role.query.filter_by(name=role_name).first()
         self.role = role
+        db.session.add(self)
+        db.session.commit()
+    
+    def set_alias(self, alias):
+        self.alias = alias
         db.session.add(self)
         db.session.commit()
 
@@ -74,6 +81,19 @@ class User(UserMixin, db.Model):
             if (user.is_administrator()):
                 num_admins += 1
         return num_admins
+    
+    @staticmethod
+    def insert_system_users():
+        users = {
+            'Permanent',
+        }
+        for u in users:
+            user = User.query.filter_by(email=u).first()
+            if user is None:
+                user = User(email=u)
+                db.session.add(user)
+                db.session.commit()
+                user.set_role('System User')
 
 
 @login.user_loader
@@ -118,6 +138,7 @@ class Role(db.Model):
     def insert_roles():
         roles = {
             'User': [],
+            'System User': [],
             'Power User': [Permission.SUPERUSER],
             'Administrator': [Permission.ADMIN, Permission.SUPERUSER],
         }
