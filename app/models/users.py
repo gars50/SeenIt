@@ -86,6 +86,8 @@ class AnonymousUser(AnonymousUserMixin):
         return False
     def is_administrator(self):
         return False
+    def is_super_user(self):
+        return False
 
 login.anonymous_user = AnonymousUser
 

@@ -2,6 +2,7 @@ from app.api import bp
 from time import sleep
 from flask import request, current_app
 from flask_login import login_required
+from app.decorators import admin_required
 from app.scripts.media import test_ombi, test_radarr, test_sonarr
 import jsonschema
 from jsonschema import validate
@@ -45,6 +46,7 @@ def validate_json(data):
 
 @bp.route('/settings/test_ombi_from_server', methods=['POST'])
 @login_required
+@admin_required
 def test_ombi_from_server():
     data = request.get_json()
     if validate_json(data):
@@ -56,6 +58,7 @@ def test_ombi_from_server():
 
 @bp.route('/settings/test_radarr_from_server', methods=['POST'])
 @login_required
+@admin_required
 def test_radarr_from_server():
     data = request.get_json()
     if validate_json(data):
@@ -67,6 +70,7 @@ def test_radarr_from_server():
 
 @bp.route('/settings/test_sonarr_from_server', methods=['POST'])
 @login_required
+@admin_required
 def test_sonarr_from_server():
     data = request.get_json()
     if validate_json(data):
@@ -77,6 +81,7 @@ def test_sonarr_from_server():
         }, 400
 
 @login_required
+@admin_required
 def stream_log(file):
     def generate():
         with open(file) as log_file:
@@ -98,11 +103,13 @@ def stream_log(file):
 
 @bp.route('/settings/logs/app', methods=['GET'])
 @login_required
+@admin_required
 def stream_applog():
     return stream_log('logs/app.log')
     
 
 @bp.route('/settings/logs/www', methods=['GET'])
 @login_required
+@admin_required
 def stream_wwwlog():
     return stream_log('logs/www.log')

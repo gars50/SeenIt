@@ -2,7 +2,8 @@ from app.api import bp
 from app.extensions import db
 from flask import json, request, current_app
 from flask_login import login_required, current_user
-from app.models import Media, User, Pick, Permission
+from app.models import Media, User, Pick
+from app.decorators import super_user_required
 from datetime import datetime
 from app.scripts.media import check_user_creation, check_movie_creation, check_tv_show_creation, check_pick_creation, delete_pick_and_check_abandoned
 
@@ -17,6 +18,7 @@ def add_pick_to_current_user(media_id):
 
 @bp.route("/picks/<int:media_id>/add_permanent", methods=['PUT'])
 @login_required
+@super_user_required
 def add_pick_permanent_collection(media_id):
     media = Media.query.get(media_id)
     permanent_user = User.query.filter_by(email="Permanent").first()

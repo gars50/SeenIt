@@ -1,11 +1,11 @@
 from flask import render_template, flash, redirect, request, url_for, current_app
 from app import db
-from app.decorators import admin_required
+from app.decorators import admin_required, super_user_required
 from app.settings import bp
 from app.scripts.media import modify_deletion_date
-from app.models import User, AppSettings, Media, Pick, Movie, TVShow, Permission
+from app.models import User, AppSettings, Media, Pick, Movie, TVShow
 from app.settings.forms import EditUserForm, AddUserForm, EditAppSettings
-from flask_login import login_required, current_user
+from flask_login import login_required
 
 @bp.route('/application', methods=['GET', 'POST'])
 @login_required
@@ -70,7 +70,7 @@ def application():
 
 @bp.route('/users')
 @login_required
-@admin_required
+@super_user_required
 def users():
     users = User.query.all()
     return render_template('settings/users.html', users=users)
@@ -111,5 +111,6 @@ def add_user():
 
 @bp.route('/logs')
 @login_required
+@admin_required
 def logs():
     return render_template('settings/logs.html')

@@ -31,6 +31,10 @@
                             <a class="dropdown-item" href="{{ url_for('settings.logs') }}">Logs</a>
                         </div>
                     </li>
+                {% elif current_user.is_super_user() %}
+                    <li class="nav-item">
+                        <a {% if page == "settings" %} class="nav-link active" {% else %} class="nav-link" {% endif %} href="{{ url_for('settings.users') }}">Users</a>
+                    </li>
                 {% endif %}
                 <li class="nav-item">
                     {% if current_user.is_anonymous %}

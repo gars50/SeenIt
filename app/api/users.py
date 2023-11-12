@@ -4,7 +4,7 @@ from flask import current_app
 from flask_login import login_required
 from app.decorators import admin_required
 from app.scripts.media import delete_pick_and_check_abandoned
-from app.models import User, Permission
+from app.models import User
 
 @bp.route("/users/<int:user_id>/delete", methods=['DELETE'])
 @login_required

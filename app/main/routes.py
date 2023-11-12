@@ -44,7 +44,3 @@ def index():
                                total_space=total_space,
                                delete_date=delete_date,
                                app_name=app_settings.app_name)
-
-@bp.route("/test")
-def test():
-    return render_template("mobile/table_views/picks.html")
