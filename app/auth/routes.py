@@ -22,9 +22,10 @@ def login():
         user = User.query.filter_by(email=form.email.data).first()
         if user is None or user.is_system_user() or not user.password_hash or not user.check_password(form.password.data):
             flash('Invalid username or password', 'warning')
+            current_app.logger.info(f'{form.email.data} tried logging in unsuccessfully.')
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
-        current_app.logger.info(str(user)+" logged in through SeenIt.")
+        current_app.logger.info(f'{user} logged in through SeenIt.')
         return redirect(url_for('main.index'))
     return render_template('auth/login.html', title='Sign In', form=form)
 
@@ -45,6 +46,7 @@ def register():
         #If there are no admin users, we create one
         if (User.admins_count() == 0):
             user = User(email=form.email.data)
+            user.set_password(form.password.data)
             db.session.add(user)
             db.session.commit()
             user.set_role("Administrator")
@@ -103,7 +105,7 @@ def update_profile():
             user.set_password(form.password.data)
         user.alias = form.alias.data
         db.session.commit()
-        flash('Your settings has been changed.', "success")
+        flash('Your settings have been changed.', "success")
         return redirect(url_for('auth.login'))
     elif request.method == 'GET':
         form.alias.data = user.alias
@@ -149,7 +151,7 @@ def plex_login():
 def plex_callback():
     app_settings = AppSettings.query.first()
 
-    if not session['plex_oauth_code'] or not session['plex_oauth_id']:
+    if not (session['plex_oauth_code'] and session['plex_oauth_id']):
         flash('Error while logging in Plex', "error")
         return redirect(url_for('auth.login_choice'))
     
