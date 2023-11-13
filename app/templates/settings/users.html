@@ -12,6 +12,7 @@
                 <th scope="col">Movie Storage</th>
                 <th scope="col">TV Show Storage</th>
                 <th scope="col">Role</th>
+                <th scope="col">Last Seen</th>
                 {% if current_user.is_administrator() %}
                     <th scope="col">Edit</th>
                     <th scope="col">Delete</th>
@@ -26,6 +27,7 @@
                     <td><a href="{{ url_for('media.user_picks', user_id=user.id, media_type='movies') }}">{{user.movie_storage_usage | filesizeformat}}</a></td>
                     <td><a href="{{ url_for('media.user_picks', user_id=user.id, media_type='tv_shows') }}">{{user.show_storage_usage | filesizeformat}}</a></td>
                     <td>{{user.role.name}}</td>
+                    <td>{{moment(user.last_seen).format('LLL')}}</td>
                     {% if current_user.is_administrator() %}
                         {% if user.is_system_user() %}
                             <td><a class="btn btn-outline-light disabled" type="button" href="{{ url_for('settings.user', user_id=user.id) }}">Edit</a></td>
