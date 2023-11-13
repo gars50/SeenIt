@@ -3,6 +3,7 @@ from app.extensions import db
 from flask import json, request, current_app
 from flask_login import login_required, current_user
 from app.models import Media, User, Pick
+from app.decorators import super_user_required
 from datetime import datetime
 from app.scripts.media import check_user_creation, check_movie_creation, check_tv_show_creation, check_pick_creation, delete_pick_and_check_abandoned
 
@@ -17,6 +18,7 @@ def add_pick_to_current_user(media_id):
 
 @bp.route("/picks/<int:media_id>/add_permanent", methods=['PUT'])
 @login_required
+@super_user_required
 def add_pick_permanent_collection(media_id):
     media = Media.query.get(media_id)
     permanent_user = User.query.filter_by(email="Permanent").first()
@@ -52,19 +54,20 @@ def delete_pick(pick_id):
     pick = Pick.query.get_or_404(pick_id)
     media = pick.media
     current_app.logger.debug("User "+current_user.alias+" is trying to delete pick "+str(pick))
-    if (not current_user.admin) and (not current_user==pick.user):
+    if (current_user.is_super_user()) or (current_user==pick.user):
+        abandoned = delete_pick_and_check_abandoned(pick)
+        if abandoned:
+            return{
+                "message" : f"{media} was let go. It has been abandoned as this was its last pick."
+            }
+        else:
+            return{
+                "message" : f"{media} was let go. Others have picked this media, and it has not been abandoned yet."
+            }
+    else:
         return {
             "error" : "Not allowed!"
         }, 405
-    abandoned = delete_pick_and_check_abandoned(pick)
-    if abandoned:
-        return{
-            "message" : str(media)+" was let go. It has been abandoned as this was its last pick."
-        }
-    else:
-        return{
-            "message" : str(media)+" was let go. Others have picked this media, and it has not been abandoned yet."
-        }
 
 @bp.route("/picks", methods=['GET'])
 @login_required

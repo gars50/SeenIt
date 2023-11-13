@@ -20,11 +20,12 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user is None or user.system_user or not user.password_hash or not user.check_password(form.password.data):
+        if user is None or user.is_system_user() or not user.password_hash or not user.check_password(form.password.data):
             flash('Invalid username or password', 'warning')
+            current_app.logger.info(f'{form.email.data} tried logging in unsuccessfully.')
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
-        current_app.logger.info(str(user)+" logged in through SeenIt.")
+        current_app.logger.info(f'{user} logged in through SeenIt.')
         return redirect(url_for('main.index'))
     return render_template('auth/login.html', title='Sign In', form=form)
 
@@ -43,15 +44,17 @@ def register():
     form = RegistrationForm()
     if form.validate_on_submit():
         #If there are no admin users, we create one
-        if not User.query.filter_by(admin=True).first():
-            user = User(email=form.email.data, admin=True)
+        if (User.admins_count() == 0):
+            user = User(email=form.email.data)
             user.set_password(form.password.data)
             db.session.add(user)
+            db.session.commit()
+            user.set_role("Administrator")
             current_app.logger.info("User with email "+user.email+" was created as an admin as it is the first user to log in.")
         else:
             #We verify the user is allowed to register
             user = User.query.filter_by(email=form.email.data).first()
-            if not user or user.system_user:
+            if not user or user.is_system_user():
                 flash("You are not allowed to register.", "error")
                 return redirect(url_for('auth.login'))
             elif user.password_hash:
@@ -102,7 +105,7 @@ def update_profile():
             user.set_password(form.password.data)
         user.alias = form.alias.data
         db.session.commit()
-        flash('Your settings has been changed.', "success")
+        flash('Your settings have been changed.', "success")
         return redirect(url_for('auth.login'))
     elif request.method == 'GET':
         form.alias.data = user.alias
@@ -148,7 +151,7 @@ def plex_login():
 def plex_callback():
     app_settings = AppSettings.query.first()
 
-    if not session['plex_oauth_code'] or not session['plex_oauth_id']:
+    if not (session['plex_oauth_code'] and session['plex_oauth_id']):
         flash('Error while logging in Plex', "error")
         return redirect(url_for('auth.login_choice'))
     
@@ -178,24 +181,25 @@ def plex_callback():
         "X-Plex-Token": plex_auth_token
     }
     response = requests.get(verify_user_url, headers=headers, data=data)
-    user_email = response.json().get('email')
+    plex_user_email = response.json().get('email')
     
-    user = User.query.filter_by(email=user_email).first()
-    current_app.logger.debug("User with email "+user_email+" is trying to login through Plex. Corresponding user: "+str(user))
+    user = User.query.filter_by(email=plex_user_email).first()
+    current_app.logger.debug(f"User with email {plex_user_email} is trying to login through Plex. Corresponding user: {user}")
     #If there are no admin users, we create one
-    if not User.query.filter_by(admin=True).first():
-        user = User(email=user_email, admin=True)  
+    if (User.admins_count() == 0):
+        user = User(email=plex_user_email)
         db.session.add(user)
         db.session.commit()
-        current_app.logger.info("User with email "+user.email+" was created as an admin as it is the first user to log in.")
+        user.set_role("Administrator")
+        current_app.logger.info(f"User with email {user.email} was created as an admin as it is the first user to log in.")
     #If the user is not in the list, we do not allow them to login
-    if user is None or user.system_user:
+    if user is None or user.is_system_user():
             flash("You are not allowed to login.", "error")
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth.login_choice'))
     
     #Otherwise we log them in and clear the cookies used for the login.
     login_user(user, remember=True)
     session.pop('plex_oauth_code', None)
     session.pop('plex_oauth_id', None)
-    current_app.logger.info(str(user)+" logged in through Plex.")
+    current_app.logger.info(f"{user} logged in through Plex.")
     return redirect(url_for('main.index'))

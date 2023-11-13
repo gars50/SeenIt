@@ -1,17 +1,16 @@
 from flask import render_template, flash, redirect, request, url_for, current_app
 from app import db
+from app.decorators import admin_required, super_user_required
 from app.settings import bp
 from app.scripts.media import modify_deletion_date
 from app.models import User, AppSettings, Media, Pick, Movie, TVShow
 from app.settings.forms import EditUserForm, AddUserForm, EditAppSettings
-from flask_login import login_required, current_user
+from flask_login import login_required
 
 @bp.route('/application', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def application():
-    if not current_user.admin:
-        flash('You do not have access to this.', "error")
-        return redirect(url_for('main.index'))
     num_picks = Pick.query.count()
     num_movies = Movie.query.count()
     num_shows = TVShow.query.count()
@@ -71,53 +70,50 @@ def application():
 
 @bp.route('/users')
 @login_required
+@super_user_required
 def users():
-    if not current_user.admin:
-        flash('You do not have access to this.', "error")
-        return redirect(url_for('main.index'))
     users = User.query.all()
     return render_template('settings/users.html', users=users)
 
 @bp.route('/user/<int:user_id>', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def user(user_id):
     user = User.query.get_or_404(user_id)
     form = EditUserForm()
     if form.validate_on_submit():
-        #If this user is the last admin and the user unchecks admin, we deny it.
-        try:
-            last_admin = User.query.filter_by(admin=True).one()
-        except Exception as err:
-            current_app.logger.debug("More than one admin or none : "+str(err))
-            last_admin = None
-        
-        if ((user == last_admin) and (not form.admin.data)):
+        #If this user is the last admin and admin is removed, we deny it.
+        if (user.is_administrator() and (User.admins_count() <= 1)) and (form.role.data != "Administrator"):
             flash('Cannot disable the last administrator', "error")
+        elif (user.is_system_user()):
+            flash('Cannot change a system user', "error")
         else:
-            user.alias = form.alias.data
-            user.admin = form.admin.data
-            db.session.commit()
+            user.set_role(form.role.data)
+            user.set_alias(form.alias.data)
             flash('Your changes have been saved.', "success")
         return redirect(url_for('settings.users'))
     elif request.method == 'GET':
         form.email.data = user.email
         form.alias.data = user.alias
-        form.admin.data = user.admin
-    return render_template('settings/user.html', form=form)
+        form.role.data = user.role.name
+        return render_template('settings/user.html', form=form)
 
 @bp.route('/add_user', methods=['GET', 'POST'])
 @login_required
+@admin_required
 def add_user():
     form = AddUserForm()
     if form.validate_on_submit():
-        user = User(email=form.email.data, alias=form.alias.data, admin=form.admin.data)
+        user = User(email=form.email.data, alias=form.alias.data)
         db.session.add(user)
         db.session.commit()
+        user.set_role(form.role.data)
         flash('User has been added.', "success")
         return redirect(url_for('settings.users'))
     return render_template('settings/add_user.html', form=form)
 
 @bp.route('/logs')
 @login_required
+@admin_required
 def logs():
     return render_template('settings/logs.html')

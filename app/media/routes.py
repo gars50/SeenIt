@@ -1,6 +1,7 @@
 from app.media import bp
 from flask_login import login_required
 from flask import render_template
+from app.decorators import super_user_required
 from app.models import User
 from flask_mobility.decorators import mobile_template
 
@@ -31,6 +32,7 @@ def permanent_picks(template):
 
 @bp.route("/user/<int:user_id>/picks")
 @login_required
+@super_user_required
 @mobile_template("{mobile/}table_views/picks.html")
 def user_picks(user_id, template):
     user = User.query.get_or_404(user_id)
