@@ -36,5 +36,5 @@ def permanent_picks(template):
 @mobile_template("{mobile/}table_views/picks.html")
 def user_picks(user_id, template):
     user = User.query.get_or_404(user_id)
-    page_title="Picks for "+user.alias+" ("+user.email+")"
+    page_title = f'Picks for {user.alias} ({user.email})'
     return render_template(template, page_title=page_title, user_id=user_id)

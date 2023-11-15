@@ -13,7 +13,7 @@ def add_pick_to_current_user(media_id):
     media = Media.query.get(media_id)
     check_pick_creation(media, current_user, datetime.utcnow(), "Picked up")
     return{
-        "message" : "Picked up "+str(media)
+        "message" : f"Picked up {media}"
     }
 
 @bp.route("/picks/<int:media_id>/add_permanent", methods=['PUT'])
@@ -24,7 +24,7 @@ def add_pick_permanent_collection(media_id):
     permanent_user = User.query.filter_by(email="Permanent").first()
     check_pick_creation(media, permanent_user, datetime.utcnow(), "Assigned")
     return{
-        "message" : str(media)+" added to the permanent collection"
+        "message" : f'{media} added to the permanent collection'
     }
 
 @bp.route("/picks/add_watching", methods=['PUT'])
@@ -36,14 +36,14 @@ def add_pick_watching():
     if data["type"] == "movie":
         #Only process if this is an actual movie
         if data["themoviedb_id"]:
-            current_app.logger.info(str(user)+" started watching movie: "+data["title"])
+            current_app.logger.info(f'{user} started watching movie: {data["title"]}')
             movie, added_movie = check_movie_creation(TMDB_id=data["themoviedb_id"])
             check_pick_creation(movie, user, datetime.utcnow(), "Watched")
 
     elif data["type"] == "tv_show":
         #Only process if this is an actual show
         if data["thetvdb_id"]:
-            current_app.logger.info(str(user)+" started watching tv show: "+data["show_title"])
+            current_app.logger.info(f'{user} started watching tv show: {data["show_title"]}')
             tv_show, added_to_db = check_tv_show_creation(theTVDB_id=data["thetvdb_id"])
             check_pick_creation(tv_show, user, datetime.utcnow(), "Watched")
     return {}, 204
@@ -53,16 +53,16 @@ def add_pick_watching():
 def delete_pick(pick_id):
     pick = Pick.query.get_or_404(pick_id)
     media = pick.media
-    current_app.logger.debug("User "+current_user.alias+" is trying to delete pick "+str(pick))
+    current_app.logger.debug(f'User {current_user.alias} is trying to delete {pick}')
     if (current_user.is_super_user()) or (current_user==pick.user):
         abandoned = delete_pick_and_check_abandoned(pick)
         if abandoned:
             return{
-                "message" : f"{media} was let go. It has been abandoned as this was its last pick."
+                "message" : f'{media} was let go. It has been abandoned as this was its last pick.'
             }
         else:
             return{
-                "message" : f"{media} was let go. Others have picked this media, and it has not been abandoned yet."
+                "message" : f'{media} was let go. Others have picked this media, and it has not been abandoned yet.'
             }
     else:
         return {

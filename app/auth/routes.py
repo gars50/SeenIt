@@ -34,7 +34,7 @@ def login():
 def logout():
     user = User.query.filter_by(email=current_user.email).first()
     logout_user()
-    current_app.logger.info(str(user)+" logged out.")
+    current_app.logger.info(f'{user} logged out.')
     return redirect(url_for('auth.login_choice'))
 
 @bp.route('/register', methods=['GET', 'POST'])
@@ -50,7 +50,7 @@ def register():
             db.session.add(user)
             db.session.commit()
             user.set_role("Administrator")
-            current_app.logger.info("User with email "+user.email+" was created as an admin as it is the first user to log in.")
+            current_app.logger.info(f'User with email {user.email} was created as an admin as it is the first user to log in.')
         else:
             #We verify the user is allowed to register
             user = User.query.filter_by(email=form.email.data).first()
@@ -144,7 +144,7 @@ def plex_login():
         "context%5Bdevice%5D%5Bproduct%5D": app_settings.app_name
     }
     params_url = urllib.parse.urlencode(params, quote_via=urllib.parse.quote)
-    full_plex_url = "https://app.plex.tv/auth/#?"+params_url
+    full_plex_url = f'https://app.plex.tv/auth/#?{params_url}'
     return redirect(full_plex_url)
 
 @bp.route('/plex_callback')
@@ -156,9 +156,9 @@ def plex_callback():
         return redirect(url_for('auth.login_choice'))
     
     #Verify if the PIN has been claimed
-    verify_pin_url = "https://plex.tv/api/v2/pins/"+str(session['plex_oauth_id'])
+    verify_pin_url = f'https://plex.tv/api/v2/pins/{session["plex_oauth_id"]}'
     headers = {
-        "accept": "application/json"
+        "accept": 'application/json'
     }
     data = {
         "X-Plex-Client-Identifier": app_settings.plex_client_id,

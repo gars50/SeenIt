@@ -8,42 +8,42 @@ from app import db
 
 def api_ombi(method, url_end):
     app_settings = AppSettings.query.first()
-    ombi_base_url = "http://"+app_settings.ombi_host+":"+f'{app_settings.ombi_port}'
+    ombi_base_url = f'http://{app_settings.ombi_host}:{app_settings.ombi_port}'
     ombi_headers = {'ApiKey' : app_settings.ombi_api_key}
     return cache_session.request(method,ombi_base_url+url_end, headers=ombi_headers)
 
 def api_radarr(method, url_end):
     app_settings = AppSettings.query.first()
-    radarr_base_url = "http://"+app_settings.radarr_host+":"+f'{app_settings.radarr_port}'
+    radarr_base_url = f'http://{app_settings.radarr_host}:{app_settings.radarr_port}'
     radarr_headers = {'X-Api-Key' : app_settings.radarr_api_key}
     return cache_session.request(method,radarr_base_url+url_end, headers=radarr_headers)
 
 def api_sonarr(method, url_end):
     app_settings = AppSettings.query.first()
-    sonarr_base_url = "http://"+app_settings.sonarr_host+":"+f'{app_settings.sonarr_port}'
+    sonarr_base_url = f'http://{app_settings.sonarr_host}:{app_settings.sonarr_port}'
     sonarr_headers = {'X-Api-Key' : app_settings.sonarr_api_key}
     return cache_session.request(method, sonarr_base_url+url_end, headers=sonarr_headers)
 
 def check_user_creation(email, alias):
     added_to_db = False
-    current_app.logger.debug("Checking if user "+email+" exists")
+    current_app.logger.debug(f'Checking if user {email} exists')
     user = User.query.filter_by(email=email).first()
     if not user:
         new_user = User(email=email, alias=alias)
         db.session.add(new_user)
         db.session.commit()
-        current_app.logger.info("Created user "+str(new_user))
+        current_app.logger.info(f'Created user {new_user}')
         added_to_db = True
     return User.query.filter_by(email=email).first(), added_to_db
 
 def check_movie_creation(TMDB_id, ombi_id=0, title=""):
     added_to_db = False
-    current_app.logger.debug("Checking if movie "+str(TMDB_id)+" exists")
+    current_app.logger.debug(f'Checking if movie {TMDB_id} exists')
     movie = Movie.query.filter_by(TMDB_id=TMDB_id).first()
     if not movie:
         current_app.logger.debug("It does not. Creating it.")
         #Get the required info from Radarr
-        radarr_get_movie = api_radarr("GET", "/api/v3/movie?tmdbid="+str(TMDB_id))
+        radarr_get_movie = api_radarr("GET", f'/api/v3/movie?tmdbid={TMDB_id}')
         radarr_infos = radarr_get_movie.json()
         if radarr_infos:
             current_app.logger.debug("Movie is already in Radarr, processing its information")
@@ -60,7 +60,7 @@ def check_movie_creation(TMDB_id, ombi_id=0, title=""):
             radarr_id = -1
             total_size = 0
             year = 0
-            radarr_lookup = api_radarr("GET","/api/v3/movie/lookup/tmdb?tmdbid="+str(TMDB_id))
+            radarr_lookup = api_radarr("GET",f'/api/v3/movie/lookup/tmdb?tmdbid={TMDB_id}')
             if radarr_lookup.status_code == 500:
                 year = 0
                 poster_url = None
@@ -76,16 +76,16 @@ def check_movie_creation(TMDB_id, ombi_id=0, title=""):
         new_movie = Movie(title=title, TMDB_id=TMDB_id, year=year, ombi_id=ombi_id, total_size=total_size, radarr_id=radarr_id, poster_url=poster_url)
         db.session.add(new_movie)
         db.session.commit()
-        current_app.logger.info("Created "+str(new_movie))
+        current_app.logger.info(f'Created {new_movie}')
         added_to_db = True
     return Movie.query.filter_by(TMDB_id=TMDB_id).first(), added_to_db
 
 def check_tv_show_creation(theTVDB_id, ombi_id=0, title=""):
     added_to_db = False
-    current_app.logger.debug("Checking if tv show "+str(theTVDB_id)+" exists")
+    current_app.logger.debug(f'Checking if tv show {theTVDB_id} exists')
     show = TVShow.query.filter_by(theTVDB_id=theTVDB_id).first()
     if not show:
-        sonarr_response = api_sonarr("GET","/api/v3/series?tvdbId="+str(theTVDB_id))
+        sonarr_response = api_sonarr("GET",f'/api/v3/series?tvdbId={theTVDB_id}')
         sonarr_infos = sonarr_response.json()
         if sonarr_infos:
             current_app.logger.debug("Show is already in Sonarr, process its information")
@@ -100,7 +100,7 @@ def check_tv_show_creation(theTVDB_id, ombi_id=0, title=""):
             current_app.logger.debug("Show is not in Sonarr, have to look up its information")
             sonarr_id = -1
             total_size = 0
-            sonarr_lookup = api_sonarr("GET","/api/v3/series/lookup?term=tvdbid:"+str(theTVDB_id))
+            sonarr_lookup = api_sonarr("GET",f'/api/v3/series/lookup?term=tvdbid:{theTVDB_id}')
             if sonarr_lookup.status_code == 500:
                 poster_url = None
             else:
@@ -114,13 +114,13 @@ def check_tv_show_creation(theTVDB_id, ombi_id=0, title=""):
         new_show = TVShow(title=title, theTVDB_id=theTVDB_id, ombi_id=ombi_id, sonarr_id=sonarr_id, total_size=total_size, poster_url=poster_url)
         db.session.add(new_show)
         db.session.commit()
-        current_app.logger.info("Created "+str(new_show))
+        current_app.logger.info(f'Created {new_show}')
         added_to_db = True
     return TVShow.query.filter_by(theTVDB_id=theTVDB_id).first(), added_to_db
 
 def check_pick_creation(media, user, pick_date, pick_method):
     added_to_db = False
-    current_app.logger.debug("Checking if pick for "+str(media)+" by "+str(user)+" exists")
+    current_app.logger.debug(f'Checking if pick for {media} by {user} exists')
     pick = Pick.query.filter_by(media=media, user=user).first()
     if not pick:
         new_pick = Pick(media=media, user=user, pick_date=pick_date, pick_method=pick_method)
@@ -129,12 +129,12 @@ def check_pick_creation(media, user, pick_date, pick_method):
         media.expiry_date = None
         media.abandoned_date = None
         db.session.commit()
-        current_app.logger.info("Created "+str(new_pick))
+        current_app.logger.info(f'Created {new_pick}')
         added_to_db = True
     return Pick.query.filter_by(media=media, user=user).first(), added_to_db
 
 def test_ombi(ombi_host, ombi_port, ombi_api_key):
-    ombi_base_url = "http://"+ombi_host+":"+f'{ombi_port}'
+    ombi_base_url = f'http://{ombi_host}:{ombi_port}'
     ombi_headers = {'ApiKey' : ombi_api_key, 'Cache-Control': 'no-cache'}
 
     try:
@@ -153,7 +153,7 @@ def test_ombi(ombi_host, ombi_port, ombi_api_key):
             }, 500
 
 def test_radarr(radarr_host, radarr_port, radarr_api_key):
-    radarr_base_url = "http://"+radarr_host+":"+f'{radarr_port}'
+    radarr_base_url = f'http://{radarr_host}:{radarr_port}'
     radarr_headers = {'X-Api-Key' : radarr_api_key, 'Cache-Control': 'no-cache'}
     try:
         response = requests.get(radarr_base_url+"/api/v3/System/Status", headers=radarr_headers)
@@ -171,7 +171,7 @@ def test_radarr(radarr_host, radarr_port, radarr_api_key):
             }, 500
 
 def test_sonarr(sonarr_host, sonarr_port, sonarr_api_key):
-    sonarr_base_url = "http://"+sonarr_host+":"+f'{sonarr_port}'
+    sonarr_base_url = f'http://{sonarr_host}:{sonarr_port}'
     sonarr_headers = {'X-Api-Key' : sonarr_api_key, 'Cache-Control': 'no-cache'}
 
     try:
@@ -227,7 +227,7 @@ def import_requests_from_ombi():
             requester_alias = movie_request["requestedUser"]["userAlias"]
             ombi_id = movie_request["id"]
 
-            current_app.logger.debug("Processing movie "+title+", requested by "+requester_email)
+            current_app.logger.debug(f'Processing movie {title}, requested by {requester_email}')
 
             requester, added_user = check_user_creation(requester_email, requester_alias)
             movie, added_movie = check_movie_creation(TMDB_id, ombi_id, title)
@@ -264,7 +264,7 @@ def import_requests_from_ombi():
             if added_tv_show:added_tv_shows+=1
             if added_tv_show_pick:added_tv_show_picks+=1
 
-    response = "Imported \n"+str(added_users)+" Users.\n"+str(added_movies)+" Movies.\n"+str(added_movie_picks)+" Movie Picks.\n"+str(added_tv_shows)+" TV Shows.\n"+str(added_tv_show_picks)+" TV Show Picks"
+    response = f'Imported \n{added_users} Users.\n{added_movies} Movies.\n{added_movie_picks} Movie Picks.\n{added_tv_shows} TV Shows.\n{added_tv_show_picks} TV Show Picks'
     app_settings.last_media_import = start_time
     db.session.commit()
     return response
@@ -289,18 +289,18 @@ def import_shows_from_sonarr():
 
 def delete_media_from_ombi(media):
     if media.type == "movie":
-        api_ombi("DELETE","/api/v1/Request/movie/"+str(media.ombi_id))
+        api_ombi("DELETE",f'/api/v1/Request/movie/{media.ombi_id}')
     else:
-        api_ombi("DELETE","/api/v1/Request/tv/"+str(media.ombi_id))
-    current_app.logger.info(str(media)+" deleted from Ombi.")
+        api_ombi("DELETE",f'/api/v1/Request/tv/{media.ombi_id}')
+    current_app.logger.info(f'{media} deleted from Ombi.')
 
 def delete_media_from_radarr(media):
-    api_radarr("DELETE", "/api/v3/movie/"+str(media.radarr_id)+"?deleteFiles=true")
-    current_app.logger.info(str(media)+" deleted from Radarr.")
+    api_radarr("DELETE", f'/api/v3/movie/{media.radarr_id}?deleteFiles=true')
+    current_app.logger.info(f'{media} deleted from Radarr.')
 
 def delete_media_from_sonarr(media):
-    api_sonarr("DELETE", "/api/v3/series/"+str(media.sonarr_id)+"?deleteFiles=true")
-    current_app.logger.info(str(media)+" deleted from Sonarr.")
+    api_sonarr("DELETE", f'/api/v3/series/{media.sonarr_id}?deleteFiles=true')
+    current_app.logger.info(f'{media} deleted from Sonarr.')
 
 def delete_media_from_media_manager(media):
     if media.type == "movie":
@@ -314,12 +314,12 @@ def delete_media_everywhere(media):
     app_settings = AppSettings.query.first()
 
     if app_settings.safe_mode:
-        message = "Deleted "+media.title+" from the database only."
-        current_app.logger.info(str(media)+" deleted from the database only.")
+        message = f'Deleted {media.title} from the database only.'
+        current_app.logger.info(f'{media} deleted from the database only.')
     else:
         delete_media_from_ombi(media)
         delete_media_from_media_manager(media)
-        message = "Deleted "+media.title+" everywhere."
+        message = f'Deleted {media.title} everywhere.'
     db.session.delete(media)
     db.session.commit()
     return message
@@ -356,9 +356,9 @@ def update_media_infos():
 def modify_deletion_date(medias):
     app_settings = AppSettings.query.first()
     for media in medias:
-        current_app.logger.debug("Changing "+str(media))
+        current_app.logger.debug(f'Changing {media}')
         media.expiry_date = media.abandoned_date + relativedelta(**{app_settings.expiry_time_unit: app_settings.expiry_time_number})
-        current_app.logger.debug("Expiry date of "+str(media)+" set to "+str(media.expiry_date))
+        current_app.logger.debug(f'Expiry date of {media} set to {media.expiry_date}')
         delete_time = app_settings.next_delete
         if (delete_time < media.expiry_date):
             #Find the next deletion date that lands after the expiration date
@@ -372,7 +372,7 @@ def modify_deletion_date(medias):
             #delete_time = deltaMulti * deletion_delta
         media.deletion_date = delete_time
         db.session.commit()
-        current_app.logger.debug("Deletion date of "+str(media)+" set to "+str(media.deletion_date))
+        current_app.logger.debug(f'Deletion date of {media} set to {media.deletion_date}')
 
 def check_if_abandoned(media, user=None):
     abandoned = (not media.picks)
@@ -380,7 +380,7 @@ def check_if_abandoned(media, user=None):
     if abandoned:
         media.abandoned_date = datetime.utcnow()
         modify_deletion_date([media])
-        current_app.logger.info(str(media)+" has been abandoned.")
+        current_app.logger.info(f'{media} has been abandoned.')
         db.session.commit()
     return abandoned
 
@@ -400,11 +400,11 @@ def update_free_space_info():
             fixed_free_space = drive["freeSpace"]/1024**3*1000**3
             app_settings.free_space = fixed_free_space
             db.session.commit()
-            current_app.logger.debug("Free space is now "+ str(app_settings.free_space))
+            current_app.logger.debug(f'Free space is now {app_settings.free_space}')
 
 def update_user_storage_usage():
     for user in User.query.all():
-        current_app.logger.debug("Updating storage for "+ str(user))
+        current_app.logger.debug(f'Updating storage for {user}')
 
         total_user_movie_size = 0
         movie_picks = Pick.query.filter_by(user=user, media_type="movie")
@@ -429,7 +429,7 @@ def delete_pick_and_check_abandoned(pick):
     user = pick.user
     if pick.pick_method == "Ombi Request":
         #Should we delete the ombi request at this point and avoid double data in the db?
-        current_app.logger.debug("Deleting Ombi Request for "+str(pick.media))
+        current_app.logger.debug(f'Deleting Ombi Request for {pick.media}')
     db.session.delete(pick)
     db.session.commit()
     abandoned = check_if_abandoned(media, user)

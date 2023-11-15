@@ -11,7 +11,7 @@ from app.models import User
 @admin_required
 def delete_user(user_id):
     user = User.query.get_or_404(user_id)
-    current_app.logger.info("Deleting user : "+str(user))
+    current_app.logger.info(f'Deleting {user}')
     if user.is_administrator():
         return {
             "error" : user.email+" is an admin and cannot be deleted"
