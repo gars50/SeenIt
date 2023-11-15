@@ -331,7 +331,7 @@ def update_media_infos():
     for radarr_movie in radarr_infos:
         seenit_movie = Movie.query.filter_by(TMDB_id=str(radarr_movie["tmdbId"])).one()
         if seenit_movie:
-            current_app.logger.debug("Processing movie " + seenit_movie.title + " from Radarr.")
+            current_app.logger.debug(f'Processing movie {seenit_movie.title} from Radarr.')
             seenit_movie.radarr_id = radarr_movie["id"]
             seenit_movie.total_size = radarr_movie["sizeOnDisk"]
             for image in radarr_movie["images"]:
@@ -345,7 +345,7 @@ def update_media_infos():
     for sonarr_show in sonarr_infos:        
         seenit_show = TVShow.query.filter_by(theTVDB_id=sonarr_show["tvdbId"]).one()
         if seenit_show:
-            current_app.logger.debug("Processing show " + seenit_show.title + " from Sonarr.")
+            current_app.logger.debug(f'Processing show {seenit_show.title} from Sonarr.')
             seenit_show.radarr_id = sonarr_show["id"]
             seenit_show.total_size = sonarr_show["statistics"]["sizeOnDisk"]
             for image in sonarr_show["images"]:
