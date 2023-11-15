@@ -34,6 +34,9 @@ class User(UserMixin, db.Model):
         db.session.add(self)
         db.session.commit()
 
+    def has_logged_in(self):
+        return (self.last_seen > datetime.min)
+
     def can(self, perm):
         return self.role is not None and self.role.has_permission(perm)
 
