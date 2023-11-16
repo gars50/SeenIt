@@ -1,10 +1,10 @@
 from app.extensions import db
 
 def default_TMDB_url(context):
-    return "https://www.themoviedb.org/movie/"+str(context.get_current_parameters()['TMDB_id'])
+    return f'https://www.themoviedb.org/movie/{context.get_current_parameters()["TMDB_id"]}'
 
 def default_theTVDB_url(context):
-    return "https://www.thetvdb.com/?id="+str(context.get_current_parameters()['theTVDB_id'])+"&tab=series"
+    return f'https://www.thetvdb.com/?id={context.get_current_parameters()["theTVDB_id"]}&tab=series'
 
 class Media(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -29,7 +29,7 @@ class Media(db.Model):
     def to_dict(self) :
         if self.type == "movie":
             media_db_url = self.TMDB_url
-            full_title = self.title+" ("+str(self.year)+")"
+            full_title = f'{self.title} ({self.year})'
         else:
             media_db_url = self.theTVDB_url
             full_title = self.title

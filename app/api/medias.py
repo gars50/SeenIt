@@ -18,7 +18,7 @@ def picks_modal(media_id):
 @super_user_required
 def delete_media(media_id):
     media = Media.query.get_or_404(media_id)
-    current_app.logger.debug(str(current_user)+" is trying to delete "+str(media))
+    current_app.logger.debug(f'{current_user} is trying to delete {media}')
     script_result = delete_media_everywhere(media)
     return {
         "message" : script_result
