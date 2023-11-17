@@ -1,5 +1,5 @@
 import os
-from app.models import AppSettings, User, Role
+from app.models import AppSettings, User, Role, PickType
 from datetime import datetime, timedelta
 from app import db, scheduler
 from app.scripts.jobs import update_medias_and_requests, delete_all_expired_medias
@@ -18,3 +18,4 @@ def first_run_setup():
 
     Role.insert_roles()
     User.insert_system_users()
+    PickType.insert_pick_types()

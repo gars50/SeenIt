@@ -133,7 +133,7 @@
 					},
 					{
 						title: 'Pick Method',
-						data: 'pick_method',
+						data: 'pick_type',
 						visible: false,
 					},
 					{
@@ -180,13 +180,13 @@
 							var media_type_icon = '<span class="media-type-tooltip" data-toggle="tooltip" title="' + icon_title + '"><i class="fa ' + icon + ' fa-fw"></i></span>';
 							var first_line = media_type_icon + '&nbsp;' + '<a href="'+row.media_db_url+'" target="_blank">'+data+'</a>'
 							var pick_date = '<i class="bi bi-calendar2-plus"></i> '+moment(row.pick_date).format('LL')
-							var pick_method = '<i class="bi bi-bag-plus"></i> ' + row.pick_method
+							var pick_type = '<i class="bi bi-bag-plus"></i> ' + row.pick_type
 							var media_size = '<i class="bi bi-hdd"></i> ' + formatBytes(row.media_size)
 							return (
 								first_line + '<br>' +
 								pick_date + '<br>' +
                                 {% if page != "permanent_picks" %}
-								    pick_method + '<br>' +
+								    pick_type + '<br>' +
 								{% endif %}
                                 media_size)
 						},
