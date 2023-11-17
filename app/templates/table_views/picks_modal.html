@@ -14,7 +14,7 @@
             <tr>
                 <td scope="row">{{ pick.user.alias }}</td>
                 <td>{{ moment(pick.pick_date).format('LLL') }}</td>
-                <td>{{ pick.pick_method }}</td>
+                <td>{{ pick.pick_type.name }}</td>
                 {% if current_user.is_super_user() %}
                     <td><a onclick="deletePickModal({{pick.id}}, this)" class="btn btn-warning">Delete</a></td>
                 {% endif %}

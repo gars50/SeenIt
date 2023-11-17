@@ -118,12 +118,12 @@ def check_tv_show_creation(theTVDB_id, ombi_id=0, title=""):
         added_to_db = True
     return TVShow.query.filter_by(theTVDB_id=theTVDB_id).first(), added_to_db
 
-def check_pick_creation(media, user, pick_date, pick_method):
+def check_pick_creation(media, user, pick_date, pick_type):
     added_to_db = False
     current_app.logger.debug(f'Checking if pick for {media} by {user} exists')
     pick = Pick.query.filter_by(media=media, user=user).first()
     if not pick:
-        new_pick = Pick(media=media, user=user, pick_date=pick_date, pick_method=pick_method)
+        new_pick = Pick(media=media, user=user, pick_date=pick_date, pick_type=pick_type)
         db.session.add(new_pick)
         media.deletion_date = None
         media.expiry_date = None
@@ -231,7 +231,7 @@ def import_requests_from_ombi():
 
             requester, added_user = check_user_creation(requester_email, requester_alias)
             movie, added_movie = check_movie_creation(TMDB_id, ombi_id, title)
-            moviePick, added_movie_pick = check_pick_creation(movie, requester, request_date_mod, "Ombi Request")
+            moviePick, added_movie_pick = check_pick_creation(movie, requester, request_date_mod, "Requested")
 
             if added_user:added_users+=1
             if added_movie:added_movies+=1
@@ -258,7 +258,7 @@ def import_requests_from_ombi():
 
             requester, added_user = check_user_creation(requester_email, requester_alias)
             tv_show, added_tv_show = check_tv_show_creation(theTVDB_id, ombi_id, title)
-            tv_show_pick, added_tv_show_pick = check_pick_creation(tv_show, requester, request_date_mod, "Ombi Request")
+            tv_show_pick, added_tv_show_pick = check_pick_creation(tv_show, requester, request_date_mod, "Requested")
 
             if added_user:added_users+=1
             if added_tv_show:added_tv_shows+=1
@@ -276,7 +276,7 @@ def import_movies_from_radarr():
     for movie in radarr_infos:
         movie, added_to_db = check_movie_creation(movie["tmdbId"])
         if (added_to_db):
-            check_pick_creation(movie, permanent_user, datetime.utcnow(), "Added from Radarr")
+            check_pick_creation(movie, permanent_user, datetime.utcnow(), "Assigned")
 
 def import_shows_from_sonarr():
     sonarr_response = api_sonarr("GET", "/api/v3/series")
@@ -285,7 +285,7 @@ def import_shows_from_sonarr():
     for show in sonarr_infos:
         tv_show, added_to_db = check_tv_show_creation(show["tvdbId"])
         if (added_to_db):
-            check_pick_creation(tv_show, permanent_user, datetime.utcnow(), "Added from Sonarr")
+            check_pick_creation(tv_show, permanent_user, datetime.utcnow(), "Assigned")
 
 def delete_media_from_ombi(media):
     if media.type == "movie":
@@ -427,8 +427,8 @@ def delete_expired_medias():
 def delete_pick_and_check_abandoned(pick):
     media = pick.media
     user = pick.user
-    if pick.pick_method == "Ombi Request":
-        #Should we delete the ombi request at this point and avoid double data in the db?
+    if pick.pick_type.name == "Requested":
+        #Need to implement deleting from Ombi
         current_app.logger.debug(f'Deleting Ombi Request for {pick.media}')
     db.session.delete(pick)
     db.session.commit()

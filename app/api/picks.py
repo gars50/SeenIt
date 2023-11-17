@@ -2,7 +2,7 @@ from app.api import bp
 from app.extensions import db
 from flask import json, request, current_app
 from flask_login import login_required, current_user
-from app.models import Media, User, Pick
+from app.models import Media, User, Pick, PickType
 from app.decorators import super_user_required
 from datetime import datetime
 from app.scripts.media import check_user_creation, check_movie_creation, check_tv_show_creation, check_pick_creation, delete_pick_and_check_abandoned
@@ -72,7 +72,7 @@ def delete_pick(pick_id):
 @bp.route("/picks", methods=['GET'])
 @login_required
 def get_picks():
-    query = Pick.query.outerjoin(Media)
+    query = Pick.query.join(Pick.media).join(Pick.pick_type)
 
     # Filtering for the specified user
     lookup_user = request.args.get('user')
@@ -82,21 +82,21 @@ def get_picks():
         )
     else:
         query = query.filter(
-             Pick.user_id.like(lookup_user)
+            Pick.user_id.like(lookup_user)
         )
+    total = query.count()
 
     # Filtering for selected media types
     media_type_search = request.args.get('media_types').split(',')
     query = query.filter(
         Media.type.in_(media_type_search)
     )
-    total = query.count()
 
     # Search filter
     search = request.args.get('search[value]')
     if search:
         query = query.filter(db.or_(
-            Pick.pick_method.like(f'%{search}%'),
+            PickType.name.like(f'%{search}%'),
             Media.title.like(f'%{search}%')
         ))
     total_filtered = query.count()
@@ -109,7 +109,7 @@ def get_picks():
         if col_index is None:
             break
         col_name = request.args.get(f'columns[{col_index}][data]')
-        if col_name == 'pick_date':  # Sorting by pick_date or pick_method column
+        if col_name == 'pick_date':  # Sorting by pick_date
             descending = request.args.get(f'order[{i}][dir]') == 'desc'
             col = Pick.pick_date
             if descending:
@@ -127,9 +127,9 @@ def get_picks():
             if descending:
                 col = col.desc()
             order.append(col)
-        elif col_name == 'pick_method':  # Sorting by Size column
+        elif col_name == 'pick_type':  # Sorting by Pick Type
             descending = request.args.get(f'order[{i}][dir]') == 'desc'
-            col = Pick.pick_method
+            col = PickType.name
             if descending:
                 col = col.desc()
             order.append(col)
