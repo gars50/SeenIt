@@ -1,7 +1,6 @@
 import requests
 from flask import current_app
 from datetime import datetime
-from dateutil.relativedelta import relativedelta
 from app.models import User, Movie, TVShow, AppSettings, Pick, Media
 from app.extensions import cache_session
 from app import db
@@ -125,10 +124,8 @@ def check_pick_creation(media, user, pick_date, pick_type):
     if not pick:
         new_pick = Pick(media=media, user=user, pick_date=pick_date, pick_type=pick_type)
         db.session.add(new_pick)
-        media.deletion_date = None
-        media.expiry_date = None
-        media.abandoned_date = None
         db.session.commit()
+        media.update_abandoned_details()
         current_app.logger.info(f'Created {new_pick}')
         added_to_db = True
     return Pick.query.filter_by(media=media, user=user).first(), added_to_db
@@ -353,37 +350,6 @@ def update_media_infos():
                     seenit_show.poster_url = image["remoteUrl"]
             db.session.commit()
 
-def modify_deletion_date(medias):
-    app_settings = AppSettings.query.first()
-    for media in medias:
-        current_app.logger.debug(f'Changing {media}')
-        media.expiry_date = media.abandoned_date + relativedelta(**{app_settings.expiry_time_unit: app_settings.expiry_time_number})
-        current_app.logger.debug(f'Expiry date of {media} set to {media.expiry_date}')
-        delete_time = app_settings.next_delete
-        if (delete_time < media.expiry_date):
-            #Find the next deletion date that lands after the expiration date
-            deletion_delta = relativedelta(**{app_settings.deletion_time_unit: app_settings.deletion_time_number})
-            while delete_time < media.expiry_date:
-                delete_time += deletion_delta
-            #There should be a faster way to calculate this, but I do not know it
-            #It shouldn't have a big impact anyway.
-            #This method does not work because division of relativedelta is not doable.
-            #deltaMulti = math.ceil(relativedelta(media.expiryDate, delete_time)/deletion_delta)
-            #delete_time = deltaMulti * deletion_delta
-        media.deletion_date = delete_time
-        db.session.commit()
-        current_app.logger.debug(f'Deletion date of {media} set to {media.deletion_date}')
-
-def check_if_abandoned(media, user=None):
-    abandoned = (not media.picks)
-    #If this was the last pick that was just deleted, we need to set the expiryDate and deletionDate
-    if abandoned:
-        media.abandoned_date = datetime.utcnow()
-        modify_deletion_date([media])
-        current_app.logger.info(f'{media} has been abandoned.')
-        db.session.commit()
-    return abandoned
-
 def update_free_space_info():
     #Get disk space remaining from Radarr with a movie
     #Need to change this for deployment, but it will do for now.
@@ -423,14 +389,3 @@ def delete_expired_medias():
     medias_to_delete = Media.query.filter(Media.deletion_date < datetime.utcnow()).all()
     for media in medias_to_delete:
         delete_media_everywhere(media)
-
-def delete_pick_and_check_abandoned(pick):
-    media = pick.media
-    user = pick.user
-    if pick.pick_type.name == "Requested":
-        #Need to implement deleting from Ombi
-        current_app.logger.debug(f'Deleting Ombi Request for {pick.media}')
-    db.session.delete(pick)
-    db.session.commit()
-    abandoned = check_if_abandoned(media, user)
-    return abandoned

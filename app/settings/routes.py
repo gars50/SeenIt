@@ -2,7 +2,6 @@ from flask import render_template, flash, redirect, request, url_for, current_ap
 from app import db
 from app.decorators import admin_required, super_user_required
 from app.settings import bp
-from app.scripts.media import modify_deletion_date
 from app.models import User, AppSettings, Media, Pick, Movie, TVShow
 from app.settings.forms import EditUserForm, AddUserForm, EditAppSettings
 from flask_login import login_required
@@ -43,8 +42,7 @@ def application():
         db.session.commit()
         if deletion_settings_changed:
             current_app.logger.info("Deletion settings have been changed. Updating deletion date of abandoned medias.")
-            abandoned_medias = Media.query.filter_by(picks=None)
-            modify_deletion_date(abandoned_medias)
+            Media.update_all_deletion_details()
         flash('Your changes have been saved.', "success")
         return redirect(url_for('settings.application'))
     elif request.method == 'GET':

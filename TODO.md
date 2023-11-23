@@ -33,9 +33,10 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
     - Add media_type class to differentiate between the two.
 - Move methods away from app.scripts.media into their respective classes
     - Create API Classes for Radarr, Sonarr, Ombi
+- Create Utils folder and move utils there
 
 ## In Progress
-- Add pick_method table instead of string
+- Find a way to have the pick deletion call the update of the media to check abandoned / expiration / deletion date
 
 ## Possible improvements
 - Add possibility to configure the notification agents in Tautulli from the SeenIt

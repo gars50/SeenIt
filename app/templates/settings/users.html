@@ -27,7 +27,7 @@
                     <td><a href="{{ url_for('media.user_picks', user_id=user.id, media_type='movies') }}">{{user.movie_storage_usage | filesizeformat}}</a></td>
                     <td><a href="{{ url_for('media.user_picks', user_id=user.id, media_type='tv_shows') }}">{{user.show_storage_usage | filesizeformat}}</a></td>
                     <td>{{user.role.name}}</td>
-                    {% if user.has_logged_in() %}
+                    {% if user.last_seen %}
                         <td>{{ moment(user.last_seen).format('LLL') }}</td>
                     {% else %}
                         <td>Never</td>

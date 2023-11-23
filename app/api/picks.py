@@ -5,7 +5,7 @@ from flask_login import login_required, current_user
 from app.models import Media, User, Pick, PickType
 from app.decorators import super_user_required
 from datetime import datetime
-from app.scripts.media import check_user_creation, check_movie_creation, check_tv_show_creation, check_pick_creation, delete_pick_and_check_abandoned
+from app.scripts.media import check_user_creation, check_movie_creation, check_tv_show_creation, check_pick_creation
 
 @bp.route("/picks/<int:media_id>/add_to_current_user", methods=['PUT'])
 @login_required
@@ -55,8 +55,11 @@ def delete_pick(pick_id):
     media = pick.media
     current_app.logger.debug(f'User {current_user.alias} is trying to delete {pick}')
     if (current_user.is_super_user()) or (current_user==pick.user):
-        abandoned = delete_pick_and_check_abandoned(pick)
-        if abandoned:
+        temp_media = pick.media
+        db.session.delete(pick)
+        db.session.commit()
+        temp_media.update_abandoned_details()
+        if (temp_media.is_abandoned()):
             return{
                 "message" : f'{media} was let go. It has been abandoned as this was its last pick.'
             }

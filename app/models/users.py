@@ -14,7 +14,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(120), nullable=False, unique=True)
     password_hash = db.Column(db.String(128))
     alias = db.Column(db.String(100), default=default_alias)
-    last_seen = db.Column(db.DateTime(), default=datetime.min)
+    last_seen = db.Column(db.DateTime(), default=None)
     movie_storage_usage = db.Column(db.BigInteger, default=0)
     show_storage_usage = db.Column(db.BigInteger, default=0)
 
@@ -23,7 +23,7 @@ class User(UserMixin, db.Model):
 
     def __repr__(self) -> str:
         return f'User: {self.email}'
-    
+
     def __init__(self, **kwargs):
         super(User, self).__init__(**kwargs)
         if self.role is None:
@@ -34,18 +34,15 @@ class User(UserMixin, db.Model):
         db.session.add(self)
         db.session.commit()
 
-    def has_logged_in(self):
-        return (self.last_seen > datetime.min)
-
     def can(self, perm):
         return self.role is not None and self.role.has_permission(perm)
 
     def is_administrator(self):
         return self.can(Permission.ADMIN)
-    
+
     def is_super_user(self):
         return self.can(Permission.SUPERUSER)
-    
+
     def is_system_user(self):
         return self.role.name == "System User"
 
@@ -54,7 +51,7 @@ class User(UserMixin, db.Model):
         self.role = role
         db.session.add(self)
         db.session.commit()
-    
+
     def set_alias(self, alias):
         self.alias = alias
         db.session.add(self)
@@ -84,7 +81,7 @@ class User(UserMixin, db.Model):
             if (user.is_administrator()):
                 num_admins += 1
         return num_admins
-    
+
     @staticmethod
     def insert_system_users():
         users = {
@@ -98,11 +95,9 @@ class User(UserMixin, db.Model):
                 db.session.commit()
                 user.set_role('System User')
 
-
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))
-
 
 class AnonymousUser(AnonymousUserMixin):
     def can(self, permissions):
@@ -125,7 +120,7 @@ class Role(db.Model):
         super(Role, self).__init__(**kwargs)
         if self.permissions is None:
             self.permissions = 0
-    
+
     def add_permission(self, perm):
         if not self.has_permission(perm):
             self.permissions += perm
@@ -136,7 +131,7 @@ class Role(db.Model):
         self.permissions = 0
     def has_permission(self, perm):
         return self.permissions & perm == perm
-    
+
     @staticmethod
     def insert_roles():
         roles = {

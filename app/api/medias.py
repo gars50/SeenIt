@@ -33,7 +33,7 @@ def get_medias():
     abandoned_only = request.args.get('abandoned_page')
     if (abandoned_only == "true"):
         query = query.filter(
-            Media.abandoned_date.is_not(None)
+            Media.picks == None
         )
     total = query.count()
 

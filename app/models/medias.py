@@ -1,4 +1,8 @@
+from flask import current_app
 from app.extensions import db
+from .application_settings import AppSettings
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 def default_TMDB_url(context):
     return f'https://www.themoviedb.org/movie/{context.get_current_parameters()["TMDB_id"]}'
@@ -19,6 +23,7 @@ class Media(db.Model):
     expiry_date = db.Column(db.DateTime)
     deletion_date = db.Column(db.DateTime)
 
+    #Relations
     picks = db.relationship('Pick', back_populates='media', cascade='all, delete')
 
     __mapper_args__ = {
@@ -45,6 +50,46 @@ class Media(db.Model):
                 'media_id': self.id,
                 'media_type': self.type
             }
+
+    def update_abandoned_details(self):
+        if self.picks:
+            self.abandoned_date = None
+            self.expiry_date = None
+            self.deletion_date = None
+        else:
+            self.abandoned_date = datetime.utcnow()
+            self.update_deletion_details()
+        db.session.add(self)
+        db.session.commit()
+
+    def update_deletion_details(self):
+        current_app_settings = AppSettings.query.first()
+        self.expiry_date = self.abandoned_date + relativedelta(**{current_app_settings.expiry_time_unit: current_app_settings.expiry_time_number})
+        current_app.logger.debug(f'Expiry date of {self} set to {self.expiry_date}')
+        delete_time = current_app_settings.next_delete
+        if (delete_time < self.expiry_date):
+            #Find the next deletion date that lands after the expiration date
+            deletion_delta = relativedelta(**{current_app_settings.deletion_time_unit: current_app_settings.deletion_time_number})
+            while delete_time < self.expiry_date:
+                delete_time += deletion_delta
+            #There should be a faster way to calculate this, but I do not know it
+            #It shouldn't have a big impact anyway.
+            #This method does not work because division of relativedelta is not doable.
+            #deltaMulti = math.ceil(relativedelta(media.expiryDate, delete_time)/deletion_delta)
+            #delete_time = deltaMulti * deletion_delta
+        self.deletion_date = delete_time
+        current_app.logger.debug(f'Deletion date of {self} set to {self.deletion_date}')
+        db.session.add(self)
+        db.session.commit()
+    
+    def is_abandoned(self):
+        return (not self.picks)
+
+    @staticmethod
+    def update_all_deletion_details():
+        for media in Media.query.all():
+            if media.is_abandoned():
+                media.update_deletion_details()
 
 class Movie(Media):
     id = db.Column(db.Integer, db.ForeignKey('media.id'), primary_key=True)

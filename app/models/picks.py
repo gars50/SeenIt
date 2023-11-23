@@ -24,7 +24,7 @@ class Pick(db.Model):
 
     def __repr__(self) -> str:
         return f'Pick: {self.media} assigned to {self.user} on {self.pick_date} through {self.pick_type.name}'
-    
+
     def to_dict(self) :
         if self.media.type == "movie":
             media_db_url = self.media.TMDB_url
@@ -49,10 +49,10 @@ class PickType(db.Model):
 
     def __init__(self, name):
         self.name = name
-    
+
     def __repr__(self) -> str:
         return f'Pick Type: {self.name}'
-    
+
     @staticmethod
     def insert_pick_types():
         types = [
