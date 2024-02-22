@@ -52,13 +52,13 @@ class Media(db.Model):
             }
 
     def update_abandoned_details(self):
-        if self.picks:
+        if self.is_abandoned():
+            self.abandoned_date = datetime.utcnow()
+            self.update_deletion_details()
+        else:
             self.abandoned_date = None
             self.expiry_date = None
             self.deletion_date = None
-        else:
-            self.abandoned_date = datetime.utcnow()
-            self.update_deletion_details()
         db.session.add(self)
         db.session.commit()
 
