@@ -43,6 +43,7 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
 - Add Picks by seasons to allow deletion of a few season at a time.
 - Logs for each day instead of lumped into one
 - Plex login displays a warning about location of the application?
+- Add a last watched info to media, and maybe delete after 1 year?
 
 ## Cancelled
 - Retrieve watchlist from plex?
