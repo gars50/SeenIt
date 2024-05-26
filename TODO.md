@@ -33,6 +33,7 @@ SeenIt allows user to delete/abandon the media they watch/request on Plex/Ombi
     - Add media_type class to differentiate between the two.
 - Move methods away from app.scripts.media into their respective classes
     - Create API Classes for Radarr, Sonarr, Ombi
+- Implement Repository Design Pattern for Ombi/Sonarr/Radarr
 
 ## In Progress
 - Add pick_method table instead of string
